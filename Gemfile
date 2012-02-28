@@ -7,7 +7,6 @@ gem 'rails', '3.2.0'
 
 gem 'mysql2'
 
-
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -36,3 +35,9 @@ gem 'jquery-rails'
 
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
+
+group :test, :development do
+  gem "rspec-rails", "~> 2.6"
+  gem "factory_girl_rails", "~> 1.2"
+  gem "ffaker"
+end
