@@ -38,6 +38,7 @@ gem 'jquery-rails'
 
 group :test, :development do
   gem "rspec-rails", "~> 2.6"
+  gem 'shoulda'
   gem "factory_girl_rails", "~> 1.2"
   gem "ffaker"
 end
