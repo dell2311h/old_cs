@@ -16,3 +16,5 @@
 
 #Ignore project file of Komodo IDE
 *.komodoproject
+
+/config/database.yml
