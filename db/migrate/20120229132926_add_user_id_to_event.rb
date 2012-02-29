@@ -1,5 +1,7 @@
 class AddUserIdToEvent < ActiveRecord::Migration
   def change
-    add_column :events, :user_id, :integer
+    change_table :events do |t|
+      t.integer :user_id
+    end
   end
 end
