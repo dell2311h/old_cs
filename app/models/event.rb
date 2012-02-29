@@ -4,6 +4,7 @@ class Event < ActiveRecord::Base
   has_many :videos
 
   validates :name, :presence => true
+  validates :user_id, :place_id, :presence => true
   
   def api_data
     hash = self.attributes
