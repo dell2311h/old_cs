@@ -6,22 +6,28 @@ describe Api::EventsController do
   describe "lists" do
 
     before(:each) do
-      @events = []
-      5.times do
-        @events << Factory(:event).attributes
+      3.times do
+        Factory(:event)
+      end
+      @events = Event.all.map do |event|
+        event.api_data
       end
     end
 
     it "should get list of ALL events" do
-      expected = {:result => @events, :success => true, :description => "Events list."}.to_json
-      get :index
-      response.body.should == expected
+      get :index     
+      response.code.should == '200'
+
+      result = JSON.parse(response.body)
+      result.should == {:result => @events, :success => true, :description => "Events list."}
     end
     
     it "should get list of TOP events" do
-      expected = {:result => @events, :success => true, :description => "Top Events list."}.to_json
       get :top
-      response.body.should == expected
+      response.code.should == '200'
+      
+      result = JSON.parse(response.body)
+      result.should == {:result => @events, :success => true, :description => "Top Events list."}
     end
     
   end  
