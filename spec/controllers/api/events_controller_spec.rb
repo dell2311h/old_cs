@@ -12,14 +12,14 @@ describe Api::EventsController do
       end
     end
 
-    describe "get list of ALL events" do
-      expected = {:result => {@events}, :success => true, :description => "Events list."}.to_json
+    it "should get list of ALL events" do
+      expected = {:result => @events, :success => true, :description => "Events list."}.to_json
       get :index
       response.body.should == expected
     end
     
-    describe "get list of TOP events" do
-      expected = {:result => {@events}, :success => true, :description => "Top Events list."}.to_json
+    it "should get list of TOP events" do
+      expected = {:result => @events, :success => true, :description => "Top Events list."}.to_json
       get :top
       response.body.should == expected
     end
