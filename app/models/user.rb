@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   validates :login, :email, :uniqueness => true
   
   validates :age, :numericality => { :only_integer => true }
+  validates_inclusion_of :age, :in => 21..30
   
   has_many :comments
   has_many :videos

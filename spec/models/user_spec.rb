@@ -1,5 +1,46 @@
 require 'spec_helper'
 
 describe User do
-  pending "add some examples to (or delete) #{__FILE__}"
+
+  it { should validate_presence_of(:name) }
+  it { should validate_presence_of(:login) }
+  it { should validate_presence_of(:email) }
+  it { should validate_presence_of(:password) }
+  it { should validate_numericality_of(:age) }
+  it { should ensure_exclusion_of(:age).in_range(0..150) }
+  it { should validate_uniqueness_of(:login) }
+  it { should validate_uniqueness_of(:email) }
+
+  it { should ensure_length_of(:login).
+                is_at_least(5).
+                is_at_most(255) }
+  
+  it { should ensure_length_of(:password).
+                is_at_least(5).
+                is_at_most(255) }
+  
+  it { should allow_value("email.gmail.com").for(:email) }
+  it { should_not allow_value("email.gmail.com1").for(:email) }
+  it { should_not allow_value(".gmail.com1").for(:email) }
+  it { should_not allow_value("email.sddsds.").for(:email) }
+  
+  it { should have_many(:comments) }
+  it { should have_many(:videos) }
+  it { should have_many(:places) }
+  it { should have_many(:events) }
+
+  before(:all) do
+    @user = Factory(:user)
+  end
+  
+  
+  describe "create method" do
+  
+      it "should be created" do
+      @user.should be_new_record
+      @user.save.should be_true
+      @user.should_not be_new_record
+      end
+      
+  end
 end
