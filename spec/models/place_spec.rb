@@ -24,4 +24,18 @@ describe Place do
     @place.api_data.keys.should ==  ["id", "name", "user_id", "latitude", "longitude"]
   end
   
+  describe ".with_name_like" do
+    it 'should give some search results' do
+      searchable_name = @place.name
+      Place.with_name_like(@place.name).count.should be > 0
+      @place.update_attribute(:name, "blah#{@place.name}qwerty 123")
+      p Place.with_name_like(@place.name)
+      Place.with_name_like(@place.name).count.should be > 0
+    end
+    
+    it 'should not give some search results' do
+      Place.with_name_like("Ruby-Cola").count.should == 0
+    end
+  end
+  
 end

@@ -4,6 +4,8 @@ class Place < ActiveRecord::Base
   
   validates :name, :user_id, :latitude, :longitude, :presence => true
   
+  scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.upcase}%") }
+  
   def api_data
     hash = self.attributes
     hash.delete("created_at")
