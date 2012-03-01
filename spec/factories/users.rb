@@ -4,7 +4,7 @@ FactoryGirl.define do
   factory :user do
     name     Faker::Name.name
     email    Faker::Internet.email
-    login    Faker::Lorem.words(1)
+    username    Faker::Lorem.words(1)
     phone    Faker::PhoneNumber
     age      20
   end

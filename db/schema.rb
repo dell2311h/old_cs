@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120229132926) do
+ActiveRecord::Schema.define(:version => 20120301161816) do
 
   create_table "comments", :force => true do |t|
     t.integer  "user_id"
@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(:version => 20120229132926) do
   create_table "users", :force => true do |t|
     t.string   "name"
     t.string   "email"
-    t.string   "login"
+    t.string   "username"
     t.string   "password"
     t.string   "phone"
     t.integer  "age"
@@ -67,8 +67,12 @@ ActiveRecord::Schema.define(:version => 20120229132926) do
     t.integer  "user_id"
     t.integer  "event_id"
     t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+    t.string   "clip_file_name"
+    t.string   "clip_content_type"
+    t.integer  "clip_file_size"
+    t.datetime "clip_updated_at"
   end
 
 end

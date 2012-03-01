@@ -3,15 +3,15 @@ require 'spec_helper'
 describe User do
 
   it { should validate_presence_of(:name) }
-  it { should validate_presence_of(:login) }
+  it { should validate_presence_of(:username) }
   it { should validate_presence_of(:email) }
   it { should validate_presence_of(:password) }
   it { should validate_numericality_of(:age) }
   it { should ensure_exclusion_of(:age).in_range(0..150) }
-  it { should validate_uniqueness_of(:login) }
+  it { should validate_uniqueness_of(:username) }
   it { should validate_uniqueness_of(:email) }
 
-  it { should ensure_length_of(:login).
+  it { should ensure_length_of(:username).
                 is_at_least(5).
                 is_at_most(255) }
   
