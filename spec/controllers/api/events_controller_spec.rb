@@ -18,8 +18,8 @@ describe Api::EventsController do
       get :index     
       response.code.should == '200'
 
-      result = JSON.parse(response.body)
-      result.should == {:result => @events, :success => true, :description => "Events list."}
+      result = JSON.parse(response.body)         
+      result.should == {"result" => @events, "success" => true, "description" => "Events list."}
     end
     
     it "should get list of TOP events" do
@@ -27,7 +27,7 @@ describe Api::EventsController do
       response.code.should == '200'
       
       result = JSON.parse(response.body)
-      result.should == {:result => @events, :success => true, :description => "Top Events list."}
+      result.should == {"result" => @events, "success" => true, "description" => "Top Events list."}
     end
     
   end  
