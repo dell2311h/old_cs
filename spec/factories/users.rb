@@ -5,6 +5,7 @@ FactoryGirl.define do
     name     Faker::Name.name
     email    Faker::Internet.email
     username    Faker::Lorem.words(1)
+    password    Faker::Lorem.words(1)
     phone    Faker::PhoneNumber
     age      20
   end
