@@ -6,7 +6,15 @@ Crowdsync::Application.routes.draw do
         get 'top'
       end
     end
+
     post 'registration' => 'registrations#create'
+
+    resources :places, :only => [] do
+      collection do
+        get 'list_by_name'
+        get 'nearby'
+      end
+    end
   end
 
   # The priority is based upon order of creation:

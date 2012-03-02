@@ -2,9 +2,9 @@
 
 FactoryGirl.define do
   factory :place do
-    name "MyString"
-    user_id ""
-    latiture 1.5
-    longitude 1.5
+    name Faker::Lorem.word.capitalize
+    user_id 1
+    latitude Faker::Geolocation.lat
+    longitude Faker::Geolocation.lng
   end
 end

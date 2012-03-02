@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120229134437) do
+ActiveRecord::Schema.define(:version => 20120301151141) do
 
   create_table "comments", :force => true do |t|
     t.integer  "user_id"
@@ -33,11 +33,13 @@ ActiveRecord::Schema.define(:version => 20120229134437) do
   create_table "places", :force => true do |t|
     t.string   "name"
     t.integer  "user_id"
-    t.integer  "latiture"
-    t.integer  "longitude"
+    t.float    "latitude"
+    t.float    "longitude"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "places", ["latitude", "longitude"], :name => "index_places_on_latitude_and_longitude"
 
   create_table "songs", :force => true do |t|
     t.string   "name"
