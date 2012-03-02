@@ -18,11 +18,8 @@ describe Place do
   it { should validate_presence_of(:longitude) }
   it { should validate_presence_of(:user_id) }
   
-  it { should respond_to :api_data }
-  
-  it "should return api data in appropriate format" do
-    @place.api_data.keys.should =~ ["id", "name", "user_id", "latitude", "longitude"]
-  end
+  it { should have_many(:events) }
+  it { should belong_to(:events) }
   
   describe ".with_name_like" do
     it 'should give some search results' do

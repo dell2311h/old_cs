@@ -6,7 +6,6 @@ Crowdsync::Application.routes.draw do
     get 'places' => 'places#index'
     
     get 'events' => 'events#index'
-    get 'events' => 'events#top'
     
   end
 end

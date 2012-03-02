@@ -14,13 +14,13 @@ class Api::PlacesController < Api::BaseController
     
     if places.count > 0
       places = places.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
-      respond_with(places, :status => :ok)  
+      respond_with places, :status => :ok 
     else
-      respond_with(:status => :not_found)  
+      respond_with :status => :not_found
     end
     
   rescue Exception => e
-    respond_with({:error => e.message}, :status => :bad_request)  
+    respond_with :error => e.message, :status => :bad_request
   end
    
 end
