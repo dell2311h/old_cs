@@ -1,13 +1,12 @@
 Crowdsync::Application.routes.draw do
 
-  devise_for :users
-
   namespace :api do
     resources :events, :only => [:index] do
       collection do
         get 'top'
       end
     end
+    post 'registration' => 'registrations#create'
   end
 
   # The priority is based upon order of creation:
