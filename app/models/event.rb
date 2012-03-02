@@ -5,4 +5,6 @@ class Event < ActiveRecord::Base
 
   validates :name, :presence => true
   validates :user_id, :place_id, :presence => true
+  
+  scope :order_by_video_count, lambda {  }
 end

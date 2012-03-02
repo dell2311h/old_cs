@@ -4,6 +4,6 @@ FactoryGirl.define do
   factory :video do
     user_id 1
     event_id 1
-    name "MyString"
+    name Faker::Lorem.word.capitalize
   end
 end
