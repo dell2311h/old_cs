@@ -77,12 +77,8 @@ ActiveRecord::Schema.define(:version => 20120301161816) do
     t.integer  "user_id"
     t.integer  "event_id"
     t.string   "name"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
-    t.string   "clip_file_name"
-    t.string   "clip_content_type"
-    t.integer  "clip_file_size"
-    t.datetime "clip_updated_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
 end

@@ -1,14 +1,26 @@
 class Api::PlacesController < Api::BaseController
 
-  def list_by_name
-    places = api_hashes_array(Place.with_name_like(params[:place_name]).paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)) 
-    render :status => "200", :json => {:success => true, :description => "Search results.", :result => places}
-  end
-  
-  def nearby
-    user_coordinates = [params[:latitude], params[:longitude]] 
-    places = api_hashes_array(Place.near(user_coordinates, SEARCH_RADIUS, :order => :distance).paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)) 
-    render :status => "200", :json => {:success => true, :description => "Nearby places list.", :result => places} 
+  def index
+    places = Place
+    
+    if params[:nearby]  
+      raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
+      places = places.near [params[:latitude], params[:longitude]], SEARCH_RADIUS, :order => :distance
+    end
+
+    if params[:place_name]
+      places = places.with_name_like params[:place_name] 
+    end
+    
+    if places.count > 0
+      places = places.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
+      respond_with(places, :status => :ok)  
+    else
+      respond_with(:status => :not_found)  
+    end
+    
+  rescue Exception => e
+    respond_with({:error => e.message}, :status => :bad_request)  
   end
    
 end
