@@ -1,4 +1,14 @@
 class User < ActiveRecord::Base
+
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable,
+  # :rememberable, :trackable, :timeoutable and :omniauthable
+
+
+  # Setup accessible (or protected) attributes for your model
+  devise :database_authenticatable, :registerable,
+         :recoverable,  :validatable, :encryptable,
+         :token_authenticatable
   
   validates :name, :username, :email, :password, :presence => true
 
@@ -14,7 +24,7 @@ class User < ActiveRecord::Base
   
   validates :age, :numericality => { :only_integer => true }
   validates_inclusion_of :age, :in => 0..150
-  
+
   has_many :comments
   has_many :videos
   has_many :places

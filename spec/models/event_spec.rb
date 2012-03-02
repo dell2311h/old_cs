@@ -15,7 +15,7 @@ describe Event do
   it { should respond_to :api_data }
   
   it "should return api data in appropriate format" do
-    @event.api_data.keys.should ==  ["id", "name", "place_id", "user_id"]
+    @event.api_data.keys.should =~ ["id", "name", "place_id", "user_id"]
   end
   
 end

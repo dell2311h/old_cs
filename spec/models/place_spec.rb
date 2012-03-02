@@ -21,7 +21,7 @@ describe Place do
   it { should respond_to :api_data }
   
   it "should return api data in appropriate format" do
-    @place.api_data.keys.should ==  ["id", "name", "user_id", "latitude", "longitude"]
+    @place.api_data.keys.should =~ ["id", "name", "user_id", "latitude", "longitude"]
   end
   
   describe ".with_name_like" do
@@ -29,7 +29,6 @@ describe Place do
       searchable_name = @place.name
       Place.with_name_like(@place.name).count.should be > 0
       @place.update_attribute(:name, "blah#{@place.name}qwerty 123")
-      p Place.with_name_like(@place.name)
       Place.with_name_like(@place.name).count.should be > 0
     end
     

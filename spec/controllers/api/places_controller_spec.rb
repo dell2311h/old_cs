@@ -24,10 +24,14 @@ describe Api::PlacesController do
 
     describe 'user can search nearby place by coordinates' do
       it 'should get are near user\'s location' do
-        get :nearby
+        @place = Factory(:place)
+        get :nearby, {:latitude => @place.latitude, :longitude => @place.longitude}
         response.code.should == '200'
         result = JSON.parse(response.body)         
-        result.should == {"result" => @places, "success" => true, "description" => "Nearby places list."}
+        result["success"].should == true
+        result["description"].should == "Nearby places list."
+        result["result"].should be_an_instance_of(Array)
+        response.body =~ /"\"id\":\"#{@place.id}\"/
       end
     end
     
