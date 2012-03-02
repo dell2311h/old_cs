@@ -1,13 +1,8 @@
 require 'spec_helper'
 
 describe Place do
-  
-  before(:each) do
-    @place = Factory(:place)
-  end
-  
-  subject { @place }
-  
+  let(:place) { Factory.create :place }
+
   it { should respond_to(:name) }
   it { should respond_to(:latitude) }  
   it { should respond_to(:longitude) }
@@ -21,20 +16,29 @@ describe Place do
   it { should respond_to :api_data }
   
   it "should return api data in appropriate format" do
-    @place.api_data.keys.should =~ ["id", "name", "user_id", "latitude", "longitude"]
+    place.api_data.keys.should =~ ["id", "name", "user_id", "latitude", "longitude"]
   end
   
-  describe ".with_name_like" do
-    it 'should give some search results' do
-      searchable_name = @place.name
-      Place.with_name_like(@place.name).count.should be > 0
-      @place.update_attribute(:name, "blah#{@place.name}qwerty 123")
-      Place.with_name_like(@place.name).count.should be > 0
+  describe "#with_name_like" do
+    before :all do
+      2.times { Factory.create :place }
+    end
+
+    it "should include place on full nmae match" do
+      places = Place.with_name_like(place.name)
+      places.count.should be > 0
+      places.should include(place)
     end
     
-    it 'should not give some search results' do
-      Place.with_name_like("Ruby-Cola").count.should == 0
+    it "should include place if name mathces partially" do
+      places = Place.with_name_like(place.name[1, (place.name.length - 3)])
+      places.count.should be > 0
+      places.should include(place)
+    end
+    
+    it "should not include place if name doesn't match" do
+      random_string = (0...10).map{ ('a'..'z').to_a[rand(26)] }.join
+      Place.with_name_like(place.name + random_string).count.should eq(0)
     end
   end
-  
 end
