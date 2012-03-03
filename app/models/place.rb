@@ -7,11 +7,5 @@ class Place < ActiveRecord::Base
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
   
   reverse_geocoded_by :latitude, :longitude
-  
-  def api_data
-    hash = self.attributes
-    hash.delete("created_at")
-    hash.delete("updated_at")
-    hash
-  end  
+
 end

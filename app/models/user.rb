@@ -1,26 +1,29 @@
 class User < ActiveRecord::Base
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable,
   # :rememberable, :trackable, :timeoutable and :omniauthable
+
+
+  # Setup accessible (or protected) attributes for your model
   devise :database_authenticatable, :registerable,
          :recoverable,  :validatable, :encryptable,
          :token_authenticatable
+  
+  validates :name, :username, :email, :password, :presence => true
 
-  # Setup accessible (or protected) attributes for your model
-  attr_accessible :name, :email, :login, :password, :phone, :age, :avatar
-
-  validates :name, :login, :email, :password, :presence => true
-
-  validates :email, :email => true
-
-  validates :login, :password,
-            :length => {:minimum => 5, :maximum => 255}
-
-  validates :login, :email, :uniqueness => true
-
+  validates :email, :email => true 
+  
+  validates :username, :password,
+            :length => {:minimum => 3, :maximum => 255}
+  
+  validates :password,
+            :length => {:minimum => 6, :maximum => 255}
+  
+  validates :username, :email, :uniqueness => true
+  
   validates :age, :numericality => { :only_integer => true }
-
-  validates_inclusion_of :age, :in => 21..30
+  validates_inclusion_of :age, :in => 0..150
 
   has_many :comments
   has_many :videos

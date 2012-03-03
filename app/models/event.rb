@@ -5,11 +5,13 @@ class Event < ActiveRecord::Base
 
   validates :name, :presence => true
   validates :user_id, :place_id, :presence => true
-  
-  def api_data
-    hash = self.attributes
-    hash.delete("created_at")
-    hash.delete("updated_at")
-    hash
-  end
+
+  scope :order_by_video_count, lambda {
+    videos = Video.arel_table
+    events = Event.arel_table
+    query_str = videos.project(videos[:event_id].count).where(events[:id].eq(videos[:event_id])).to_sql
+    select("*, (#{query_str}) AS videos_count").order('videos_count DESC')
+  }
+
 end
+
