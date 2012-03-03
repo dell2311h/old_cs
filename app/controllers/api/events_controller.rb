@@ -1,20 +1,21 @@
 class Api::EventsController < Api::BaseController
-     
+
   def index
     events = Event
-    
+
     if params[:top]
-      events = events.top
-    end  
-    
+      events = events.order_by_video_count
+    end
+
     if events.count > 0
       events = events.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
-      respond_with events, :status => :ok   
-    else  
+      respond_with events, :status => :ok
+    else
       respond_with :status => :not_found
-    end  
-    
+    end
+
   end
- 
-   
+
+
 end
+
