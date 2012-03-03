@@ -7,7 +7,7 @@ Crowdsync::Application.routes.draw do
       end
     end
 
-    post 'registration' => 'registrations#create'
+    resource :users, :only => [:create, :update, :show]
 
     resources :places, :only => [] do
       collection do
