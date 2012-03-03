@@ -2,8 +2,6 @@ require 'spec_helper'
 
 describe User do
 
-  subject { Factory(:user) }
-
   it { should validate_presence_of(:name) }
   it { should validate_presence_of(:username) }
   it { should validate_presence_of(:email) }
@@ -31,5 +29,19 @@ describe User do
   it { should have_many(:places) }
   it { should have_many(:events) }
 
-
+  before(:all) do
+    @user = Factory(:user)
+  end
+  
+  
+  describe "create method" do
+  
+    it "should be created" do
+      #@user = Factory(:user)
+      @user.should be_new_record
+      @user.save.should be_true
+      @user.should_not be_new_record
+    end
+      
+  end
 end

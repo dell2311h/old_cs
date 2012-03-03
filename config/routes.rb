@@ -1,19 +1,11 @@
 Crowdsync::Application.routes.draw do
 
   namespace :api do
-    resources :events, :only => [:index] do
-      collection do
-        get 'top'
-      end
-    end
+    resource :users, :only => [:create, :update, :show]
 
-    post 'registration' => 'registrations#create'
+    get 'places' => 'places#index'
 
-    resources :places, :only => [] do
-      collection do
-        get 'list_by_name'
-        get 'nearby'
-      end
-    end
+    get 'events' => 'events#index'
+
   end
 end

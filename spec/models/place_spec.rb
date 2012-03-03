@@ -13,25 +13,22 @@ describe Place do
   it { should validate_presence_of(:longitude) }
   it { should validate_presence_of(:user_id) }
   
-  it { should respond_to :api_data }
-  
-  it "should return api data in appropriate format" do
-    place.api_data.keys.should =~ ["id", "name", "user_id", "latitude", "longitude"]
-  end
+  it { should have_many(:events) }
+  it { should belong_to(:user) }
   
   describe "#with_name_like" do
     before :all do
       2.times { Factory.create :place }
     end
 
-    it "should include place on full nmae match" do
+    it "should include place on full name match" do
       places = Place.with_name_like(place.name)
       places.count.should be > 0
       places.should include(place)
     end
     
     it "should include place if name mathces partially" do
-      places = Place.with_name_like(place.name[1, (place.name.length - 3)])
+      places = Place.with_name_like(place.name[1, (place.name.length - 2)])
       places.count.should be > 0
       places.should include(place)
     end

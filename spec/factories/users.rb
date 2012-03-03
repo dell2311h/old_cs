@@ -4,9 +4,9 @@ FactoryGirl.define do
   factory :user do
     name     Faker::Name.name
     email    Faker::Internet.email
-    username Faker::Internet.user_name
-    password "password"
+    username    Faker::Internet.user_name
+    password    "passwordddd"
     phone    Faker::PhoneNumber.phone_number
-    age      ((18..90).to_a.sample)
+    age      20
   end
 end
