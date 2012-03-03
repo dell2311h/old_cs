@@ -13,5 +13,9 @@ class Event < ActiveRecord::Base
     select("*, (#{query_str}) AS videos_count").order('videos_count DESC')
   }
 
+  scope :nearby, lambda { |coordinates, radius|
+    Event.joins(:place).merge(Place.near coordinates, radius, :order => :distance, :select => "places.*, places.name AS place_name, events.*")
+  }
+
 end
 
