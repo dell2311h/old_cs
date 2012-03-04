@@ -1,7 +1,9 @@
 Crowdsync::Application.routes.draw do
 
   namespace :api do
-    resource :users, :only => [:create, :update, :show]
+    post 'users' => 'users#create'
+    get 'users/:id' => 'users#show'
+    put 'users/:id' => 'users#update'
 
     get 'places' => 'places#index'
 

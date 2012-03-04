@@ -9,19 +9,19 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable,  :validatable, :encryptable,
          :token_authenticatable
-  
-  validates :name, :username, :email, :password, :presence => true
 
-  validates :email, :email => true 
-  
-  validates :username, :password,
+  validates :name, :username, :email, :presence => true
+  validates :password, :presence => true, :if => lambda {|u| u.new_record? }
+  validates :email, :email => true
+
+  validates :username,
             :length => {:minimum => 3, :maximum => 255}
-  
+
   validates :password,
-            :length => {:minimum => 6, :maximum => 255}
-  
+            :length => {:minimum => 6, :maximum => 255}, :unless => lambda {|u| u.password.nil? }
+
   validates :username, :email, :uniqueness => true
-  
+
   validates :age, :numericality => { :only_integer => true }
   validates_inclusion_of :age, :in => 0..150
 
