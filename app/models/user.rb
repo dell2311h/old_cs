@@ -30,4 +30,13 @@ class User < ActiveRecord::Base
   has_many :places
   has_many :events
 
+protected
+
+  def self.find_for_database_authentication(conditions)
+    login = conditions.delete(:login)
+    where(["username = :login OR email = :login",
+           {:login => login}])
+    .first
+  end
+
 end
