@@ -3,6 +3,5 @@
 FactoryGirl.define do
   factory :song do |f|
     f.name Faker::Lorem.word.capitalize
-    f.after_create {|song| Factory(:comment, :commentable => song)}
   end
 end
