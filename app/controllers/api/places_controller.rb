@@ -16,7 +16,7 @@ class Api::PlacesController < Api::BaseController
       places = places.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
       respond_with places, :status => :ok
     else
-      respond_with :status => :not_found
+      respond_with [], :status => :not_found
     end
 
   end

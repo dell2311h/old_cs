@@ -5,7 +5,8 @@ class Api::BaseController < ApplicationController
 
 
   rescue_from Exception do |exeption|
-    respond_with :error => exeption.message, :status => :bad_request
+    error = {:error => exeption.message}
+    respond_with error, :status => :bad_request
   end
 
 end
