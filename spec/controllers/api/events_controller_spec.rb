@@ -41,7 +41,7 @@ describe Api::EventsController do
         response.should be_ok
       end
 
-      describe "should get list of nearby events" do
+      describe "retrive list of nearby events" do
         context 'with valid params' do
           it "should be ok" do
             lat = Faker::Geolocation.lat
