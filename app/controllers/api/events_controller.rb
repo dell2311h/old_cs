@@ -22,8 +22,8 @@ class Api::EventsController < Api::BaseController
   end
   
   def create
-    @event = @current_user.create_event! params[:event]
-    respond_with @event, :status => :ok
+    @event = @current_user.events.create! params[:event]
+    respond_with @event, :status => :created, :location => nil
   end
 
 
