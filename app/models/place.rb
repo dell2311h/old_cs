@@ -1,6 +1,7 @@
 class Place < ActiveRecord::Base
   has_many :events
   belongs_to :user
+  has_many :comments, :as => :commentable, :class_name => "Comment", :dependent => :destroy
   
   validates :name, :user_id, :latitude, :longitude, :presence => true
   

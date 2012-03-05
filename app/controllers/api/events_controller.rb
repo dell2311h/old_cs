@@ -20,6 +20,11 @@ class Api::EventsController < Api::BaseController
     end
 
   end
+  
+  def create
+    @event = @current_user.create_event! params[:event]
+    respond_with @event, :status => :ok
+  end
 
 
 end
