@@ -8,7 +8,7 @@ class Api::UsersController < Api::BaseController
     @status = 400
     @user = {error: e.message}
   ensure
-    respond_with({user: @user}, :status => @status, :location => nil)
+    respond_with(@user, :status => @status, :location => nil)
   end
 
   def show
@@ -24,7 +24,7 @@ class Api::UsersController < Api::BaseController
   def update
     @user = User.find(params[:id])
     @status = 400
-    @status = 200 if @user.update_attributes(params[:user]) == true
+    @status = 200 if @user.update_attributes(params[:user])
   rescue Exception => e
     @status = 404
     @user = {error: e.message}
