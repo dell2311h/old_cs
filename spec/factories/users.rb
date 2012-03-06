@@ -9,4 +9,8 @@ FactoryGirl.define do
     f.phone    Faker::PhoneNumber.phone_number
     f.age      20
   end
+
+  factory :social_user, :parent => :user do |f|
+    f.authentications {|auth| [auth.association(:authentication)]}
+  end
 end

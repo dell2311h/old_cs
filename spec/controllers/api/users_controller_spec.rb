@@ -23,6 +23,21 @@ describe Api::UsersController do
         result['id'].should_not be_nil
         result['name'].should eq 'User'
       end
+
+        context 'with information about user from social network' do
+          before :all do
+            @json = {:name => "User", :email => "user@gmail.com", :password => "password", :username => "user111", :age => 33,
+                     :authentications_attributes => [{:provider => "facebook", :uid => "33232", :token => "567GFHJJHGghGJG76876VBVJHG"}]}
+          end
+          it "should create authentication for newly created user" do
+            User.delete_all
+            post :create, :format => :json, :user => @json
+            response.code.should == '201'
+            result = JSON.parse(response.body)
+            result['id'].should_not be_nil
+            User.find(result['id']).authentications.count.should eq 1
+          end
+        end
     end
 
     context 'with incorrect request params' do
