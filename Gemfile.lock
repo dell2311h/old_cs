@@ -179,10 +179,10 @@ DEPENDENCIES
   geocoder
   jquery-rails
   mysql2
-  paperclip
   omniauth-facebook
   omniauth-foursquare
   omniauth-twitter
+  paperclip
   rails (= 3.2.0)
   rspec-rails (~> 2.6)
   sass-rails (~> 3.2.3)
