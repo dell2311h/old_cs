@@ -18,3 +18,7 @@
 *.komodoproject
 
 /config/database.yml
+
+public/system/clips/**
+!public/system/clips/.gitkeep
+

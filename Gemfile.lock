@@ -32,6 +32,7 @@ GEM
     arel (3.0.2)
     bcrypt-ruby (3.0.1)
     builder (3.0.0)
+    cocaine (0.2.1)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -96,6 +97,11 @@ GEM
     omniauth-twitter (0.0.8)
       omniauth-oauth (~> 1.0)
     orm_adapter (0.0.6)
+    paperclip (2.7.0)
+      activerecord (>= 2.3.0)
+      activesupport (>= 2.3.2)
+      cocaine (>= 0.0.2)
+      mime-types
     polyglot (0.3.3)
     rack (1.4.1)
     rack-cache (1.1)
@@ -176,6 +182,7 @@ DEPENDENCIES
   omniauth-facebook
   omniauth-foursquare
   omniauth-twitter
+  paperclip
   rails (= 3.2.0)
   rspec-rails (~> 2.6)
   sass-rails (~> 3.2.3)
