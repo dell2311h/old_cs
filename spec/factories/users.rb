@@ -1,12 +1,12 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
-  factory :user do
-    name     Faker::Name.name
-    email    Faker::Internet.email
-    username    Faker::Internet.user_name
-    password    "passwordddd"
-    phone    Faker::PhoneNumber.phone_number
-    age      20
+  factory :user do |f|
+    f.name     Faker::Name.name
+    f.username    Faker::Internet.user_name
+    f.email    Faker::Internet.email
+    f.password    "passwordddd"
+    f.phone    Faker::PhoneNumber.phone_number
+    f.age      20
   end
 end
