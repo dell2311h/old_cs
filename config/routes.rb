@@ -11,5 +11,18 @@ Crowdsync::Application.routes.draw do
 
     get 'events' => 'events#index'
 
+    resources :places, :only => [] do
+      collection do
+        get 'list_by_name'
+        get 'nearby'
+      end
+    end
+
+    #videos
+    post 'videos'     => 'videos#create'
+    get  'videos/:id' => 'videos#show'
+    get  'videos'     => 'videos#index'
+    put  'videos/:id' => 'videos#update'
+
   end
 end
