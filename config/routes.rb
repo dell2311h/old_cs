@@ -12,6 +12,8 @@ Crowdsync::Application.routes.draw do
     get 'events' => 'events#index'
     
     resources :events, :only => [:create]
+    
+    post "places/:place_id/events" => "events#create"
 
   end
 end
