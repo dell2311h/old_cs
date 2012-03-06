@@ -10,6 +10,8 @@ Crowdsync::Application.routes.draw do
     get 'places' => 'places#index'
 
     get 'events' => 'events#index'
+    
+    resources :events, :only => [:create]
 
     resources :places, :only => [] do
       collection do
