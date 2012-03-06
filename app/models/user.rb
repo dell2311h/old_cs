@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   devise :database_authenticatable, :registerable,
          :recoverable,  :validatable, :encryptable,
-         :token_authenticatable
+         :token_authenticatable, :omniauthable
 
   validates :name, :username, :email, :presence => true
   validates :password, :presence => true, :if => lambda {|u| u.new_record? }
@@ -29,6 +29,11 @@ class User < ActiveRecord::Base
   has_many :videos
   has_many :places
   has_many :events
+  has_many :authentications, :dependent => :destroy
+
+  accepts_nested_attributes_for :authentications
+
+  before_save :reset_authentication_token
 
 protected
 

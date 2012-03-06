@@ -7,6 +7,10 @@ gem 'rails', '3.2.0'
 
 gem 'mysql2'
 gem 'devise'
+gem "omniauth-facebook"
+gem 'omniauth-twitter'
+gem 'omniauth-foursquare'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -23,6 +27,8 @@ gem 'jquery-rails'
 
 gem 'will_paginate', '~> 3.0'
 gem "geocoder"
+
+gem 'paperclip'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
