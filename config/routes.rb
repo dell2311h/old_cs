@@ -15,13 +15,6 @@ Crowdsync::Application.routes.draw do
     
     post "places/:place_id/events" => "events#create"
 
-    resources :places, :only => [] do
-      collection do
-        get 'list_by_name'
-        get 'nearby'
-      end
-    end
-
     #videos
     post 'videos'     => 'videos#create'
     get  'videos/:id' => 'videos#show'
