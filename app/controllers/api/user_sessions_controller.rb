@@ -2,10 +2,9 @@ class Api::UserSessionsController < Api::BaseController
 
   def create
     raise "Not enough options for authorization" if incorrect_params?
-    if params[:login]
-      @user = User.find_for_database_authentication(params)
-      raise "Wrong username or password" if @user.nil? or !@user.valid_password? params[:password]
-      @user.reset_authentication_token! if @user.authentication_token.nil?
+    if params[:email]
+      @user = User.find_by_email(params[:email])
+      raise "Wrong email or password" if @user.nil? or !@user.valid_password? params[:password]
       @response = {token: @user.authentication_token}
       @status = 200
     elsif params[:provider]
@@ -28,7 +27,7 @@ class Api::UserSessionsController < Api::BaseController
 private
 
   def incorrect_params?
-    (params[:login].blank? or params[:password].blank?) and
+    (params[:email].blank? or params[:password].blank?) and
     (params[:provider].blank? or params[:uid].blank? or  params[:token].blank?)
   end
 
