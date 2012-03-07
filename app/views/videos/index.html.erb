@@ -1,0 +1,22 @@
+<h1>Videos</h1>
+
+<%= link_to "Upload new", new_video_path %>
+
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Download link</th>
+    <th></th>
+  </tr>
+  
+  <% @videos.each do |video| %>   
+    <tr>
+      <td><%= video.id %></td>
+      <td><%= video.name %></td>
+      <td><%= link_to "Download", video.clip.url %></td>
+      <td><%= link_to "Delete", video, method: :delete, confirm: "Are you sure to delete this video?" %></td>
+    </tr>
+  <% end %>
+</table>
+<%= will_paginate @videos %>

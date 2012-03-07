@@ -27,6 +27,8 @@ Crowdsync::Application.routes.draw do
     get  'videos/:id' => 'videos#show'
     get  'videos'     => 'videos#index'
     put  'videos/:id' => 'videos#update'
-
   end
+  
+  resources :videos, :only => [:index, :new, :create, :destroy]
+  
 end
