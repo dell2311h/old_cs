@@ -1,6 +1,6 @@
 Crowdsync::Application.routes.draw do
 
-devise_for :users, :path_names => { :sign_up => "register" }
+  devise_for :users, :path_names => { :sign_up => "register" }
 
   namespace :api do
     post 'users' => 'users#create'
@@ -25,5 +25,7 @@ devise_for :users, :path_names => { :sign_up => "register" }
   end
   
   resources :videos, :only => [:index, :new, :create, :destroy]
+  
+  root :to => "videos#index"
   
 end

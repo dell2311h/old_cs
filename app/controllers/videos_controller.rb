@@ -1,7 +1,10 @@
 class VideosController < ApplicationController
+
+  before_filter :authenticate_user!
+  
+
   def index
-    @videos = Video.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE) # Remove this when devise will be ready
-    # @videos = current_user.videos.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
+    @videos = current_user.videos.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
   end
 
   def new
@@ -10,8 +13,7 @@ class VideosController < ApplicationController
 
   def create
     @video = Video.new(params[:video])
-    # @video.user = current_user
-    @video.user = User.first # Remove this when devise will be ready
+    @video.user = current_user
     respond_to do |format|
       if @video.save
         format.html { redirect_to videos_path, notice: 'Video was successfully created.' }
