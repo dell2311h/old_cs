@@ -1,5 +1,7 @@
 Crowdsync::Application.routes.draw do
 
+devise_for :users, :path_names => { :sign_up => "register" }
+
   namespace :api do
     post 'users' => 'users#create'
     get 'users/:id' => 'users#show'
