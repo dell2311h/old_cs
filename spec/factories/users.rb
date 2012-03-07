@@ -3,8 +3,8 @@
 FactoryGirl.define do
   factory :user do |f|
     f.name     Faker::Name.name
-    f.username    Faker::Internet.user_name
-    f.email    Faker::Internet.email
+    f.sequence(:username) { |n| "username_#{n}_#{(1..99999).to_a.sample}" }
+    f.sequence(:email) { |n| "username_#{n}_#{(1..99999).to_a.sample}@gmail.com" }
     f.password    "passwordddd"
     f.phone    Faker::PhoneNumber.phone_number
     f.age      20

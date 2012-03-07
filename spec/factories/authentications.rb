@@ -4,7 +4,7 @@ FactoryGirl.define do
   factory :authentication do |f|
     f.association :user
     f.provider "facebook"
-    f.uid {rand(9999)}
-    f.token "qwerty#{rand(9999)}"
+    f.uid (1..99999).to_a.sample
+    f.token "qwerty#{(1..99999).to_a.sample}"
   end
 end
