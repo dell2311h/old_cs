@@ -1,6 +1,15 @@
 Crowdsync::Application.routes.draw do
 
-devise_for :users, :path_names => { :sign_up => "register" }
+devise_for :user, :path => '', :skip => [:registration] do
+    scope :controller => 'devise/registrations' do      
+      get :cancel, :path => 'users/cancel', :as => :cancel_user_registration
+      post :create,  :path => 'sign_up', :as => :user_registration
+      get  :new,     :path => 'sign_up' , :as => :new_user_registration
+      get :edit,    :path => 'users/edit', :as => :edit_user_registration
+      put :update, :path => 'users/edit', :as => :update_user_registration
+      delete :destroy, :path => 'users'
+    end
+  end 
 
   namespace :api do
     post 'users' => 'users#create'
