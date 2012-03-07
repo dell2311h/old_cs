@@ -7,9 +7,9 @@ describe Api::UserSessionsController do
       @user = Factory.create(:social_user)
       @auth = @user.authentications.first
     end
-    context 'with correct username and password' do
+    context 'with correct email and password' do
       it "should return authentication token" do
-        post :create, :format => :json, :login => @user.username, :password => @user.password
+        post :create, :format => :json, :email => @user.email, :password => @user.password
         response.code.should == '200'
         result = JSON.parse(response.body)
         result['token'].should_not be_nil
@@ -25,13 +25,13 @@ describe Api::UserSessionsController do
       end
     end
 
-    context 'with empty login or password' do
+    context 'with empty email or password' do
       it "should return error" do
-        post :create, :format => :json, :login => '', :password => @user.password
+        post :create, :format => :json, :email => '', :password => @user.password
         response.code.should == '400'
         result = JSON.parse(response.body)
         result['error'].should_not be_nil
-        post :create, :format => :json, :login => @user.email, :password => ''
+        post :create, :format => :json, :email => @user.email, :password => ''
         response.code.should == '400'
         result = JSON.parse(response.body)
         result['error'].should_not be_nil
