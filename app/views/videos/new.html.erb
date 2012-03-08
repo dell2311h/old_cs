@@ -1,0 +1,36 @@
+<% content_for :api_tool_js do %>
+  <%#= javascript_include_tag "swfupload.js" %>
+<% end %>
+
+<script type="text/javascript">
+  var swfu;
+  window.onload = function () { 
+    swfu = new SWFUpload({ 
+      upload_url : "<%= videos_path %>", 
+      flash_url : "/swfupload.swf", 
+      file_size_limit : "20 MB" 
+    });
+  };
+</script>
+
+<h1>Upload new video</h1>
+<%= form_for @video, :url => videos_path, :html => { :multipart => true } do |f| %>
+  <p>
+    <%= f.label :name %>
+    <span><%= f.text_field :name %></span>
+  </p>
+  <p>
+    <%= f.label :event_id %>
+    <span><%= f.text_field :event_id %></span>
+  </p>
+  <p>
+    <%= f.label :clip %>
+    <span><%= f.file_field :clip %></span>
+  </p>
+  
+  <p>
+    <span><%= f.submit "Upload" %></span>
+  </p>
+<% end %>
+
+<%= link_to "Videos", videos_path %>
