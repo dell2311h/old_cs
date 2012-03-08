@@ -12,9 +12,9 @@ devise_for :users, :path_names => { :sign_up => "register" }
     get 'places' => 'places#index'
 
     get 'events' => 'events#index'
-    
+
     resources :events, :only => [:create]
-    
+
     post "places/:place_id/events" => "events#create"
 
     resources :places, :only => [] do
