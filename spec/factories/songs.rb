@@ -2,6 +2,7 @@
 
 FactoryGirl.define do
   factory :song do |f|
-    f.name Faker::Lorem.word.capitalize
+    f.name { Faker::Lorem.word.capitalize }
   end
 end
+

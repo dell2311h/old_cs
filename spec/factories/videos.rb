@@ -5,8 +5,9 @@ FactoryGirl.define do
   factory :video do |f|
     f.association :user
     f.association :event
-    f.name Faker::Lorem.word.capitalize
+    f.name { Faker::Lorem.word.capitalize }
     f.clip {fixture_file_upload('spec/fixtures/clip.mp4', 'video/mp4', :binary)}
 
   end
 end
+
