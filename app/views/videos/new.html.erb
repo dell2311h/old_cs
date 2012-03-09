@@ -14,23 +14,32 @@
 </script>
 
 <h1>Upload new video</h1>
-<%= form_for @video, :url => videos_path, :html => { :multipart => true } do |f| %>
-  <p>
-    <%= f.label :name %>
-    <span><%= f.text_field :name %></span>
-  </p>
-  <p>
-    <%= f.label :event_id %>
-    <span><%= f.text_field :event_id %></span>
-  </p>
-  <p>
-    <%= f.label :clip %>
-    <span><%= f.file_field :clip %></span>
-  </p>
-  
-  <p>
-    <span><%= f.submit "Upload" %></span>
-  </p>
+<%= form_for @video, :url => videos_path, :html => { :multipart => true, :class => "simple_form form-horizontal" } do |f| %>
+
+  <div class = "control-group string required">
+    <%= f.label :name, :class => "string required control-label" %>
+    <div class = "controls">
+      <%= f.text_field :name %>
+    </div>
+  </div>
+
+  <div class = "control-group string required">
+    <%= f.label :event_id, :class => "string required control-label" %>
+    <div class = "controls">
+      <%= f.text_field :event_id %>
+    </div>
+  </div>
+
+  <div class = "control-group string required">
+    <%= f.label :clip, :class => "string required control-label" %>
+    <div class = "controls">
+      <%= f.file_field :clip %>
+    </div>
+  </div>
+
+  <div class="form-actions"><%= f.submit "Upload", :class => "btn btn-primary" %></div>
+
+
 <% end %>
 
 <%= link_to "Videos", videos_path %>

@@ -1,31 +1,65 @@
 <h2>Sign up</h2>
 
-<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :multipart => true } ) do |f| %>
+<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :multipart => true, :class => "simple_form form-horizontal" } ) do |f| %>
   <%= devise_error_messages! %>
 
-  <div><%= f.label :email %><br />
-  <%= f.email_field :email %></div>
+  <div class = "control-group string required">
+    <%= f.label :email, :class => "string required control-label" %>
+    <div class = "controls">
+      <%= f.email_field :email %>
+    </div>
+  </div>
 
-  <div><%= f.label :username %><br />
-  <%= f.text_field :username %></div>
+  <div class = "control-group string required">
+    <%= f.label :username, :class => "string required control-label" %>
+    <div class = "controls">
+      <%= f.text_field :username %>
+    </div>
+  </div>
 
-  <div><%= f.label :name %><br />
-  <%= f.text_field :name %></div>
+  <div class = "control-group string required">
+    <%= f.label :name, :class => "string required control-label"  %>
+    <div class = "controls">
+      <%= f.text_field :name %>
+    </div>
+  </div>
 
-  <div><%= f.label :age %><br />
-  <%= f.text_field :age %></div>
+  <div class = "control-group string">
+  <%= f.label :age, :class => "string control-label" %>
+    <div class = "controls">
+      <%= f.text_field :age %>
+    </div>
+  </div>
 
-  <div><%= f.label :phone %><br />
-  <%= f.text_field :phone %></div>
+  <div class = "control-group string">
+    <%= f.label :phone, :class => "string control-label" %>
+    <div class = "controls">
+      <%= f.text_field :phone %>
+    </div>
+  </div>
 
-  <div><%= f.label :password %><br />
-  <%= f.password_field :password %></div>
+  <div class = "control-group string required">
+    <%= f.label :password, :class => "string required control-label" %>
+    <div class = "controls">
+      <%= f.password_field :password %>
+    </div>
+  </div>
+  
+  <div class = "control-group string required">
+    <%= f.label :password_confirmation, :class => "string required control-label" %>
+    <div class = "controls">
+      <%= f.password_field :password_confirmation %>
+    </div>
+  </div>
 
-  <div><%= f.label :password_confirmation %><br />
-  <%= f.password_field :password_confirmation %></div>
-  <div><%= f.label :avatar %><br />
-  <%= f.file_field :avatar %></div>
-  <div><%= f.submit "Sign up" %></div>
+  <div class = "control-group string required">
+    <%= f.label :avatar, :class => "string required control-label" %>
+      <div class = "controls">
+        <%= f.file_field :avatar %>
+    </div>
+  </div>
+
+  <div class="form-actions"><%= f.submit "Sign in", :class => "btn btn-primary" %></div>
 <% end %>
 
 <%= render "links" %>

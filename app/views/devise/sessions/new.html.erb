@@ -1,17 +1,34 @@
 <h2>Sign in</h2>
 
-<%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-  <div><%= f.label :email %><br />
-  <%= f.email_field :email %></div>
+<%= form_for(resource, :html => { :class => "simple_form form-horizontal"}, :as => resource_name, :url => session_path(resource_name)) do |f| %>
 
-  <div><%= f.label :password %><br />
-  <%= f.password_field :password %></div>
+  <div class = "control-group string required">
+    <%= f.label :email, :class => "string required control-label" %>
+    <div class = "controls">
+      <%= f.email_field :email %>
+    </div>
+  </div>
+
+  <div class = "control-group string required">
+    <div class = "control-group string required">
+      <%= f.label :password, :class => "string required control-label" %>
+      <div class = "controls">
+        <%= f.password_field :password %>
+      </div>
+    </div>
+  </div>
 
   <% if devise_mapping.rememberable? -%>
-    <div><%= f.check_box :remember_me %> <%= f.label :remember_me %></div>
+    <div class="control-group boolean optional">
+      <%= f.label :remember_me, :class => "boolean optional control-label" %>
+      <div class="controls">
+        <input type="hidden" value="0" name="article[published]">
+        <%= f.check_box :remember_me, %>
+      </div>
+    </div>
   <% end -%>
 
-  <div><%= f.submit "Sign in" %></div>
+  <div class="form-actions"><%= f.submit "Sign in", :class => "btn btn-primary" %></div>
 <% end %>
 
 <%= render "links" %>
