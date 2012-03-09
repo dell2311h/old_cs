@@ -2,10 +2,11 @@
 
 FactoryGirl.define do
   factory :place do |f|
-    f.name Faker::Lorem.word.capitalize
+    f.name { Faker::Lorem.word.capitalize }
     f.association :user
-    f.latitude Faker::Geolocation.lat
-    f.longitude Faker::Geolocation.lng
+    f.latitude { Faker::Geolocation.lat }
+    f.longitude { Faker::Geolocation.lng }
     f.after_create {|place| Factory(:comment, :commentable => place)}
   end
 end
+
