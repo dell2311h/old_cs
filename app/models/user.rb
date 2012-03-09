@@ -31,6 +31,8 @@ class User < ActiveRecord::Base
   has_many :events
   has_many :authentications, :dependent => :destroy
 
+  has_attached_file :avatar, :styles => { :medium => "300x300>", :thumb => "100x100>" }
+
   accepts_nested_attributes_for :authentications
 
   before_save :reset_authentication_token
