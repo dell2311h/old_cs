@@ -61,5 +61,11 @@ module Crowdsync
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+    # Add jQuery File Uploader assets folders
+    ["images", "javascripts", "stylesheets"].each do |folder_name|
+      config.assets.paths << Rails.root.join("vendor/assets", folder_name ,"jQFileUpload").to_path
+    end
   end
 end
+
