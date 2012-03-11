@@ -2,6 +2,7 @@ class Api::UsersController < Api::BaseController
 
   def create
     @user = User.new(params[:user])
+    @user.authentications.build(params[:oauth]) unless params[:oauth].nil?
     @status = 400
     @status = 201 if @user.save
   rescue Exception => e

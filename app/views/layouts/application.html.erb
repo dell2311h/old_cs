@@ -8,12 +8,28 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-<div>
-  <%= flash[:notice] %>
-  <%= flash[:alert] %>
-</dvi>
-<%= yield %>
+<div class = "container">
+  <% unless flash[:alert].nil? -%>
+    <div class="alert alert-error fade in" data-alert="alert">
+    <a class="close" href="#" data-dismiss="alert">×</a>
+      <div class="alert alert-error">
+        <%= flash[:alert] %>
+      </div>
+    </div>
+  <% end -%>
 
+  <% unless flash[:notice].nil? -%>
+    <div class="alert alert-info fade in" data-alert="alert">
+      <a class="close" href="#" data-dismiss="alert">×</a>
+      <div class="alert alert-info">
+        <%= flash[:notice] %>
+      </div>
+    </div>
+  <% end -%>
+</div>
+<div class = "container master-container">
+<%= yield %>
+</div>
 </body>
 </html>
 

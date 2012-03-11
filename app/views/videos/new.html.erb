@@ -1,5 +1,5 @@
+<%= link_to "Back to Videos list", videos_path %>
 <%= stylesheet_link_tag  "jquery.fileupload-ui.css" %>
-
 <h2>Upload Videos</h2>
 <%= form_for @video, :html => { :multipart => true, :id => "fileupload"  } do |f| %>
   <div>
@@ -136,6 +136,4 @@
 
     });
 </script>
-
-<%= link_to "Back to Videos list", videos_path %>
 
