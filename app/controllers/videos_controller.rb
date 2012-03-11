@@ -4,8 +4,11 @@ class VideosController < ApplicationController
 
 
   def index
-    @videos = current_user.videos.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
-    render :json => @videos.collect { |v| v.to_jq_upload }.to_json
+    @videos = current_user.videos.order("created_at DESC").paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
+    respond_to do |format|
+      format.html
+      format.js { render :json => @videos.collect { |v| v.to_jq_upload }.to_json }
+    end
   end
 
   def new
@@ -17,17 +20,6 @@ class VideosController < ApplicationController
     @video = Video.new(params[:video])
     @video.name = params[:video][:clip].original_filename
     @video.user = current_user
-=begin
-    respond_to do |format|
-      if @video.save
-        format.html { redirect_to videos_path, notice: 'Video was successfully created.' }
-        format.json { render json: @video, status: :created, location: @video.clip.url }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @video.errors, status: :unprocessable_entity }
-      end
-    end
-=end
     if @video.save
       respond_to do |format|
         format.html {
@@ -46,16 +38,13 @@ class VideosController < ApplicationController
   end
 
   def destroy
-
     @video = Video.find params[:id]
-    @video.destroy
-=begin
+    @video.destroy if @video.user == current_user
     respond_to do |format|
       format.html { redirect_to videos_path, notice: 'Video was successfully deleted.' }
-      format.json { head :ok }
+      format.json { render :json => true }
     end
-=end
-    render :json => true
   end
+
 end
 

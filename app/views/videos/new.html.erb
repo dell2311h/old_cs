@@ -1,6 +1,4 @@
-<% content_for :jq_file_upload do %>
-  <%= stylesheet_link_tag  "jquery.fileupload-ui.css" %>
-<% end %>
+<%= stylesheet_link_tag  "jquery.fileupload-ui.css" %>
 
 <h2>Upload Videos</h2>
 <%= form_for @video, :html => { :multipart => true, :id => "fileupload"  } do |f| %>
@@ -29,17 +27,19 @@
       </button>
       <input type="checkbox" class="toggle">
     </div>
-    <div class="span5">
+   <div class="span5">
       <!-- The global progress bar -->
-      <div class="progress progress-success progress-striped active nofade">
+      <div class="progress progress-success progress-striped active fade">
           <div class="bar" style="width:0%;"></div>
       </div>
     </div>
+
   </div>
   <br>
   <div class="row">
     <div class="span7">
-      <table class="zebra-striped"><tbody class="files"></tbody></table>
+      <h3>Recently uploaded</h3>
+      <table class="table table-striped"><tbody class="files"></tbody></table>
       <div id="loading"> </div>
     </div>
   </div>
@@ -69,12 +69,12 @@
     {% if (file.error) { %}
     <td class="error" colspan="2"><span class="label important">Error</span> {%=fileUploadErrors[file.error] || file.error%}</td>
     {% } else if (o.files.valid && !i) { %}
-    <td class="progress"><div class="progressbar progress-striped active"><div class="bar" style="width:0%;"></div></div></td>
+    <td><div class="progress progress-animated"><div class="bar" style="width:0%;"></div></div></td>
     <td class="start">{% if (!o.options.autoUpload) { %}<button class="btn btn-primary">Start</button>{% } %}</td>
     {% } else { %}
     <td colspan="2"></td>
     {% } %}
-    <td class="cancel">{% if (!i) { %}<button class="btn btn-info">Cancel</button>{% } %}</td>
+    <td class="cancel">{% if (!i) { %}<button class="btn btn-warning">Cancel</button>{% } %}</td>
   </tr>
   {% } %}
 </script>
@@ -136,4 +136,6 @@
 
     });
 </script>
+
+<%= link_to "Back to Videos list", videos_path %>
 
