@@ -2,30 +2,51 @@
   <%= stylesheet_link_tag  "jquery.fileupload-ui.css" %>
 <% end %>
 
-<h2>Video</h2>
+<h2>Upload Videos</h2>
 <%= form_for @video, :html => { :multipart => true, :id => "fileupload"  } do |f| %>
+  <div>
+     <%= f.select :event_id , options_from_collection_for_select(@events, "id", "name") %>
+  </div>
   <div class="row">
-    <div class="span16 fileupload-buttonbar">
+    <div class="span7 fileupload-buttonbar">
       <div class="progressbar fileupload-progressbar nofade"><div style="width:0%;"></div></div>
-      <span class="btn success fileinput-button">
+      <span class="btn btn-success fileinput-button">
+        <i class="icon-plus icon-white"></i>
         <span>Add files</span>
-        <%= f.file_field :clip %>
+        <%= file_field_tag "video_clip", name: "video[clip]", multiple: "" %>
       </span>
-      <button type="submit" class="btn primary start">Start upload</button>
-      <button type="reset" class="btn info cancel">Cancel upload</button>
-      <button type="button" class="btn danger delete">Delete selected</button>
+      <button type="submit" class="btn btn-primary start">
+        <i class="icon-upload icon-white"></i>
+        <span>Start upload</span>
+      </button>
+      <button type="reset" class="btn btn-warning cancel">
+          <i class="icon-ban-circle icon-white"></i>
+          <span>Cancel upload</span>
+      </button>
+      <button type="button" class="btn btn-danger delete">
+          <i class="icon-trash icon-white"></i>
+          <span>Delete</span>
+      </button>
       <input type="checkbox" class="toggle">
+    </div>
+    <div class="span5">
+      <!-- The global progress bar -->
+      <div class="progress progress-success progress-striped active nofade">
+          <div class="bar" style="width:0%;"></div>
+      </div>
     </div>
   </div>
   <br>
   <div class="row">
-    <div class="span16">
+    <div class="span7">
       <table class="zebra-striped"><tbody class="files"></tbody></table>
       <div id="loading"> </div>
     </div>
   </div>
-        <%= f.text_field :name, :value => "Test" %>
-        <%= f.text_field :event_id, :value => 1 %>
+
+
+
+
 <% end %>
 <script>
   var fileUploadErrors = {
@@ -48,12 +69,12 @@
     {% if (file.error) { %}
     <td class="error" colspan="2"><span class="label important">Error</span> {%=fileUploadErrors[file.error] || file.error%}</td>
     {% } else if (o.files.valid && !i) { %}
-    <td class="progress"><div class="progressbar"><div class="bar" style="width:0%;"></div></div></td>
-    <td class="start">{% if (!o.options.autoUpload) { %}<button class="btn primary">Start</button>{% } %}</td>
+    <td class="progress"><div class="progressbar progress-striped active"><div class="bar" style="width:0%;"></div></div></td>
+    <td class="start">{% if (!o.options.autoUpload) { %}<button class="btn btn-primary">Start</button>{% } %}</td>
     {% } else { %}
     <td colspan="2"></td>
     {% } %}
-    <td class="cancel">{% if (!i) { %}<button class="btn info">Cancel</button>{% } %}</td>
+    <td class="cancel">{% if (!i) { %}<button class="btn btn-info">Cancel</button>{% } %}</td>
   </tr>
   {% } %}
 </script>
@@ -76,13 +97,12 @@
     <td colspan="2"></td>
     {% } %}
     <td class="delete">
-    <button class="btn danger" data-type="{%=file.delete_type%}" data-url="{%=file.delete_url%}">Delete</button>
+    <button class="btn btn-danger" data-type="{%=file.delete_type%}" data-url="{%=file.delete_url%}">Delete</button>
     <input type="checkbox" name="delete" value="1">
     </td>
   </tr>
   {% } %}
 </script>
-
 
 <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
 <%= javascript_include_tag 'jquery.ui.widget.js' %>

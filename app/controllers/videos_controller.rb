@@ -10,10 +10,12 @@ class VideosController < ApplicationController
 
   def new
     @video = Video.new
+    @events = Event.all
   end
 
   def create
     @video = Video.new(params[:video])
+    @video.name = params[:video][:clip].original_filename
     @video.user = current_user
 =begin
     respond_to do |format|
@@ -38,7 +40,7 @@ class VideosController < ApplicationController
         }
       end
     else
-      render :json => [{:error => "custom_failure"}], :status => 304
+      render :json => [{:error => @video.errors}], :status => 304
     end
 
   end
