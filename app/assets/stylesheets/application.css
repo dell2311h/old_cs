@@ -12,3 +12,17 @@
  *= require_tree .
 */
 
+.pagination span, .pagination em {
+  float: left;
+  padding: 0 14px;
+  line-height: 34px;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  border-left-width: 0;
+}
+
+.pagination em {
+  color: green;
+  background-color: #f9f9f9;
+}
+

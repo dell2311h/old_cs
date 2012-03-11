@@ -5,10 +5,6 @@ class VideosController < ApplicationController
 
   def index
     @videos = current_user.videos.order("created_at DESC").paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
-    respond_to do |format|
-      format.html
-      format.js { render :json => @videos.collect { |v| v.to_jq_upload }.to_json }
-    end
   end
 
   def new

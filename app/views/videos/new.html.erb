@@ -1,6 +1,6 @@
-<%= link_to "Back to Videos list", videos_path %>
 <%= stylesheet_link_tag  "jquery.fileupload-ui.css" %>
 <h2>Upload Videos</h2>
+<%= link_to "Back to Videos list", videos_path %>
 <%= form_for @video, :html => { :multipart => true, :id => "fileupload"  } do |f| %>
   <div>
      <%= f.select :event_id , options_from_collection_for_select(@events, "id", "name") %>
@@ -38,15 +38,10 @@
   <br>
   <div class="row">
     <div class="span7">
-      <h3>Recently uploaded</h3>
       <table class="table table-striped"><tbody class="files"></tbody></table>
       <div id="loading"> </div>
     </div>
   </div>
-
-
-
-
 <% end %>
 <script>
   var fileUploadErrors = {
@@ -119,21 +114,6 @@
     $(function () {
         // Initialize the jQuery File Upload widget:
         $('#fileupload').fileupload();
-        //
-        // Load existing files:
-        $.getJSON($('#fileupload').prop('action'), function (files) {
-          var fu = $('#fileupload').data('fileupload'),
-            template;
-          fu._adjustMaxNumberOfFiles(-files.length);
-          template = fu._renderDownload(files)
-            .appendTo($('#fileupload .files'));
-          // Force reflow:
-          fu._reflow = fu._transition && template.length &&
-            template[0].offsetWidth;
-          template.addClass('in');
-          $('#loading').remove();
-        });
-
     });
 </script>
 
