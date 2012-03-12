@@ -25,7 +25,7 @@ class User < ActiveRecord::Base
   validates :age, :numericality => { :only_integer => true }
   validates_inclusion_of :age, :in => 0..150
 
-  has_many :comments
+  has_many :comments, :dependent => :destroy
   has_many :videos
   has_many :places
   has_many :events

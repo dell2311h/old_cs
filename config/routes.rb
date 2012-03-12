@@ -31,6 +31,12 @@ devise_for :user, :path => '', :skip => [:registration] do
     get  'videos/:id' => 'videos#show'
     get  'videos'     => 'videos#index'
     put  'videos/:id' => 'videos#update'
+    
+    
+    constraints :commentable => "/videos|places|events/" do
+      get "/:commentable/:id/comments" => "comments#index"
+      post "/:commentable/:id/comments" => "comments#create"
+    end
   end
   
   resources :videos, :only => [:index, :new, :create, :destroy]
