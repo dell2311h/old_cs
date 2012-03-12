@@ -3,7 +3,7 @@ class Api::CommentsController < Api::BaseController
   before_filter :prepare_commentable_object
 
   def index
-    @comments = Comment
+    @comments = @commentable_object.comments
         
     if @comments.count > 0
       @comments = @comments.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
@@ -23,7 +23,11 @@ class Api::CommentsController < Api::BaseController
 
   private
     def prepare_commentable_object
-      model_class = params[:commentable].capitalize.constantize
+      class_name = case params[:commentable]
+        when /videos|places|events/
+          params[:commentable][0..-2]
+      end
+      model_class = class_name.capitalize.constantize
       @commentable_object = model_class.find(params[:id])
     end
     

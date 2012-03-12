@@ -33,10 +33,11 @@ devise_for :user, :path => '', :skip => [:registration] do
     put  'videos/:id' => 'videos#update'
     
     
-    constraints :commentable => "/videos|places|events/" do
-      get "/:commentable/:id/comments" => "comments#index"
-      post "/:commentable/:id/comments" => "comments#create"
+    constraints :commentable => /videos|places|events/ do
+      get "/:commentable/:id/comments" => "comments#index", :as => :comment_create
+      post "/:commentable/:id/comments" => "comments#create", :as => :comments_list
     end
+      
   end
   
   resources :videos, :only => [:index, :new, :create, :destroy]
