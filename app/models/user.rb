@@ -35,6 +35,6 @@ class User < ActiveRecord::Base
 
   accepts_nested_attributes_for :authentications
 
-  before_save :reset_authentication_token
+  before_create :reset_authentication_token
 
 end
