@@ -1,7 +1,7 @@
 class Api::EventsController < Api::BaseController
 
   def index
-    @events = Event.includes(:place)
+    @events = Event
 
     if params[:top]
       @events = @events.order_by_video_count
