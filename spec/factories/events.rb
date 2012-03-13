@@ -6,6 +6,7 @@ FactoryGirl.define do
     f.association :user
     f.association :place
     f.after_create {|event| Factory(:comment, :commentable => event) }
+    f.after_create {|event| Factory(:tagging, :taggable => event) }
   end
 end
 
