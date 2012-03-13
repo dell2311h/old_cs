@@ -6,7 +6,7 @@ class Api::SongsController < Api::BaseController
     
     if @songs.count > 0
       @songs = @songs.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
-      respond_with @songs, status: :ok, location: nil
+      render status: :ok, json: {songs: @songs, count: @songs.count}
     else
       respond_with [], status: :not_found
     end
