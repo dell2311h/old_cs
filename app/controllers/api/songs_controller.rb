@@ -14,7 +14,8 @@ class Api::SongsController < Api::BaseController
   
   def create
     @video = Video.find params[:id]
-    @song = @video.songs.create! params[:song]
+    @song = Song.find_or_create_by_name(params[:song][:name])
+    @video.songs << @song if !@video.songs.find_by_id(@song)
     respond_with @song, status: :created, location: nil
   end
   
