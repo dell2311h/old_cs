@@ -38,6 +38,12 @@ devise_for :user, :path => '', :skip => [:registration] do
       post "/:commentable/:id/comments" => "comments#create", :as => :comments_list
     end
       
+    constraints :taggable => /videos|places|events/ do
+      get "/tags/:id/taggables" => "tags#index", :as => :tags_list
+      get "/:taggable/:id/tags" => "tags#index", :as => :tag_create
+      post "/:taggable/:id/tags" => "tags#create", :as => :tags_list
+    end  
+      
   end
   
   resources :videos, :only => [:index, :new, :create, :destroy]
