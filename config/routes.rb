@@ -39,8 +39,7 @@ devise_for :user, :path => '', :skip => [:registration] do
     end
       
     constraints :taggable => /videos|places|events/ do
-      get "/tags/:id/taggables" => "tags#index", :as => :tags_list
-      get "/:taggable/:id/tags" => "tags#index", :as => :tag_create
+      get "/:taggable/:id/tags" => "tags#index", :as => :create_tag
       post "/:taggable/:id/tags" => "tags#create", :as => :tags_list
     end  
       
