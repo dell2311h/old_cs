@@ -3,6 +3,7 @@
 FactoryGirl.define do
   factory :song do |f|
     f.name { Faker::Lorem.word.capitalize }
+    f.after_create {|song| Factory(:video_song, :song => song) }
   end
 end
 

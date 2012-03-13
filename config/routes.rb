@@ -42,6 +42,9 @@ devise_for :user, :path => '', :skip => [:registration] do
       get "/:taggable/:id/tags" => "tags#index", :as => :create_tag
       post "/:taggable/:id/tags" => "tags#create", :as => :tags_list
     end  
+    
+    get "/videos/:id/songs" => "songs#index", :as => :songs_list
+    post "/videos/:id/songs" => "songs#create", :as => :create_song
       
   end
   
