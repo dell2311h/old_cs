@@ -23,19 +23,22 @@ class Api::VideosController < Api::BaseController
   end
 
   def index
-    @video = Video.all
-    @status = 200
+    @videos = Video
 
-    if @video.nil?
-      raise 'Videos not found'
+    if params[:my]
+      @videos = @videos.where(:user_id => @current_user.id)
     end
 
-    rescue Exception => e
-      @status = 404
-      @video = {error: e.message}
-    ensure
-      render :json => @video, :status => @status
+    if params[:event_id]
+      @videos = @videos.where(:event_id => params[:event_id])
+    end
 
+    if @videos.count > 0
+      @videos = @videos.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
+      render status: :ok, json: {:videos => @videos, count: @videos.count}
+    else
+      respond_with [], :status => :not_found
+    end 
   end
 
   def show

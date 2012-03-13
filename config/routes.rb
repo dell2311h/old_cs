@@ -26,12 +26,12 @@ devise_for :user, :path => '', :skip => [:registration] do
 
     post "places/:place_id/events" => "events#create"
 
-    #videos
+    # Videos
     post 'videos'     => 'videos#create'
     get  'videos/:id' => 'videos#show'
     get  'videos'     => 'videos#index'
     put  'videos/:id' => 'videos#update'
-    
+    get  'events/:event_id/videos' => 'videos#index'
     
     constraints :commentable => /videos|places|events/ do
       get "/:commentable/:id/comments" => "comments#index", :as => :comment_create
@@ -43,9 +43,10 @@ devise_for :user, :path => '', :skip => [:registration] do
       post "/:taggable/:id/tags" => "tags#create", :as => :tags_list
     end  
     
+    # Songs
     get "/videos/:id/songs" => "songs#index", :as => :songs_list
-    post "/videos/:id/songs" => "songs#create", :as => :create_song
-      
+    post "/videos/:id/songs" => "songs#create", :as => :create_song      
+        
   end
   
   resources :videos, :only => [:index, :new, :create, :destroy]
