@@ -25,8 +25,8 @@ class Api::VideosController < Api::BaseController
   def index
     @videos = Video
 
-    if params[:my]
-      @videos = @videos.where(:user_id => @current_user.id)
+    if params[:user_id]
+      @videos = @videos.where(:user_id => params[:user_id])
     end
 
     if params[:event_id]
