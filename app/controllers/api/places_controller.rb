@@ -5,7 +5,7 @@ class Api::PlacesController < Api::BaseController
 
     if params[:nearby]
       raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
-      raise "Coordinates are invalid" unless valid_number?(params[:latitude]) && valid_number?(params[:longitude])
+      check_coordinates_format
       places = places.near [params[:latitude], params[:longitude]], SEARCH_RADIUS, :order => :distance
     end
 

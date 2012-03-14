@@ -13,11 +13,11 @@ class Api::BaseController < ApplicationController
   # TODO here should be before_filer which will be set @current_user variable with current API user object
   
   
-  protected
-    
-    # Method for validation of latitude and longitude params
-    def valid_number?(string)
-      string.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
+  private
+       
+    def check_coordinates_format
+      Float(params[:latitude])
+      Float(params[:longitude])
     end
 
 end
