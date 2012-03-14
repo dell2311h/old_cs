@@ -15,7 +15,7 @@ class Api::EventsController < Api::BaseController
 
     if @events.count > 0
       @events = @events.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
-      render status: :ok, json: {:events => @events.as_json(:include => :place), count: @events.count}
+#      render status: :ok, json: {:events => @events.as_json(:include => :place), count: @events.count}
     else
       respond_with [], :status => :not_found
     end
@@ -24,7 +24,7 @@ class Api::EventsController < Api::BaseController
   
   def show
     @event = Event.find params[:id]
-    render status: :ok, json: {:event => @event.as_json(:include => [:place, :user, :videos])}
+#    render status: :ok, json: {:event => @event.as_json(:include => [:place, :user])}
   end
   
   def create

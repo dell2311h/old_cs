@@ -8,6 +8,7 @@ class Event < ActiveRecord::Base
   has_many :tags, through: :taggings
 
   has_attached_file :image, :styles => { :iphone => "200x200>" }
+  validates_attachment_content_type :image, :content_type => ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif']
 
   validates :name, :presence => true
   validates :user_id, :place_id, :presence => true
@@ -23,6 +24,10 @@ class Event < ActiveRecord::Base
   scope :nearby, lambda { |coordinates, radius|
     Event.joins(:place).merge(Place.near coordinates, radius, :order => :distance, :select => "places.*, places.name AS place_name, events.*")
   }
+  
+  def songs_count
+    1
+  end
 
 end
 
