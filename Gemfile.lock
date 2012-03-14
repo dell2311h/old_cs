@@ -104,6 +104,9 @@ GEM
       cocaine (>= 0.0.2)
       mime-types
     polyglot (0.3.3)
+    rabl (0.6.1)
+      activesupport (>= 2.3.14)
+      multi_json (~> 1.1.0)
     rack (1.4.1)
     rack-cache (1.1)
       rack (>= 0.4)
@@ -189,6 +192,7 @@ DEPENDENCIES
   omniauth-foursquare
   omniauth-twitter
   paperclip
+  rabl
   rails (= 3.2.0)
   rspec-rails (~> 2.6)
   sass-rails (~> 3.2.3)
