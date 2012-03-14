@@ -3,11 +3,11 @@ class Event < ActiveRecord::Base
   belongs_to :place
   has_many :videos
   has_many :comments, :as => :commentable, :class_name => "Comment", :dependent => :destroy
-  
-  
+   
   has_many :taggings, as: :taggable, class_name: "Tagging", dependent: :destroy
   has_many :tags, through: :taggings
 
+  has_attached_file :image, :styles => { :iphone => "200x200>" }
 
   validates :name, :presence => true
   validates :user_id, :place_id, :presence => true
