@@ -6,18 +6,19 @@ class Api::TagsController < Api::BaseController
     @tags = @taggable.tags
         
     if @tags.count > 0
-      @tags = @tags.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
-      render status: :ok, json: {:tags => @tags, count: @tags.count}
+      render status: :ok, json: @tags.map(&:name)
     else
       respond_with [], :status => :not_found
     end 
   end
   
   def create
-    tag_name = params[:tag][:name].downcase
-    @tag = Tag.find_or_create_by_name(tag_name)
-    @taggable.tags << @tag if !@taggable.tags.find_by_id(@tag)
-    respond_with @tag, :status => :created, :location => nil
+    params[:tags].each do |tag_name|
+      @tag = Tag.find_or_create_by_name(tag_name.downcase)
+      @taggable.tags << @tag if !@taggable.tags.find_by_id(@tag)
+    end
+    @tags = @taggable.tags.map(&:name)
+    respond_with @tags, :status => :created, :location => nil
   end
   
   private
