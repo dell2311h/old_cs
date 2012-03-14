@@ -22,6 +22,11 @@ class Api::EventsController < Api::BaseController
 
   end
   
+  def show
+    @event = Event.find params[:id]
+    render status: :ok, json: {:event => @event.as_json(:include => [:place, :user, :videos])}
+  end
+  
   def create
     if params[:place_id]
       @place = Place.find(params[:place_id]) 

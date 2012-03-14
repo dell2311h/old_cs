@@ -20,9 +20,7 @@ devise_for :user, :path => '', :skip => [:registration] do
 
     get 'places' => 'places#index'
 
-    get 'events' => 'events#index'
-
-    resources :events, :only => [:create]
+    resources :events, :only => [:index, :create, :show]
 
     post "places/:place_id/events" => "events#create"
 
