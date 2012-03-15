@@ -13,6 +13,10 @@ class Api::EventsController < Api::BaseController
       @events = @events.nearby [params[:latitude], params[:longitude]], SEARCH_RADIUS
     end
 
+    if params[:event_name]
+      @events = @events.with_name_like params[:event_name]
+    end
+
     if @events.count > 0
       @events = @events.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
     else
