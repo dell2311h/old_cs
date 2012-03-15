@@ -6,8 +6,7 @@ class Api::BaseController < ApplicationController
 
 
   rescue_from Exception do |exeption|
-    error = {:error => exeption.message}
-    respond_with error, :status => :bad_request, :location => nil
+    render status: :bad_request, json: { error: exeption.message }, layout: false
   end
   
   # TODO here should be before_filer which will be set @current_user variable with current API user object

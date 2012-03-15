@@ -13,9 +13,12 @@ class Api::EventsController < Api::BaseController
       @events = @events.nearby [params[:latitude], params[:longitude]], SEARCH_RADIUS
     end
 
+    if params[:event_name]
+      @events = @events.with_name_like params[:event_name]
+    end
+
     if @events.count > 0
       @events = @events.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
-      render status: :ok, json: {:events => @events.as_json(:include => :place), count: @events.count}
     else
       respond_with [], :status => :not_found
     end
@@ -24,7 +27,6 @@ class Api::EventsController < Api::BaseController
   
   def show
     @event = Event.find params[:id]
-    render status: :ok, json: {:event => @event.as_json(:include => [:place, :user, :videos])}
   end
   
   def create
