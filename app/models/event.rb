@@ -25,9 +25,12 @@ class Event < ActiveRecord::Base
     Event.joins(:place).merge(Place.near coordinates, radius, :order => :distance, :select => "places.*, places.name AS place_name, events.*")
   }
   
-  def songs_count
-    1
+  def songs
+    Song.find_by_sql(["SELECT DISTINCT (songs.id), songs.name FROM songs INNER JOIN video_songs ON video_songs.song_id = songs.id INNER JOIN videos ON videos.id = video_songs.video_id WHERE videos.event_id = ?", self.id])
   end
+    
+
+  
 
 end
 
