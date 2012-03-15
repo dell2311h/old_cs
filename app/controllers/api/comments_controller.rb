@@ -5,13 +5,9 @@ class Api::CommentsController < Api::BaseController
   def index
     @comments = @commentable.comments
         
-    if @comments.count > 0
-      @comments = @comments.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
-      render status: :ok, json: {:comments => @comments.as_json(:include => :user), count: @comments.count}
-    else
-      respond_with [], :status => :not_found
-    end
+    @comments = @comments.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
 
+    render :status => :not_found if @comments.count == 0
   end
   
   def create
