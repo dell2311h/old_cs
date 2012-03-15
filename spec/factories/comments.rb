@@ -3,6 +3,6 @@
 FactoryGirl.define do 
   factory :comment do |f|
     f.association :user   
-    f.text Faker::Lorem.sentence
+    f.text { Faker::Lorem.sentence }
   end
 end
