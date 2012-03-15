@@ -13,4 +13,10 @@ class Place < ActiveRecord::Base
   
   reverse_geocoded_by :latitude, :longitude
 
+  
+  def eventful_id
+    
+  nil
+  end
+  
 end

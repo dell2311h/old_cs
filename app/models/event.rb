@@ -1,3 +1,4 @@
+require 'eventful_lib'
 class Event < ActiveRecord::Base
   belongs_to :user
   belongs_to :place
@@ -12,6 +13,8 @@ class Event < ActiveRecord::Base
   validates :name, :presence => true
   validates :user_id, :place_id, :presence => true
 
+  before_create :add_eventful_event
+
   scope :order_by_video_count, lambda {
     videos = Video.arel_table
     events = Event.arel_table
@@ -23,6 +26,36 @@ class Event < ActiveRecord::Base
   scope :nearby, lambda { |coordinates, radius|
     Event.joins(:place).merge(Place.near coordinates, radius, :order => :distance, :select => "places.*, places.name AS place_name, events.*")
   }
+
+  private
+
+  def add_eventful_event
+    unless self.eventful_id.nil?
+      found_event = Event.get_eventful_event self.eventful_id
+        if found_event.nil?
+          eventful_id = Event.create_eventful_event self
+          self.eventful_id = eventful_id
+        end
+    else
+      self.eventful_id = Event.create_eventful_event self
+    end
+  end
+
+  def self.get_eventful_event id
+    event = EventfulLib::Api.get_event :id => id
+
+    event
+  end
+
+  def self.create_eventful_event event
+    params = {:title => event.name, :start_time => event.date}
+    params[:venur_id] = event.place.eventful_id unless event.place.eventful_id.nil?
+    output = EventfulLib::Api.create_event params
+
+    return output.id unless output[:id].nil?
+
+    nil
+  end
 
 end
 

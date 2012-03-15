@@ -1,0 +1,1 @@
+Crowdsync::Application.config.eventful_app_key = "fFNCjc4kh2Gc3XVW"
