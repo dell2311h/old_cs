@@ -46,6 +46,7 @@ devise_for :user, :path => '', :skip => [:registration] do
     get "/videos/:video_id/songs" => "songs#index", :as => :video_songs_list
     post "/videos/:video_id/songs" => "songs#create", :as => :create_song      
     get "/songs" => "songs#index", :as => :songs_list
+    get "/events/:event_id/songs" => "songs#index", :as => :event_songs_list
         
   end
   

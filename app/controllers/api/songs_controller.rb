@@ -7,6 +7,11 @@ class Api::SongsController < Api::BaseController
       @songs = @video.songs
     end
     
+    if params[:event_id]
+      @event = Event.find params[:event_id]
+      @songs = @event.songs
+    end
+    
     if params[:song_name]
       @songs = Song.with_name_like(params[:song_name])
     end  
