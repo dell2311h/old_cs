@@ -21,6 +21,8 @@ devise_for :user, :path => '', :skip => [:registration] do
     get 'places' => 'places#index'
 
     resources :events, :only => [:index, :create, :show]
+    
+    resources :places, :only => [:create]
 
     post "places/:place_id/events" => "events#create"
 
