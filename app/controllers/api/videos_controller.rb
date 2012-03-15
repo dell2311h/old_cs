@@ -35,7 +35,6 @@ class Api::VideosController < Api::BaseController
 
     if @videos.count > 0
       @videos = @videos.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
-      render status: :ok, json: {:videos => @videos, count: @videos.count}
     else
       respond_with [], :status => :not_found
     end 
@@ -43,13 +42,6 @@ class Api::VideosController < Api::BaseController
 
   def show
     @video = Video.find(params[:id])
-    @status = 200
-    rescue Exception => e
-     @status = 404
-     @video = {error: e.message}
-    ensure
-      #respond_with(@video, :status => @status, :location => nil)
-      render :json => @video, :status => @status
   end
   
   def update
