@@ -34,35 +34,36 @@ class Event < ActiveRecord::Base
     
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
 
+
   private
 
-  def add_eventful_event
-    unless self.eventful_id.nil?
-      found_event = Event.get_eventful_event self.eventful_id
-        if found_event.nil?
-          eventful_id = Event.create_eventful_event self
-          self.eventful_id = eventful_id
-        end
-    else
-      self.eventful_id = Event.create_eventful_event self
+    def add_eventful_event
+      unless self.eventful_id.nil?
+        found_event = Event.get_eventful_event self.eventful_id
+          if found_event.nil?
+            eventful_id = Event.create_eventful_event self
+            self.eventful_id = eventful_id
+          end
+      else
+        self.eventful_id = Event.create_eventful_event self
+      end
     end
-  end
 
-  def self.get_eventful_event id
-    event = EventfulLib::Api.get_event :id => id
+    def self.get_eventful_event id
+      event = EventfulLib::Api.get_event :id => id
 
-    event
-  end
+      event
+    end
 
-  def self.create_eventful_event event
-    params = {:title => event.name, :start_time => event.date}
-    params[:venur_id] = event.place.eventful_id unless event.place.eventful_id.nil?
-    output = EventfulLib::Api.create_event params
+    def self.create_eventful_event event
+      params = {:title => event.name, :start_time => event.date}
+      params[:venur_id] = event.place.eventful_id unless event.place.eventful_id.nil?
+      output = EventfulLib::Api.create_event params
 
-    return output.id unless output[:id].nil?
+      return output.id unless output[:id].nil?
 
-    nil
-  end
+      nil
+    end
 
 end
 

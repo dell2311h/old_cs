@@ -18,6 +18,8 @@ class Video < ActiveRecord::Base
   has_many :video_songs, dependent: :destroy
   has_many :songs, through: :video_songs
 
+  scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
+
   #one convenient method to pass jq_upload the necessary information
   def to_jq_upload
     {

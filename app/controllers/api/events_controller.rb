@@ -47,8 +47,8 @@ class Api::EventsController < Api::BaseController
       @events = @events.nearby [params[:latitude], params[:longitude]], SEARCH_RADIUS
     end
 
-    if params[:event_name]
-      @events = @events.with_name_like params[:event_name]
+    if query_str = params[:event_name] || params[:q]
+      @events = @events.with_name_like query_str
     end
 
     if @events.count > 0

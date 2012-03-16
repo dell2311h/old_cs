@@ -1,21 +1,20 @@
 class Api::PlacesController < Api::BaseController
 
   def index
-    places = Place
+    @places = Place
 
     if params[:nearby]
       raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
       check_coordinates_format
-      places = places.near [params[:latitude], params[:longitude]], SEARCH_RADIUS, :order => :distance
+      @places = @places.near [params[:latitude], params[:longitude]], SEARCH_RADIUS, :order => :distance
     end
 
-    if params[:place_name]
-      places = places.with_name_like params[:place_name]
+    if query_str = params[:place_name] || params[:q]
+      @places = @places.with_name_like query_str
     end
 
-    if places.count > 0
-      places = places.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
-      respond_with places, :status => :ok
+    if @places.count > 0
+      @places = @places.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
     else
       respond_with [], :status => :not_found
     end

@@ -37,6 +37,10 @@ class Api::VideosController < Api::BaseController
       @song = Song.find params[:song_id]
       @videos = @song.videos
     end
+    
+    if params[:q]
+      @videos = Video.with_name_like(params[:q])
+    end
 
     if @videos.count > 0
       @videos = @videos.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)

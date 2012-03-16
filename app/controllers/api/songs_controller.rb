@@ -13,8 +13,12 @@ class Api::SongsController < Api::BaseController
     end
     
     if params[:song_name]
-      @songs = Song.with_name_like(params[:song_name])
+      @songs = Song.suggestions_by_name(params[:song_name])
     end  
+    
+    if params[:q]
+      @songs = Song.with_name_like(params[:q]).paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
+    end
     
     render :status => :not_found if @songs.count == 0
   end
