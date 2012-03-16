@@ -32,6 +32,11 @@ class Api::VideosController < Api::BaseController
     if params[:event_id]
       @videos = @videos.where(:event_id => params[:event_id])
     end
+    
+    if params[:song_id]
+      @song = Song.find params[:song_id]
+      @videos = @song.videos
+    end
 
     if @videos.count > 0
       @videos = @videos.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)

@@ -33,6 +33,7 @@ devise_for :user, :path => '', :skip => [:registration] do
     put  'videos/:id' => 'videos#update'
     get  'events/:event_id/videos' => 'videos#index'
     get  'users/:user_id/videos' => 'videos#index'
+    get  "songs/:song_id/videos" => "videos#index"
     
     constraints :commentable => /videos|places|events/ do
       get "/:commentable/:id/comments" => "comments#index", :as => :comment_create
