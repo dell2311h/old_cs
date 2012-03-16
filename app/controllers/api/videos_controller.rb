@@ -1,10 +1,10 @@
 class Api::VideosController < Api::BaseController
 
-  before_filter :check_params, :only => :create
+  before_filter :check_params, :only => :create 
 
   def create
     @video = Video.new(params[:video])
-    @video.user_id = @currentuser.id
+    @video.user_id = @current_user.id
     @video.event_id = @event.id
     @status = 400
 
@@ -60,10 +60,16 @@ class Api::VideosController < Api::BaseController
        render :json => @video, :status => @status
   end
   
+  def destroy
+    @video = @current_user.videos.find params[:id]
+    @video.destroy
+    render status: :accepted, json: {}
+  end
+  
 private
 
   def check_params
-    @currentuser = User.first
+    @current_user = User.first
     raise "Invalid params" if params[:event_id].nil?
     @event = Event.find params[:event_id]
     raise "Invalid params" if @event.nil?

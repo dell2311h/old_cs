@@ -33,6 +33,7 @@ devise_for :user, :path => '', :skip => [:registration] do
     get  'videos/:id' => 'videos#show'
     get  'videos'     => 'videos#index'
     put  'videos/:id' => 'videos#update'
+    delete  'videos/:id' => 'videos#destroy'
     get  'events/:event_id/videos' => 'videos#index'
     get  'users/:user_id/videos' => 'videos#index'
     get  "songs/:song_id/videos" => "videos#index"
