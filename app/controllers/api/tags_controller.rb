@@ -8,7 +8,7 @@ class Api::TagsController < Api::BaseController
     if @tags.count > 0
       render status: :ok, json: @tags.map(&:name)
     else
-      respond_with [], :status => :not_found
+      render :status => :not_found, json: []
     end 
   end
   
