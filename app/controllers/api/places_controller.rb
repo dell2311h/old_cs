@@ -1,4 +1,32 @@
+require "foursquare_lib"
 class Api::PlacesController < Api::BaseController
+
+  def remote
+    search_params = {}
+    raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
+    check_coordinates_format
+    search_params[:latitude]  = params[:latitude]
+    search_params[:longitude] = params[:longitude]
+    search_params[:radius]    = SEARCH_RADIUS
+
+    if params[:place_name]
+      search_params[:query] = params[:place_name]
+    end
+
+     if search_params.empty?
+      respond_with [], :status => :not_found
+      return
+    end
+
+    places = ForsquareLib::Api.find_places search_params
+
+    if places.empty?
+      respond_with [], :status => :not_found
+      return
+    end
+
+    respond_with places, :status => :ok, :location => nil
+  end
 
   def index
     @places = Place

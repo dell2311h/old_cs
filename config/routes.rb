@@ -18,6 +18,7 @@ devise_for :user, :path => '', :skip => [:registration] do
 
     post 'user_sessions' => 'user_sessions#create'
 
+    get 'places/remote' => 'places#remote'
     get 'places' => 'places#index'
 
     get 'events/remote' => 'events#remote'
