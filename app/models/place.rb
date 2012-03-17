@@ -6,6 +6,7 @@ class Place < ActiveRecord::Base
   
   has_many :taggings, as: :taggable, class_name: "Tagging", dependent: :destroy
   has_many :tags, through: :taggings
+  has_many :place_providers, dependent: :destroy
   
   validates :name, :user_id, :latitude, :longitude, :presence => true
   
@@ -13,7 +14,7 @@ class Place < ActiveRecord::Base
   
   reverse_geocoded_by :latitude, :longitude
 
-  
+
   def eventful_id
     
   nil
