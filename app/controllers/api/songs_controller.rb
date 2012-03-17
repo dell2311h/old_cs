@@ -1,6 +1,8 @@
 class Api::SongsController < Api::BaseController
 
   def index
+  
+    @songs = Song
    
     if params[:video_id]
       @video = Video.find params[:video_id]
@@ -17,10 +19,15 @@ class Api::SongsController < Api::BaseController
     end  
     
     if params[:q]
-      @songs = Song.with_name_like(params[:q]).paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
+      @songs = Song.with_name_like(params[:q])
     end
     
-    render :status => :not_found if @songs.count == 0
+    if @songs.count > 0
+      @songs = @songs.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
+    else
+      render :status => :not_found, json: {}
+    end
+    
   end
   
   def create
