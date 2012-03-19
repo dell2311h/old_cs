@@ -29,7 +29,7 @@ class Event < ActiveRecord::Base
   }
   
   def songs
-    Song.find_by_sql(["SELECT DISTINCT (songs.id), songs.name FROM songs INNER JOIN video_songs ON video_songs.song_id = songs.id INNER JOIN videos ON videos.id = video_songs.video_id WHERE videos.event_id = ?", self.id])
+    Song.select("DISTINCT (songs.id), songs.name").joins(:videos).where("videos.event_id = ?", self.id)
   end
     
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
