@@ -1,6 +1,8 @@
 class Api::VideosController < Api::BaseController
 
   before_filter :check_params, :only => :create 
+  
+  skip_before_filter :auth_check, :only => [:index, :show]
 
   def create
     @video = Video.new(params[:video])

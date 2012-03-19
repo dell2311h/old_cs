@@ -1,6 +1,8 @@
 require "foursquare_lib"
 class Api::PlacesController < Api::BaseController
 
+  skip_before_filter :auth_check, :only => [:index, :remote]
+
   def remote
     search_params = {}
     raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]

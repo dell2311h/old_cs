@@ -1,5 +1,7 @@
 class Api::EventsController < Api::BaseController
 
+  skip_before_filter :auth_check, :only => [:index, :remote, :show]
+
   def remote
     search_params = {}
     if params[:nearby]

@@ -1,5 +1,7 @@
 class Api::UsersController < Api::BaseController
 
+  skip_before_filter :auth_check, :only => [:create]
+
   def create
     @user = User.new(params[:user])
     @user.authentications.build(params[:oauth]) unless params[:oauth].nil?

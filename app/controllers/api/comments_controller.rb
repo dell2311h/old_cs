@@ -1,6 +1,8 @@
 class Api::CommentsController < Api::BaseController
 
   before_filter :find_commentable
+  
+  skip_before_filter :auth_check, :only => [:index]
 
   def index
     @comments = @commentable.comments

@@ -2,6 +2,8 @@ class Api::TagsController < Api::BaseController
   
   before_filter :find_taggable
   
+  skip_before_filter :auth_check, :only => [:index]
+  
   def index
     @tags = @taggable.tags
         

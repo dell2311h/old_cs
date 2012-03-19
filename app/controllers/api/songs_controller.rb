@@ -1,5 +1,7 @@
 class Api::SongsController < Api::BaseController
 
+  skip_before_filter :auth_check, :only => [:index]
+
   def index
   
     @songs = Song
