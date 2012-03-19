@@ -2,6 +2,8 @@ class Api::BaseController < ApplicationController
 
   skip_before_filter :verify_authenticity_token
   
+  before_filter :auth_check
+  
   respond_to :json
 
 
@@ -18,6 +20,11 @@ class Api::BaseController < ApplicationController
       Float(params[:latitude])
       Float(params[:longitude])
     end
+
+    def auth_check
+      @current_user = User.find 1
+    end
+
 
 end
 

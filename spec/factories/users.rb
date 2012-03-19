@@ -8,6 +8,7 @@ FactoryGirl.define do
     f.password    "passwordddd"
     f.phone { Faker::PhoneNumber.phone_number }
     f.age      20
+    f.avatar {fixture_file_upload('spec/fixtures/dark_side.jpg', 'image/jpeg', :binary)}
   end
 
   factory :social_user, :parent => :user do |f|
