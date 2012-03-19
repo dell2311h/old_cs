@@ -1,5 +1,7 @@
 class Api::UserSessionsController < Api::BaseController
 
+  skip_before_filter :auth_check, :only => [:create]
+
   def create
     raise "Not enough options for authorization" if incorrect_params?
     if params[:email]

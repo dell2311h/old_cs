@@ -11,8 +11,8 @@ class Event < ActiveRecord::Base
   has_attached_file :image, :styles => { :iphone => "200x200>" }
   validates_attachment_content_type :image, :content_type => ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif']
 
-  validates :name, :presence => true
-  validates :user_id, :place_id, :presence => true
+  validates :name, :date, presence: true
+  validates :user_id, :place_id, presence: true
 
   before_create :add_eventful_event
 

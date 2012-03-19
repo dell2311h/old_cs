@@ -22,7 +22,8 @@ class Api::BaseController < ApplicationController
     end
 
     def auth_check
-      @current_user = User.find 1
+      @current_user = User.find_by_authentication_token(params[:authentication_token])
+      render status: :bad_request, json: { error: "Authentication failed" } unless @current_user
     end
 
 
