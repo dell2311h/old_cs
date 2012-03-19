@@ -12,6 +12,7 @@ gem 'omniauth-twitter'
 gem 'omniauth-foursquare'
 
 gem 'eventfulapi'
+gem 'foursquare2'
 
 # Gems used only for assets and not required
 # in production environments by default.

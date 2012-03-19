@@ -24,7 +24,6 @@ module EventfulLib
 
       unless longitude.nil? && latitude.nil?
         search_params[:location] = "#{latitude},#{longitude}"
-        p search_params
       end
 
       results = self.eventful_api.call 'events/search', search_params
