@@ -20,8 +20,7 @@ class Api::VideosController < Api::BaseController
       @status = 400
       @video = {error: e.message}
     ensure
-    #respond_with({user: @video}, :status => @status, :location => nil)
-      render :json => @video, :status => @status
+      respond_with  @video, :status => @status, :location => nil
   end
 
   def index

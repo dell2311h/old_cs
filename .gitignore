@@ -18,6 +18,7 @@ tmp
 *.komodoproject
 
 config/database.yml
+config/s3.yml
 config/unicorn.conf.rb
 
 public/system/clips/**
