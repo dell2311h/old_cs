@@ -75,7 +75,6 @@ class Api::VideosController < Api::BaseController
 private
 
   def check_params
-    @current_user = User.first
     raise "Invalid params" if params[:event_id].nil?
     @event = Event.find params[:event_id]
     raise "Invalid params" if @event.nil?
