@@ -1,26 +1,13 @@
 class Api::VideosController < Api::BaseController
-
-  before_filter :check_params, :only => :create 
-  
+ 
   skip_before_filter :auth_check, :only => [:index, :show]
 
   def create
-    @video = Video.new(params[:video])
-    @video.user_id = @current_user.id
-    @video.event_id = @event.id
-    @status = 400
-
-    if @video.save
-      @status = 201
-    else
-      @video = {error: @video.errors}
-    end
-
-    rescue Exception => e
-      @status = 400
-      @video = {error: e.message}
-    ensure
-      respond_with  @video, :status => @status, :location => nil
+    @event = Event.find params[:event_id]
+    @video = @current_user.videos.build params[:video]
+    @video.event = @event
+    @video.save!
+    render status: :created, action: :show
   end
 
   def index
@@ -71,14 +58,4 @@ class Api::VideosController < Api::BaseController
     render status: :accepted, json: {}
   end
   
-private
-
-  def check_params
-    raise "Invalid params" if params[:event_id].nil?
-    @event = Event.find params[:event_id]
-    raise "Invalid params" if @event.nil?
-    rescue Exception => e
-      render :json => {error: e.message}, :status => 400
-   end
-
 end

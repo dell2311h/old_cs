@@ -30,7 +30,7 @@ devise_for :user, :path => '', :skip => [:registration] do
     post "places/:place_id/events" => "events#create"
 
     # Videos
-    post 'videos'     => 'videos#create'
+    post 'events/:event_id/videos' => 'videos#create'
     get  'videos/:id' => 'videos#show'
     get  'videos'     => 'videos#index'
     put  'videos/:id' => 'videos#update'
