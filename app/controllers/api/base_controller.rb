@@ -25,7 +25,6 @@ class Api::BaseController < ApplicationController
       @current_user = User.find_by_authentication_token(params[:authentication_token])
       render status: :unauthorized, json: { error: "Authentication failed" } unless @current_user
     end
-
-
+    
 end
 
