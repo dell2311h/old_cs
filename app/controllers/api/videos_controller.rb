@@ -43,10 +43,8 @@ class Api::VideosController < Api::BaseController
   
   def update
     @video = Video.find(params[:id])
-    raise "Invalid params" unless @video.update_attributes(params[:video])      
+    @video.update_attributes!(params[:video])
     render status: :accepted, action: :show
-  rescue Exception => e 
-    render status: :bad_request, json: {error: @video.errors}
   end
   
   def destroy
