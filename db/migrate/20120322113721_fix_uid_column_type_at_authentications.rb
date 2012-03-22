@@ -1,5 +1,9 @@
 class FixUidColumnTypeAtAuthentications < ActiveRecord::Migration
-  def change
-    change_column :authentications, :uid, :integer, :limit => 8
+  def up
+    change_column :authentications, :uid, 'integer unsigned'
+  end
+  
+  def down
+    change_column :authentications, :uid, :integer
   end
 end
