@@ -49,6 +49,10 @@ class Api::EventsController < Api::BaseController
       @events = @events.nearby [params[:latitude], params[:longitude]], SEARCH_RADIUS
     end
 
+    if params[:nearby_by_time]
+      @events = @events.nearby_by_time_with_offset SEARCH_DATE_OFFSET
+    end
+
     if query_str = params[:event_name] || params[:q]
       @events = @events.with_name_like query_str
     end

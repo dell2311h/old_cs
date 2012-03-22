@@ -1,7 +1,7 @@
 object @event
 attributes :id, :name, :date
 
-node(:image_url) { |event| event.image.url(:iphone) }
+node(:image_url) { |event| event.image.url(:iphone) if event.image.file? }
 
 child :place do
   extends "api/places/show"
