@@ -16,10 +16,10 @@ ActiveRecord::Schema.define(:version => 20120322113721) do
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
     t.string   "provider"
-    t.integer  "uid"
+    t.integer  "uid",        :limit => 8
     t.string   "token"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
   end
 
   create_table "comments", :force => true do |t|
