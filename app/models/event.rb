@@ -33,7 +33,8 @@ class Event < ActiveRecord::Base
   end
     
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
-
+  
+  scope :nearby_by_time_with_offset, lambda { |date_offset| where(:date => Date.today..(Date.today + date_offset)) }
 
   private
 
