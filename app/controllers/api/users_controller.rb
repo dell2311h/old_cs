@@ -3,11 +3,18 @@ class Api::UsersController < Api::BaseController
   skip_before_filter :auth_check, :only => [:create]
 
   def create
-    @user = User.new params[:user]
-    @user.authentications.build(params[:oauth]) if params[:oauth]
+    oauth = params[:oauth]
+    @user = User.find_by_email(params[:user][:email]) || User.new(params[:user])
+    if @user.new_record?
+      @user.authentications.build(oauth) if oauth
+    else
+      raise "Wrong email or password" unless @user.valid_password? params[:user][:password]
+      @user.authentications.create(oauth) unless @user.authentications.find_by_provider_and_uid(oauth[:provider], oauth[:uid]) if oauth
+    end
+         
     @user.save!
     @token = @user.authentication_token
-    render status: :created, action: :show, locals: { token: @token }
+    render status: :created, action: :show
   end
 
   def show
