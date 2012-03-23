@@ -26,6 +26,13 @@ module EventfulLib
         search_params[:location] = "#{latitude},#{longitude}"
       end
 
+      unless search_params[:date_offset].nil? && search_params[:date].nil?
+        date = self.format_date search_params[:date], search_params[:date_offset]
+        search_params.delete :date
+        search_params.delete :date_offset
+        search_params[:date] = date
+      end
+
       results = self.eventful_api.call 'events/search', search_params
       output_events = []
       return [] if results["total_items"] < 1
@@ -40,7 +47,7 @@ module EventfulLib
         tmp = {}
         tmp[:eventful_id]     = event["id"]
         tmp[:name]            = event["title"]
-        tmp[:date]            = event["created"]
+        tmp[:date]            = event["start_time"]
         tmp[:image_url] = nil
         tmp[:image_url] = event["image"]["url"] unless event["image"].nil? || event["image"]["url"].nil?
         output_events.push tmp
@@ -54,6 +61,16 @@ module EventfulLib
     end
 
     private
+
+     def self.format_date date, offset
+       date_begin = date.strftime("%Y%m%d00")
+       date_end = date + offset
+       date_end = date_end.strftime("%Y%m%d00")
+       interval = date_begin.to_s + '-' + date_end.to_s
+
+       interval
+    end
+    
     @@eventful_api = nil
 
     def self.eventful_api
