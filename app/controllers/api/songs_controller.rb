@@ -34,7 +34,7 @@ class Api::SongsController < Api::BaseController
   
   def create
     @video = Video.find params[:video_id]
-    params[:songs].each do |song_params|
+    params[:songs].map{|k,v| v}.each do |song_params|
       @song = song_params[:id] ? Song.find(song_params[:id]) : Song.create!(song_params)
       @video.songs << @song if !@video.songs.find_by_id(@song)     
     end

@@ -15,7 +15,7 @@ class Api::TagsController < Api::BaseController
   end
   
   def create
-    params[:tags].each do |tag_name|
+    params[:tags].map{|k,v| v}.each do |tag_name|
       @tag = Tag.find_or_create_by_name(tag_name.downcase)
       @taggable.tags << @tag if !@taggable.tags.find_by_id(@tag)
     end
