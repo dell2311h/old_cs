@@ -3,15 +3,11 @@ class Api::UsersController < Api::BaseController
   skip_before_filter :auth_check, :only => [:create]
 
   def create
-    @user = User.new(params[:user])
-    @user.authentications.build(params[:oauth]) unless params[:oauth].nil?
-    @status = 400
-    @status = 201 if @user.save
-  rescue Exception => e
-    @status = 400
-    @user = {error: e.message}
-  ensure
-    respond_with(@user, :status => @status, :location => nil)
+    @user = User.new params[:user]
+    @user.authentications.build(params[:oauth]) if params[:oauth]
+    @user.save!
+    @token = @user.authentication_token
+    render status: :created, action: :show, locals: { token: @token }
   end
 
   def show
