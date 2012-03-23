@@ -26,10 +26,9 @@ module EventfulLib
         search_params[:location] = "#{latitude},#{longitude}"
       end
 
-      unless search_params[:date_offset].nil? && search_params[:date].nil?
-        date = self.format_date search_params[:date], search_params[:date_offset]
+      unless search_params[:date].nil?
+        date = self.format_date search_params[:date]
         search_params.delete :date
-        search_params.delete :date_offset
         search_params[:date] = date
       end
 
@@ -62,10 +61,11 @@ module EventfulLib
 
     private
 
-     def self.format_date date, offset
-       date_begin = date.strftime("%Y%m%d00")
-       date_end = date + offset
-       date_end = date_end.strftime("%Y%m%d00")
+     def self.format_date date
+       date = Date.parse date
+       date_begin = date - 1
+       date_begin = date_begin.strftime("%Y%m%d00")
+       date_end = date.strftime("%Y%m%d00")
        interval = date_begin.to_s + '-' + date_end.to_s
 
        interval
