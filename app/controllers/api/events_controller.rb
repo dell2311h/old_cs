@@ -12,9 +12,8 @@ class Api::EventsController < Api::BaseController
       search_params[:longitude] = params[:longitude]
     end
 
-    if params[:nearby_by_time]
-      search_params[:date_offset] = SEARCH_DATE_OFFSET
-      search_params[:date] = Date.today
+    if params[:date]
+      search_params[:date] = params[:date]
     end
 
     if params[:event_name]
