@@ -1,4 +1,10 @@
 class Video < ActiveRecord::Base
+  STATUS_NEW = 0
+  STATUS_DEMUX_WORKING = 1
+  STATUS_DEMUX_DONE = 2
+  STATUS_STREAMING_WORKING = 3
+  STATUS_STREAMING_DONE = 4
+
   attr_accessible :clip, :event_id, :user_id, :name
   has_attached_file :clip,
                     :storage => :s3,
