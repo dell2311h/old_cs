@@ -1,30 +1,28 @@
+require 'net/http'
 module EncodingLib
 
   class Api
 
     def self.send_request action, params
-      #self.instance.send action
-      #instance = EncodingLib::Api.new
-      #instance.send
-      instance = self.instance
-      instance.send params
+      self.instance.send action, params
     end
 
+    def self.instance
+      @@instance = self.new if @@instance.nil?
 
-      
-      def self.instance
-        @@instance = self.new if @@instance.nil?
+      @@instance
+    end
 
-        @@instance
-      end
+    def send action, params
+        #url = "#{@base_url}/#{action}"
+        #request = Net::HTTP::Get.new(url)
 
-      def send params
-        p params
-      end
+        #request
+    end
 
-      def initialize
-
-      end
+    def initialize
+      @base_url = "localhost"
+    end
 
       private
          @@instance = nil
