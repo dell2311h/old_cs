@@ -31,6 +31,10 @@ class Video < ActiveRecord::Base
   has_many :video_songs, dependent: :destroy
   has_many :songs, through: :video_songs
 
+  has_many :clips, dependent: :destroy
+  has_one  :demux_video, :class_name => 'Clip', :conditions => { :type => Clip::TYPE_DEMUX_VIDEO }
+  has_one  :demux_audio, :class_name => 'Clip', :conditions => { :type => Clip::TYPE_DEMUX_AUDIO }
+  
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
 
   #one convenient method to pass jq_upload the necessary information
