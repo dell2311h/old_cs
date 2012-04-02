@@ -4,7 +4,16 @@ module EncodingLib
   class Api
 
     def self.send_request action, params
-      self.instance.send action, params
+      case action
+      when :add_media
+        response = self.instance.request '/medias', params, :post
+      else
+        raise 'unknown action'
+      end
+
+      parsed_response = self.instance.parse_result response
+
+      parsed_response
     end
 
     def self.instance
@@ -13,15 +22,32 @@ module EncodingLib
       @@instance
     end
 
-    def send action, params
-        #url = "#{@base_url}/#{action}"
-        #request = Net::HTTP::Get.new(url)
+    def parse_result result
 
-        #request
+      result
+    end
+
+    def request action, params, method
+        case method
+        when :post
+        http = Net::HTTP.new(@base_url, @port)
+        request = Net::HTTP::Post.new(action)
+        request.body = params.to_param
+        response = http.request(request)
+        else
+          raise 'unknown request method'
+        end
+
+        raise 'Request unsuccessfull' if response != Net::HTTPSuccess
+        response = response.get_response
+
+        response
     end
 
     def initialize
-      @base_url = "localhost"
+      uri = URI.parse(Crowdsync::Application.config.encding_url)
+      @base_url = uri.host
+      @port     = uri.port
     end
 
       private

@@ -18,7 +18,6 @@ module EncodingLib
 
     def initialize
       log_path = Rails.root.to_s + '/log/encoding.log'
-      p log_path
       @log = File.open log_path, 'a'
 
     end
