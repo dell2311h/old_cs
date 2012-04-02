@@ -3,6 +3,18 @@ module EncodingLib
 
   class Worker
 
+  def self.callback action, params
+    case action
+    when :demux
+      status, message = EncodingLib::Demux.demux_callback params
+
+      return status, message
+    else
+
+      return false, "unknown action"
+    end
+  end
+
     def run
       medias = find_medias
 

@@ -26,37 +26,57 @@ module EncodingLib
     end
 
     def self.demux_callback result
-      raise 'video_id not set' if result[:video_id].nil?
-      raise 'demux_audio not set' if result[:demux_audio].nil?
-      raise 'demux audio source not set' if result[:demux_audio][:source].nil?
-      raise 'demux audio encoding_id  not set' if result[:demux_audio][:encoding_id].nil?
-      raise 'demux_video not set' if result[:demux_video].nil?
-      raise 'demux video source not set' if result[:demux_video][:source].nil?
-      raise 'demux video encoding_id  not set' if result[:demux_video][:encoding_id].nil?
-      
-      video = Video.find result[:video_id]
-      raise 'video not found' if video.nil?
+      begin
+        raise 'video_id not set' if result[:video_id].nil?
+        media = nil
 
-      demux_audio = Clip.find_or_initialize_by_video_id_and_clip_type(video.id, Clip::TYPE_DEMUX_AUDIO)
-      demux_audio.update_attributes({ :source      => result[:demux_audio][:source],
-                                      :encoding_id => result[:demux_audio][:encoding_id],
-                                      :clip_type   => Clip::TYPE_DEMUX_AUDIO,
-                                    })
+        unless result[:demux_audio].nil?
+          media = result[:demux_audio]
+          clip_type = Clip::TYPE_DEMUX_AUDIO
+          clip_other_type = Clip::TYPE_DEMUX_VIDEO
+        end
+        unless result[:demux_video].nil?
+          media = result[:demux_video]
+          clip_type = Clip::TYPE_DEMUX_VIDEO
+          clip_other_type = Clip::TYPE_DEMUX_AUDIO
+        end
 
-      demux_video = Clip.find_or_initialize_by_video_id_and_clip_type(video.id, Clip::TYPE_DEMUX_VIDEO)
-      demux_video.update_attributes({ :source      => result[:demux_video][:source],
-                                      :encoding_id => result[:demux_video][:encoding_id],
-                                      :clip_type   => Clip::TYPE_DEMUX_VIDEO
-                                    })
+        raise 'demux_audio or demux_video not_set' if media.nil?
+        raise 'media source not set' if media[:source].nil?
+        raise 'media audio encoding_id  not set' if media[:encoding_id].nil?
 
-      unless demux_video.errors.empty? && demux_audio.errors.empty?
-        raise 'Validation errors'
+        video = Video.find result[:video_id]
+        raise 'video not found' if video.nil?
+
+        clip = Clip.find_or_initialize_by_video_id_and_clip_type(video.id, clip_type)
+        clip.update_attributes({ :source      => media[:source],
+                                 :encoding_id => media[:encoding_id],
+                                 :clip_type   => clip_type,
+                              })
+
+        unless clip.errors.empty?
+          raise 'Unable to save clip params: ' + clip.attributes.to_json
+        end
+
+        EncodingLib::Logger.log "Created demux clip(encoding_id #{media[:encoding_id]}) for video id# #{video.id.to_s}"
+
+        if video.status == Video::STATUS_DEMUX_WORKING
+          other_clip = Clip.where(:clip_type => clip_other_type, :video_id => video.id)
+          unless other_clip.first.nil?
+            video.status = Video::STATUS_DEMUX_DONE
+            video.save
+          end
+        end
+      rescue Exception => e
+         message = 'Failer to create clip reason: '
+         message = 'Failer to create clip for video id# ' + result[:video_id] + ' reason: 'unless result[:video_id].nil?
+
+         EncodingLib::Logger.log message + e.message
+
+         return false, e.message
       end
-      video.status = Video::STATUS_DEMUX_DONE
-      video.save
-      EncodingLib::Logger.log "Created demux audio(encoding_id #{result[:demux_audio][:encoding_id]}) and video #{result[:demux_video][:encoding_id]}) for video id# #{video.id.to_s}"
 
-      true
+      return true, nil
     end
 
     private

@@ -1,24 +1,14 @@
-require "encoding_lib_demux"
+require "encoding_lib_worker"
 class CallbacksController < ApplicationController
 
   def demux
+      status, message = EncodingLib::Worker.callback :demux, params
+      unless status == true
+        render status: :bad_request, json: { error: message }, layout: false
 
-    begin
-      status = EncodingLib::Demux.demux_callback params
-    rescue Exception => exeption
-      render status: :bad_request, json: { error: exeption.message }, layout: false
+        return
+      end
 
-      return
-    end
-    if status != true
-      render :status => :bad_request, json: {:error => "Bad request"}, layout: false
-
-      return
-    else
-      render :status => :ok, layout: false
-
-      return
-    end
-
+      render :status => :ok, json:{ error: '' }, layout: false
   end
 end
