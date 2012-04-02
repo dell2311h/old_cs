@@ -7,13 +7,20 @@ module EncodingLib
       case action
       when :add_media
         response = self.instance.request '/medias', params, :post
+
+        return response.id
+      when 'demux'
+        send_params = {:command => "demux"}
+        action = '/demux/' + params[:encoding_id] + '/encode'
+        response = self.instance.request action, send_params, :post
+        
+        return true unless response.id.nil?
+        
+        return false
+
       else
         raise 'unknown action'
       end
-
-      parsed_response = self.instance.parse_result response
-
-      parsed_response
     end
 
     def self.instance
@@ -38,7 +45,7 @@ module EncodingLib
           raise 'unknown request method'
         end
 
-        raise 'Request unsuccessfull' if response != Net::HTTPSuccess
+        raise 'Request "' + action + '" unsuccessfull params(' + (params.to_json) + ')' if response != Net::HTTPSuccess
         response = response.get_response
 
         response

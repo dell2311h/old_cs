@@ -7,21 +7,22 @@ module EncodingLib
     def self.process_media video
 
       if video.encoding_id.nil?
-        video.encoding_id = self.add_media video
-        video.save
+        status = self.add_media video
+
+        return false if status == false
       end
 
-      EncodingLib::Logger.log 'Demuxing video id# ' + video_to_demux.id.to_s
-      status EncodingLib::Api.send_request 'demux', video.encoding_id
+      begin
+        status = EncodingLib::Api.send_request 'demux', { :encoding_id => video.encoding_id}
 
-      if status == "OK"
-        EncodingLib::Logger.log 'Video video id# ' + video_to_demux.id.to_s + 'was sent to demux'
+        raise 'Server returned error' unless status == true
+
+        EncodingLib::Logger.log 'Video id# ' + video.id.to_s + ' was send to demux'
         video.status = Video::STATUS_DEMUX_WORKING
         video.save
-      else
-        EncodingLib::Logger.log 'Failes to demux video id# ' + video_to_demux.id.to_s
+      rescue Exception => e
+        EncodingLib::Logger.log 'Failed to send video id# ' + video.id.to_s + ' to demux reason: ' + e.message
       end
-
     end
 
     def self.demux_callback result
@@ -62,10 +63,18 @@ module EncodingLib
 
 
       def self.add_media video
-        EncodingLib::Logger.log 'Adding media id# ' + video.id.to_s
-        encoding_id = EncodingLib::Api.send_request :add_media, {:media => {:source => video.clip.url} }
+        begin
+          encoding_id = EncodingLib::Api.send_request :add_media, {:media => {:source => video.clip.url} }
+          video.encoding_id = encoding_id
+          video.save
+          EncodingLib::Logger.log 'Added video id# ' + video.id.to_s + ' to encoding, encoding_id ' .encoding_id
 
-        encoding_id
+          return true
+        rescue Exception => e
+          EncodingLib::Logger.log 'Failed to add media id# ' + video.id.to_s + ' reason: ' + e.message
+
+          return false
+        end
       end
   end
 end
