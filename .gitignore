@@ -25,3 +25,4 @@ public/system/clips/**
 !public/system/clips/.gitkeep
 public/system/avatars/**
 public/system/images/**
+config/initializers/paperclip.rb

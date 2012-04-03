@@ -8,10 +8,8 @@ class Video < ActiveRecord::Base
   STATUS_STREAMING_DONE = 4
 
   attr_accessible :clip, :event_id, :user_id, :name
-  has_attached_file :clip,
-                    :storage => :s3,
-                    :s3_credentials => "#{Rails.root.to_s}/config/s3.yml",
-                    :path => "/:style/:id/:filename"
+  has_attached_file :clip, PAPERCLIP_STORAGE_OPTIONS
+
 
   validates :user_id , :event_id, :presence => true
   validates :user_id, :event_id, :numericality => { :only_integer => true }
