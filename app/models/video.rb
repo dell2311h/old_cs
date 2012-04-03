@@ -34,6 +34,7 @@ class Video < ActiveRecord::Base
   has_many :clips, dependent: :destroy
   has_one  :demux_video, :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_DEMUX_VIDEO }
   has_one  :demux_audio, :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_DEMUX_AUDIO }
+  has_one  :streaming,   :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_STREAMING }
   
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
 
@@ -47,6 +48,10 @@ class Video < ActiveRecord::Base
       "delete_url" => "/videos/#{self.id}",
       "delete_type" => "DELETE"
     }
+  end
+
+  def self.find_by_clip_encoding_id encoding_id
+    Video.joins(:clips).where('clips.encoding_id' => encoding_id).first
   end
 
 end

@@ -13,7 +13,7 @@ module EncodingLib
       end
 
       begin
-        status = EncodingLib::Api.send_request 'demux', { :encoding_id => video.encoding_id}
+        status = EncodingLib::Api.send_request :demux, { :encoding_id => video.encoding_id}
 
         raise 'Server returned error' unless status == true
 
@@ -43,7 +43,7 @@ module EncodingLib
 
         raise 'demux_audio or demux_video not_set' if media.nil?
         raise 'media source not set' if media[:source].nil?
-        raise 'media audio encoding_id  not set' if media[:encoding_id].nil?
+        raise 'media encoding_id not set' if media[:encoding_id].nil?
 
         video = Video.find result[:video_id]
         raise 'video not found' if video.nil?
