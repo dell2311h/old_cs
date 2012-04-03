@@ -9,6 +9,8 @@ module EncodingLib
       status, message = EncodingLib::Demux.demux_callback params
 
       return status, message
+    when :streaming
+      status, message = EncodingLib::Streaming.streaming_callback params
     else
 
       return false, "unknown action"
@@ -23,6 +25,8 @@ module EncodingLib
           case media.status
             when Video::STATUS_NEW
               EncodingLib::Demux.process_media media
+            when Video::STATUS_DEMUX_DONE
+              EncodingLib::Streaming.process_media media
           end
 
         end

@@ -9,7 +9,7 @@ module EncodingLib
         response = self.instance.request '/medias', params, :post
 
         return response.id
-      when 'demux'
+      when :demux
         send_params = {:command => "demux"}
         action = '/demux/' + params[:encoding_id] + '/encode'
         response = self.instance.request action, send_params, :post
@@ -17,7 +17,14 @@ module EncodingLib
         return true unless response.id.nil?
         
         return false
-
+      when :streaming
+        send_params = {:command => "streaming"}
+        action = '/demux/' + params[:encoding_id] + '/encode'
+        response = self.instance.request action, send_params, :post
+        
+        return true unless response.id.nil?
+        
+        return false
       else
         raise 'unknown action'
       end
