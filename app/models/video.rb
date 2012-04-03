@@ -1,4 +1,6 @@
 class Video < ActiveRecord::Base
+
+  STATUS_UPLOADING = -1
   STATUS_NEW = 0
   STATUS_DEMUX_WORKING = 1
   STATUS_DEMUX_DONE = 2
