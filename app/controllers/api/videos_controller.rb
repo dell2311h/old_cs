@@ -42,7 +42,7 @@ class Api::VideosController < Api::BaseController
   end
   
   def update
-    @video = current_user.videos.find(params[:id])
+    @video = @current_user.videos.find params[:id]
     @video.update_attributes!(params[:video])
     render status: :accepted, action: :show
   end
