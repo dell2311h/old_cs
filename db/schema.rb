@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120403141411) do
+ActiveRecord::Schema.define(:version => 20120403153229) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -136,6 +136,7 @@ ActiveRecord::Schema.define(:version => 20120403141411) do
     t.datetime "clip_updated_at"
     t.string   "encoding_id"
     t.integer  "status",            :default => -1
+    t.integer  "last_chunk_id"
   end
 
 end

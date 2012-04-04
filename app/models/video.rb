@@ -8,16 +8,14 @@ class Video < ActiveRecord::Base
   STATUS_STREAMING_DONE = 4
 
   attr_accessible :clip, :event_id, :user_id, :name
-  has_attached_file :clip,
-                    :storage => :s3,
-                    :s3_credentials => "#{Rails.root.to_s}/config/s3.yml",
-                    :path => "/:style/:id/:filename"
+  has_attached_file :clip, PAPERCLIP_STORAGE_OPTIONS
+
 
   validates :user_id , :event_id, :presence => true
   validates :user_id, :event_id, :numericality => { :only_integer => true }
 
-  validates_attachment_presence :clip
-  validates_attachment_content_type :clip, :content_type => ['video/mp4', 'video/quicktime']
+  validates_attachment_presence :clip, :unless => Proc.new { |video| video.status == STATUS_UPLOADING }
+  validates_attachment_content_type :clip, :content_type => ['video/mp4', 'video/quicktime'], :unless => Proc.new { |video| video.status == STATUS_UPLOADING }
 
   before_create do |video|
     video.name = video.clip_file_name if video.name.blank?
@@ -54,6 +52,39 @@ class Video < ActiveRecord::Base
 
   def self.find_by_clip_encoding_id encoding_id
     Video.joins(:clips).where('clips.encoding_id' => encoding_id).first
+  end
+  
+  #----- Chunked uploading ---------------
+  
+  after_create do |video| 
+    # Prepare upload folder
+    video.make_uploads_folder
+  end
+  
+  after_destroy do |video|  
+    # Remove uploaded data
+    video.remove_attached_data 
+  end
+  
+  TMPFILES_DIR = "#{::Rails.root}/tmp/uploads"
+  UPLOADS_FOLDER = TMPFILES_DIR + "/videos"
+  
+  def directory_fullpath
+    UPLOADS_FOLDER + "/#{self.id}"
+  end
+  
+  def tmpfile_fullpath
+    "#{directory_fullpath}/tmpfile"
+  end
+  
+  def make_uploads_folder
+    Dir.mkdir(TMPFILES_DIR) unless File.directory? TMPFILES_DIR # create dir if it is not exist
+    Dir.mkdir(UPLOADS_FOLDER) unless File.directory? UPLOADS_FOLDER # create dir if it is not exist          
+    Dir.mkdir(self.directory_fullpath) unless File.directory? self.directory_fullpath # create dir if it is not exist   
+  end
+  
+  def remove_attached_data
+    FileUtils.rm_rf self.directory_fullpath
   end
 
 end
