@@ -7,7 +7,7 @@ class Video < ActiveRecord::Base
   STATUS_STREAMING_WORKING = 3
   STATUS_STREAMING_DONE = 4
 
-  attr_accessible :clip, :event_id, :user_id
+  attr_accessible :clip, :event_id, :user_id, :uuid, :tags, :songs, :thumbnail
   has_attached_file :clip, PAPERCLIP_STORAGE_OPTIONS
 
   has_attached_file :thumbnail, {:styles => { :iphone => "200x200>" }}.merge(PAPERCLIP_STORAGE_OPTIONS)
@@ -50,9 +50,16 @@ class Video < ActiveRecord::Base
     Video.joins(:clips).where('clips.encoding_id' => encoding_id).first
   end
   
-  def self.create_multiple_by params
-    Video.create params[:videos]
+
+  # Overriding "tags=" method for adding tags by their name
+  def tags=(tags_names)
+    tags_names.each do |tag_name|
+      tag = Tag.find_or_create_by_name(tag_name.downcase)
+      self.tags << tag if !self.tags.find_by_id(tag)
+    end
+    self.tags.map(&:name)
   end
+
   
   #----- Chunked uploading ---------------
       
