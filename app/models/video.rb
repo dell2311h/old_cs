@@ -10,6 +10,8 @@ class Video < ActiveRecord::Base
   attr_accessible :clip, :event_id, :user_id, :name
   has_attached_file :clip, PAPERCLIP_STORAGE_OPTIONS
 
+  has_attached_file :thumbnail, {:styles => { :iphone => "200x200>" }}.merge(PAPERCLIP_STORAGE_OPTIONS)
+  validates_attachment_content_type :thumbnail, :content_type => ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif']
 
   validates :user_id , :event_id, :presence => true
   validates :user_id, :event_id, :numericality => { :only_integer => true }
@@ -54,8 +56,12 @@ class Video < ActiveRecord::Base
     Video.joins(:clips).where('clips.encoding_id' => encoding_id).first
   end
   
-  #----- Chunked uploading ---------------
+  def create_multiple_by params
+    
+  end
   
+  #----- Chunked uploading ---------------
+      
   after_create do |video| 
     # Prepare upload folder
     video.make_uploads_folder
