@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120404145422) do
+ActiveRecord::Schema.define(:version => 20120404151217) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -127,7 +127,6 @@ ActiveRecord::Schema.define(:version => 20120404145422) do
   create_table "videos", :force => true do |t|
     t.integer  "user_id"
     t.integer  "event_id"
-    t.string   "name"
     t.datetime "created_at",                             :null => false
     t.datetime "updated_at",                             :null => false
     t.string   "clip_file_name"

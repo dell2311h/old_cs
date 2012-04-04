@@ -7,7 +7,7 @@ class Video < ActiveRecord::Base
   STATUS_STREAMING_WORKING = 3
   STATUS_STREAMING_DONE = 4
 
-  attr_accessible :clip, :event_id, :user_id, :name
+  attr_accessible :clip, :event_id, :user_id
   has_attached_file :clip, PAPERCLIP_STORAGE_OPTIONS
 
   has_attached_file :thumbnail, {:styles => { :iphone => "200x200>" }}.merge(PAPERCLIP_STORAGE_OPTIONS)
@@ -18,10 +18,6 @@ class Video < ActiveRecord::Base
 
   validates_attachment_presence :clip, :unless => Proc.new { |video| video.status == STATUS_UPLOADING }
   validates_attachment_content_type :clip, :content_type => ['video/mp4', 'video/quicktime'], :unless => Proc.new { |video| video.status == STATUS_UPLOADING }
-
-  before_create do |video|
-    video.name = video.clip_file_name if video.name.blank?
-  end
 
   belongs_to :event
   belongs_to :user
@@ -38,8 +34,6 @@ class Video < ActiveRecord::Base
   has_one  :demux_audio, :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_DEMUX_AUDIO }
   has_one  :streaming,   :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_STREAMING }
   
-  scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
-
   #one convenient method to pass jq_upload the necessary information
   def to_jq_upload
     {
@@ -56,8 +50,8 @@ class Video < ActiveRecord::Base
     Video.joins(:clips).where('clips.encoding_id' => encoding_id).first
   end
   
-  def create_multiple_by params
-    
+  def self.create_multiple_by params
+    Video.create params[:videos]
   end
   
   #----- Chunked uploading ---------------
