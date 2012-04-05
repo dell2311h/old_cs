@@ -57,6 +57,7 @@ devise_for :user, :path => '', :skip => [:registration] do
 
     # me routes
     get 'me' => "users#show"
+    put 'me' => "users#update"
 
   end
 

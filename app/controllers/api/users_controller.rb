@@ -22,17 +22,9 @@ class Api::UsersController < Api::BaseController
   end
 
   def update
-    @user = User.find(params[:id])
-    @status = 400
-    @status = 200 if @user.update_attributes(params[:user])
-  rescue Exception => e
-    @status = 404
-    @user = {error: e.message}
-  ensure
-    # respond_with(@user, :status => @status, :location => nil)
-    # TODO: respond_with always return 204 No Content
-    render :json => @user.to_json, :status => @status
+    @user = current_user
+    @user.update_attributes!(params[:user])
+    render status: :accepted, action: :show
   end
 
 end
-
