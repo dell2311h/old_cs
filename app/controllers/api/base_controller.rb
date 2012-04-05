@@ -13,12 +13,6 @@ class Api::BaseController < ApplicationController
 
   # TODO here should be before_filer which will be set @current_user variable with current API user object
 
-  protected
-
-    def me?
-      request.url =~ /api\/me/
-    end
-
   private
 
     def check_coordinates_format
@@ -29,6 +23,10 @@ class Api::BaseController < ApplicationController
     def auth_check
       @current_user = User.find_by_authentication_token(params[:authentication_token])
       render status: :unauthorized, json: { error: "Authentication failed" } unless @current_user
+    end
+    
+    def me?
+      request.url =~ /api\/me/
     end
 
 end
