@@ -5,13 +5,13 @@ class Api::RelationshipsController < Api::BaseController
   def create
     @user = User.find params[:user_id]
     current_user.follow!(@user)
-    render status: :accepted
+    render status: :created, json: {}
   end
 
   def destroy
     @user = User.find params[:user_id]
     current_user.unfollow!(@user)
-    render status: :accepted
+    render status: :accepted, json: {}
   end
 
 

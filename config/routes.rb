@@ -58,6 +58,8 @@ devise_for :user, :path => '', :skip => [:registration] do
     # me routes
     get 'me' => "users#show"
     put 'me' => "users#update"
+    post "me/followings" => "relationships#create"
+    delete "me/followings/:user_id" => "relationships#destroy"
 
     #Authentications
     put    "/me/authentications/:provider.json" => "authentications#link"
@@ -71,3 +73,4 @@ devise_for :user, :path => '', :skip => [:registration] do
   root :to => "videos#index"
 
 end
+
