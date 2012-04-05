@@ -18,6 +18,7 @@ class Api::UsersController < Api::BaseController
   end
 
   def show
+    p current_user
     @user = me? ? current_user : User.find(params[:id])
   end
 
