@@ -58,6 +58,9 @@ devise_for :user, :path => '', :skip => [:registration] do
     # me routes
     get 'me' => "users#show"
 
+    #Authentications
+    put    "/me/authentications/:provider.json" => "authentications#link"
+    delete "/me/authentications/:provider.json" => "authentications#destroy"
   end
 
   resources :videos, :only => [:index, :new, :create, :destroy]
