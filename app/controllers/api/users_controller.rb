@@ -11,20 +11,14 @@ class Api::UsersController < Api::BaseController
       raise "Wrong password" unless @user.valid_password? params[:user][:password]
       @user.authentications.create(oauth) unless @user.authentications.find_by_provider_and_uid(oauth[:provider], oauth[:uid]) if oauth
     end
-         
+
     @user.save!
     @token = @user.authentication_token
     render status: :created, action: :show
   end
 
   def show
-    @user = User.find(params[:id])
-    @status = 200
-  rescue Exception => e
-    @status = 404
-    @user = {error: e.message}
-  ensure
-    respond_with(@user, :status => @status, :location => nil)
+    @user = me? ? current_user : User.find(params[:id])
   end
 
   def update
