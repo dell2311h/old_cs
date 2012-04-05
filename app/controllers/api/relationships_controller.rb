@@ -1,4 +1,4 @@
-class Api::FollowingsController < Api::BaseController
+class Api::RelationshipsController < Api::BaseController
 
   before_filter :find_user, :only => [:create, :destroy]
 
