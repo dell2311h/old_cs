@@ -59,7 +59,8 @@ devise_for :user, :path => '', :skip => [:registration] do
   
   resources :videos, :only => [:index, :new, :create, :destroy]
   
-  post "/callbacks/demux"
+  post "/callbacks/:method" => "callbacks#callback"
+  post "/callbacks/:method" => "callbacks#callback"
   
   root :to => "videos#index"
   
