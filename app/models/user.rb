@@ -57,6 +57,20 @@ class User < ActiveRecord::Base
     self.relationships.find_by_followed_id(followed.id).destroy
   end
 
+  # Authentications methods
+  def link_authentication oauth_params
+    oauth = self.authentications.find_or_initialize_by_provider_and_uid oauth_params[:provider], oauth_params[:uid]
+    oauth.update_attributes!({ :uid      => oauth_params[:uid],
+                              :token    => oauth_params[:token],
+                              :provider => oauth_params[:provider],
+                              })
+
+    oauth
+  end
+
+  def unlink_authentication provider
+    Authentication.delete_all([ "provider = ? AND user_id = ?",provider, self.id ])
+  end
 
 end
 
