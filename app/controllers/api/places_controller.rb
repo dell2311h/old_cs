@@ -30,9 +30,9 @@ class Api::PlacesController < Api::BaseController
     end
 
   end
-  
+
   def create
-    @place = @current_user.places.create! params[:place]
+    @place = current_user.places.create! params[:place]
     respond_with @place, :status => :created, :location => nil
   end
 
