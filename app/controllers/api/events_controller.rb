@@ -68,17 +68,17 @@ class Api::EventsController < Api::BaseController
     end
 
   end
-  
+
   def show
     @event = Event.find params[:id]
   end
-  
+
   def create
     if params[:place_id]
-      @place = Place.find(params[:place_id]) 
+      @place = Place.find(params[:place_id])
       params[:event][:place_id] = @place.id
     end
-    @event = @current_user.events.create! params[:event]
+    @event = current_user.events.create! params[:event]
     respond_with @event, :status => :created, :location => nil
   end
 
