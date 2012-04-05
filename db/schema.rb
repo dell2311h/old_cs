@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120403153229) do
+ActiveRecord::Schema.define(:version => 20120405155533) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -73,6 +73,13 @@ ActiveRecord::Schema.define(:version => 20120403153229) do
 
   add_index "places", ["latitude", "longitude"], :name => "index_places_on_latitude_and_longitude"
 
+  create_table "relationships", :force => true do |t|
+    t.integer  "follower_id"
+    t.integer  "followed_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
   create_table "songs", :force => true do |t|
     t.string   "name"
     t.datetime "created_at", :null => false
@@ -127,16 +134,20 @@ ActiveRecord::Schema.define(:version => 20120403153229) do
   create_table "videos", :force => true do |t|
     t.integer  "user_id"
     t.integer  "event_id"
-    t.string   "name"
-    t.datetime "created_at",                        :null => false
-    t.datetime "updated_at",                        :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.string   "clip_file_name"
     t.string   "clip_content_type"
     t.integer  "clip_file_size"
     t.datetime "clip_updated_at"
     t.string   "encoding_id"
-    t.integer  "status",            :default => -1
+    t.integer  "status",                 :default => -1
     t.integer  "last_chunk_id"
+    t.string   "thumbnail_file_name"
+    t.string   "thumbnail_content_type"
+    t.integer  "thumbnail_file_size"
+    t.datetime "thumbnail_updated_at"
+    t.string   "uuid"
   end
 
 end

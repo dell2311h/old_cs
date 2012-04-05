@@ -12,9 +12,6 @@ class Api::BaseController < ApplicationController
   end
 
 
-
-  # TODO here should be before_filer which will be set @current_user variable with current API user object
-
   private
 
     def current_user
@@ -29,7 +26,7 @@ class Api::BaseController < ApplicationController
     def auth_check
       render status: :unauthorized, json: { error: "Authentication failed" } unless current_user
     end
-    
+
     def me?
       request.url =~ /api\/me/
     end
@@ -38,3 +35,4 @@ class Api::BaseController < ApplicationController
 
 
 end
+
