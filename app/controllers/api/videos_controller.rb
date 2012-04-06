@@ -1,6 +1,7 @@
 class Api::VideosController < Api::BaseController
 
-  skip_before_filter :auth_check, :only => [:index, :show]
+  skip_before_filter :auth_check, :only => [:show]
+  skip_before_filter :auth_check, :onlt => [:index], :unless => Proc.new { |c| me? }
 
   def create
     @event = Event.find params[:event_id]
@@ -11,7 +12,7 @@ class Api::VideosController < Api::BaseController
   end
 
   def index
-    @videos = Video.find_videos params
+    @videos = me? ? (Video.for_user current_user) : (Video.find_videos params)
 
     if @videos.count > 0
       @videos = @videos.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)

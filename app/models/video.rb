@@ -35,9 +35,10 @@ class Video < ActiveRecord::Base
   has_one  :demux_video, :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_DEMUX_VIDEO }
   has_one  :demux_audio, :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_DEMUX_AUDIO }
   has_one  :streaming,   :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_STREAMING }
-  
-  scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
+  has_many :likes
 
+  scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
+  scope :for_user, lambda {|user| where("user_id = ?", user.id) }
   #one convenient method to pass jq_upload the necessary information
   def to_jq_upload
     {
@@ -53,7 +54,7 @@ class Video < ActiveRecord::Base
   def self.find_by_clip_encoding_id encoding_id
     Video.joins(:clips).where('clips.encoding_id' => encoding_id).first
   end
-  
+
   def self.find_videos params
     videos = Video
 
@@ -78,34 +79,34 @@ class Video < ActiveRecord::Base
   end
 
   #----- Chunked uploading ---------------
-  
-  after_create do |video| 
+
+  after_create do |video|
     # Prepare upload folder
     video.make_uploads_folder
   end
-  
-  after_destroy do |video|  
+
+  after_destroy do |video|
     # Remove uploaded data
-    video.remove_attached_data 
+    video.remove_attached_data
   end
-  
+
   TMPFILES_DIR = "#{::Rails.root}/tmp/uploads"
   UPLOADS_FOLDER = TMPFILES_DIR + "/videos"
-  
+
   def directory_fullpath
     UPLOADS_FOLDER + "/#{self.id}"
   end
-  
+
   def tmpfile_fullpath
     "#{directory_fullpath}/tmpfile"
   end
-  
+
   def make_uploads_folder
     Dir.mkdir(TMPFILES_DIR) unless File.directory? TMPFILES_DIR # create dir if it is not exist
-    Dir.mkdir(UPLOADS_FOLDER) unless File.directory? UPLOADS_FOLDER # create dir if it is not exist          
-    Dir.mkdir(self.directory_fullpath) unless File.directory? self.directory_fullpath # create dir if it is not exist   
+    Dir.mkdir(UPLOADS_FOLDER) unless File.directory? UPLOADS_FOLDER # create dir if it is not exist
+    Dir.mkdir(self.directory_fullpath) unless File.directory? self.directory_fullpath # create dir if it is not exist
   end
-  
+
   def remove_attached_data
     FileUtils.rm_rf self.directory_fullpath
   end
