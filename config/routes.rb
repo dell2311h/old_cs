@@ -55,9 +55,17 @@ devise_for :user, :path => '', :skip => [:registration] do
     get "/songs" => "songs#index", :as => :songs_list
     get "/events/:event_id/songs" => "songs#index", :as => :event_songs_list
 
+    get "users/:user_id/followings" => "relationships#followings"
+    get "users/:user_id/followers" => "relationships#followers"
+
     # me routes
     get 'me' => "users#show"
     put "/me/coordinates" => "users#update_coordinates"
+    put 'me' => "users#update"
+    get "me/followings" => "relationships#followings"
+    get "me/followers" => "relationships#followers"
+    post "me/followings" => "relationships#create"
+    delete "me/followings/:user_id" => "relationships#destroy"
 
     #Authentications
     put    "/me/authentications/:provider.json" => "authentications#link"
@@ -71,3 +79,4 @@ devise_for :user, :path => '', :skip => [:registration] do
   root :to => "videos#index"
 
 end
+

@@ -33,12 +33,33 @@ class User < ActiveRecord::Base
   has_many :events
   has_many :authentications, :dependent => :destroy
 
+  # Following associations
+  has_many :relationships, foreign_key: "follower_id", dependent: :destroy
+  has_many :followings, through: :relationships, source: :followed
+  has_many :reverse_relationships, :class_name => "Relationship", foreign_key: "followed_id", dependent: :destroy
+  has_many :followers, through: :reverse_relationships, :source => :follower
+
+
   has_attached_file :avatar, :styles => { :medium => "300x300>", :iphone => "200x200>", :thumb => "100x100>" }
 
   accepts_nested_attributes_for :authentications
 
   before_create :reset_authentication_token
 
+  # Followings methods
+  def following?(followed)
+    self.relationships.find_by_followed_id(followed.id)
+  end
+
+  def follow!(followed)
+    self.relationships.create!(:followed_id => followed.id) unless self.following? followed
+  end
+
+  def unfollow!(followed)
+    self.relationships.find_by_followed_id(followed.id).destroy
+  end
+
+  # Authentications methods
   def link_authentication oauth_params
     oauth = self.authentications.find_or_initialize_by_provider_and_uid oauth_params[:provider], oauth_params[:uid]
     oauth.update_attributes!({ :uid      => oauth_params[:uid],
@@ -59,4 +80,5 @@ class User < ActiveRecord::Base
                               :longitude => coordinates[:longitude]
                               })
   end
+
 end

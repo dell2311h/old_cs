@@ -11,6 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+
 ActiveRecord::Schema.define(:version => 20120406100843) do
 
   create_table "authentications", :force => true do |t|
@@ -72,6 +73,13 @@ ActiveRecord::Schema.define(:version => 20120406100843) do
   end
 
   add_index "places", ["latitude", "longitude"], :name => "index_places_on_latitude_and_longitude"
+
+  create_table "relationships", :force => true do |t|
+    t.integer  "follower_id"
+    t.integer  "followed_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
 
   create_table "songs", :force => true do |t|
     t.string   "name"
