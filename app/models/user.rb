@@ -30,6 +30,7 @@ class User < ActiveRecord::Base
   has_many :places
   has_many :events
   has_many :authentications, :dependent => :destroy
+  has_many :likes
 
   # Following associations
   has_many :relationships, foreign_key: "follower_id", dependent: :destroy
@@ -57,6 +58,15 @@ class User < ActiveRecord::Base
     self.relationships.find_by_followed_id(followed.id).destroy
   end
 
+  def like!(video)
+    self.likes.create!(:video_id => video.id)
+  end
+
+  def unlike!(video)
+    like = self.likes.find_by_video_id(video.id)
+    like.delete unless like.nil?
+  end
+
   # Authentications methods
   def link_authentication oauth_params
     oauth = self.authentications.find_or_initialize_by_provider_and_uid oauth_params[:provider], oauth_params[:uid]
@@ -73,4 +83,3 @@ class User < ActiveRecord::Base
   end
 
 end
-

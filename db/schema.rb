@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120405155533) do
+ActiveRecord::Schema.define(:version => 20120406102644) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -52,6 +52,13 @@ ActiveRecord::Schema.define(:version => 20120405155533) do
     t.integer  "image_file_size"
     t.datetime "image_updated_at"
     t.string   "eventful_id"
+  end
+
+  create_table "likes", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "video_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "place_providers", :force => true do |t|
