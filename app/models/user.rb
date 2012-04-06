@@ -46,6 +46,7 @@ class User < ActiveRecord::Base
 
   before_create :reset_authentication_token
 
+
   # Followings methods
   def following?(followed)
     self.relationships.find_by_followed_id(followed.id)
@@ -82,3 +83,4 @@ class User < ActiveRecord::Base
   end
 
 end
+
