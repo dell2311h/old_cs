@@ -18,7 +18,7 @@ class Api::UsersController < Api::BaseController
   end
 
   def show
-    @user = User.with_calculated_counters.find(me? ? current_user.id : params[:id])
+    @user = User.personal_details_by_id(me? ? current_user.id : params[:id])
   end
 
   def update

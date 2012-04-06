@@ -3,7 +3,9 @@ attributes :id, :name, :email, :username, :phone, :age, :dob, :website, :bio, :u
 node(:avatar_url) { |user| user.avatar.url(:thumb) if user.avatar.file? }
 node(:token) { @token } if @token
 
-child :authentications => :authentications do
-  attributes :provider, :uid, :token
+if @user and @user.id == current_user.id
+  child :authentications => :authentications do
+    attributes :provider, :uid, :token
+  end
 end
 

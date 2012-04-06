@@ -52,6 +52,10 @@ class User < ActiveRecord::Base
   # Get all users counts by one query
   scope :with_calculated_counters, select("*, (#{Video.select("COUNT(videos.user_id)").where("users.id = videos.user_id").to_sql}) AS uploaded_videos_count, (#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count,  (#{Relationship.select("COUNT(relationships.followed_id)").where("users.id = relationships.followed_id").to_sql}) AS followers_count, (#{Like.select("COUNT(likes.user_id)").where("users.id = likes.user_id").to_sql}) AS liked_videos_count")
 
+  def self.personal_details_by_id(user_id)
+    User.with_calculated_counters.find user_id
+  end
+
   # Followings methods
   def following?(followed)
     self.relationships.find_by_followed_id(followed.id)
@@ -65,6 +69,7 @@ class User < ActiveRecord::Base
     self.relationships.find_by_followed_id(followed.id).destroy
   end
 
+  # Like methods
   def like!(video)
     self.likes.create!(:video_id => video.id)
   end
