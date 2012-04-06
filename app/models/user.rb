@@ -32,6 +32,7 @@ class User < ActiveRecord::Base
   has_many :places
   has_many :events
   has_many :authentications, :dependent => :destroy
+  has_many :likes
 
   # Following associations
   has_many :relationships, foreign_key: "follower_id", dependent: :destroy
@@ -46,6 +47,7 @@ class User < ActiveRecord::Base
 
   before_create :reset_authentication_token
 
+  scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
 
   # Followings methods
   def following?(followed)
@@ -53,11 +55,20 @@ class User < ActiveRecord::Base
   end
 
   def follow!(followed)
-    self.relationships.create!(:followed_id => followed.id) unless self.following? followed
+    self.relationships.create!(:followed_id => followed.id)
   end
 
   def unfollow!(followed)
     self.relationships.find_by_followed_id(followed.id).destroy
+  end
+
+  def like!(video)
+    self.likes.create!(:video_id => video.id)
+  end
+
+  def unlike!(video)
+    like = self.likes.find_by_video_id(video.id)
+    like.delete unless like.nil?
   end
 
   # Authentications methods
@@ -80,6 +91,15 @@ class User < ActiveRecord::Base
     self.update_attributes!({ :latitude  => coordinates[:latitude],
                               :longitude => coordinates[:longitude]
                               })
+  end
+
+  def self.find_users params
+    users = User
+    if params[:name]
+      users = users.with_name_like(params[:name])
+    end
+
+    users.all
   end
 
 end

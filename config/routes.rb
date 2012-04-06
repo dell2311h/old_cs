@@ -12,9 +12,8 @@ devise_for :user, :path => '', :skip => [:registration] do
   end
 
   namespace :api do
-    post 'users' => 'users#create'
-    get 'users/:id' => 'users#show'
-    put 'users/:id' => 'users#update'
+
+    resources :users, :only => [:index, :create, :show, :update]
 
     post 'user_sessions' => 'user_sessions#create'
 
@@ -66,6 +65,8 @@ devise_for :user, :path => '', :skip => [:registration] do
     get "me/followers" => "relationships#followers"
     post "me/followings" => "relationships#create"
     delete "me/followings/:user_id" => "relationships#destroy"
+    post "me/likes" => "likes#create"
+    delete "me/likes/:video_id" => "likes#destroy"
     get "me/videos" => "videos#index"
 
     #Authentications
@@ -80,4 +81,3 @@ devise_for :user, :path => '', :skip => [:registration] do
   root :to => "videos#index"
 
 end
-
