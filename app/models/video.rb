@@ -37,7 +37,7 @@ class Video < ActiveRecord::Base
   has_one  :streaming,   :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_STREAMING }
   
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
-
+  scope :for_user, lambda {|user| where("user_id = ?", user.id) }
   #one convenient method to pass jq_upload the necessary information
   def to_jq_upload
     {
