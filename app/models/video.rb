@@ -38,7 +38,7 @@ class Video < ActiveRecord::Base
   has_many :likes
 
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
-
+  scope :for_user, lambda {|user| where("user_id = ?", user.id) }
   #one convenient method to pass jq_upload the necessary information
   def to_jq_upload
     {
@@ -53,6 +53,29 @@ class Video < ActiveRecord::Base
 
   def self.find_by_clip_encoding_id encoding_id
     Video.joins(:clips).where('clips.encoding_id' => encoding_id).first
+  end
+
+  def self.find_videos params
+    videos = Video
+
+    if params[:user_id]
+      videos = videos.where(:user_id => params[:user_id])
+    end
+
+    if params[:event_id]
+      videos = videos.where(:event_id => params[:event_id])
+    end
+
+    if params[:song_id]
+      song = Song.find params[:song_id]
+      videos = song.videos
+    end
+
+    if params[:q]
+      videos = Video.with_name_like(params[:q])
+    end
+
+    videos
   end
 
   #----- Chunked uploading ---------------

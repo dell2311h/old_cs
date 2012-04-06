@@ -1,6 +1,6 @@
 class Api::UsersController < Api::BaseController
 
-  skip_before_filter :auth_check, :only => [:create]
+  skip_before_filter :auth_check, :only => [:create, :index]
 
   def create
     oauth = params[:oauth]
@@ -27,4 +27,18 @@ class Api::UsersController < Api::BaseController
     render status: :accepted, action: :show
   end
 
+  def update_coordinates
+    current_user.update_coordinates params
+    render status: :accepted, json: {}
+  end
+
+  def index
+    @users = User.find_users params
+    if @users.count < 1
+      render :status => :not_found, json: {}
+      return
+    end
+  end
+
 end
+

@@ -12,9 +12,8 @@ devise_for :user, :path => '', :skip => [:registration] do
   end
 
   namespace :api do
-    post 'users' => 'users#create'
-    get 'users/:id' => 'users#show'
-    put 'users/:id' => 'users#update'
+
+    resources :users, :only => [:index, :create, :show, :update]
 
     post 'user_sessions' => 'user_sessions#create'
 
@@ -60,6 +59,7 @@ devise_for :user, :path => '', :skip => [:registration] do
 
     # me routes
     get 'me' => "users#show"
+    put "/me/coordinates" => "users#update_coordinates"
     put 'me' => "users#update"
     get "me/followings" => "relationships#followings"
     get "me/followers" => "relationships#followers"
@@ -67,10 +67,11 @@ devise_for :user, :path => '', :skip => [:registration] do
     delete "me/followings/:user_id" => "relationships#destroy"
     post "me/likes" => "likes#create"
     delete "me/likes/:video_id" => "likes#destroy"
+    get "me/videos" => "videos#index"
 
     #Authentications
-    put    "/me/authentications/:provider.json" => "authentications#link"
-    delete "/me/authentications/:provider.json" => "authentications#destroy"
+    put    "/me/authentications/:provider" => "authentications#link"
+    delete "/me/authentications/:provider" => "authentications#destroy"
   end
 
   resources :videos, :only => [:index, :new, :create, :destroy]

@@ -25,6 +25,8 @@ class User < ActiveRecord::Base
   validates :age, :numericality => { :only_integer => true }
   validates_inclusion_of :age, :in => 0..150
 
+  validates :latitude, :longitude, :numericality => true
+
   has_many :comments, :dependent => :destroy
   has_many :videos
   has_many :places
@@ -44,6 +46,8 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :authentications
 
   before_create :reset_authentication_token
+
+  scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
 
   # Followings methods
   def following?(followed)
@@ -80,6 +84,22 @@ class User < ActiveRecord::Base
 
   def unlink_authentication provider
     Authentication.delete_all([ "provider = ? AND user_id = ?",provider, self.id ])
+  end
+
+  def update_coordinates coordinates
+    raise "Incorrevt coordinates" if coordinates[:latitude].nil? || coordinates[:longitude].nil?
+    self.update_attributes!({ :latitude  => coordinates[:latitude],
+                              :longitude => coordinates[:longitude]
+                              })
+  end
+
+  def self.find_users params
+    users = User
+    if params[:name]
+      users = users.with_name_like(params[:name])
+    end
+
+    users.all
   end
 
 end
