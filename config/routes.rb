@@ -57,6 +57,7 @@ devise_for :user, :path => '', :skip => [:registration] do
 
     # me routes
     get 'me' => "users#show"
+    put "/me/coordinates" => "users#update_coordinates"
 
     #Authentications
     put    "/me/authentications/:provider.json" => "authentications#link"

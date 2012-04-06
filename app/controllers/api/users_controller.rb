@@ -34,5 +34,10 @@ class Api::UsersController < Api::BaseController
     render :json => @user.to_json, :status => @status
   end
 
+  def update_coordinates
+    current_user.update_coordinates params
+    render status: :accepted, json: {}
+  end
+
 end
 

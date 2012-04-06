@@ -25,6 +25,8 @@ class User < ActiveRecord::Base
   validates :age, :numericality => { :only_integer => true }
   validates_inclusion_of :age, :in => 0..150
 
+  validates :latitude, :longitude, :numericality => true
+
   has_many :comments, :dependent => :destroy
   has_many :videos
   has_many :places
@@ -49,5 +51,12 @@ class User < ActiveRecord::Base
 
   def unlink_authentication provider
     Authentication.delete_all([ "provider = ? AND user_id = ?",provider, self.id ])
+  end
+
+  def update_coordinates coordinates
+    raise "Incorrevt coordinates" if coordinates[:latitude].nil? || coordinates[:longitude].nil?
+    self.update_attributes!({ :latitude  => coordinates[:latitude],
+                              :longitude => coordinates[:longitude]
+                              })
   end
 end
