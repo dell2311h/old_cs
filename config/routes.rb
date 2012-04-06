@@ -66,6 +66,7 @@ devise_for :user, :path => '', :skip => [:registration] do
     get "me/followers" => "relationships#followers"
     post "me/followings" => "relationships#create"
     delete "me/followings/:user_id" => "relationships#destroy"
+    get "me/videos" => "videos#index"
 
     #Authentications
     put    "/me/authentications/:provider" => "authentications#link"
