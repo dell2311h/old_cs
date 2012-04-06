@@ -12,9 +12,8 @@ devise_for :user, :path => '', :skip => [:registration] do
   end
 
   namespace :api do
-    post 'users' => 'users#create'
-    get 'users/:id' => 'users#show'
-    put 'users/:id' => 'users#update'
+
+    resources :users, :only => [:index, :create, :show, :update]
 
     post 'user_sessions' => 'user_sessions#create'
 

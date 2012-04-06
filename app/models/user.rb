@@ -46,6 +46,8 @@ class User < ActiveRecord::Base
 
   before_create :reset_authentication_token
 
+  scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
+
   # Followings methods
   def following?(followed)
     self.relationships.find_by_followed_id(followed.id)
@@ -79,6 +81,15 @@ class User < ActiveRecord::Base
     self.update_attributes!({ :latitude  => coordinates[:latitude],
                               :longitude => coordinates[:longitude]
                               })
+  end
+
+  def self.find_users params
+    users = User
+    if params[:name]
+      users = users.with_name_like(params[:name])
+    end
+
+    users.all
   end
 
 end
