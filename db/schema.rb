@@ -121,6 +121,9 @@ ActiveRecord::Schema.define(:version => 20120406100843) do
     t.datetime "avatar_updated_at"
     t.float    "latitude"
     t.float    "longitude"
+    t.date     "dob"
+    t.string   "website"
+    t.text     "bio"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
