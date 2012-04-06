@@ -11,24 +11,7 @@ class Api::VideosController < Api::BaseController
   end
 
   def index
-    @videos = Video
-
-    if params[:user_id]
-      @videos = @videos.where(:user_id => params[:user_id])
-    end
-
-    if params[:event_id]
-      @videos = @videos.where(:event_id => params[:event_id])
-    end
-
-    if params[:song_id]
-      @song = Song.find params[:song_id]
-      @videos = @song.videos
-    end
-
-    if params[:q]
-      @videos = Video.with_name_like(params[:q])
-    end
+    @videos = Video.find_videos params
 
     if @videos.count > 0
       @videos = @videos.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
