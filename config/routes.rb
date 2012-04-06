@@ -68,8 +68,8 @@ devise_for :user, :path => '', :skip => [:registration] do
     delete "me/followings/:user_id" => "relationships#destroy"
 
     #Authentications
-    put    "/me/authentications/:provider.json" => "authentications#link"
-    delete "/me/authentications/:provider.json" => "authentications#destroy"
+    put    "/me/authentications/:provider" => "authentications#link"
+    delete "/me/authentications/:provider" => "authentications#destroy"
   end
 
   resources :videos, :only => [:index, :new, :create, :destroy]
