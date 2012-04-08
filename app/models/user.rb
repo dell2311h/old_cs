@@ -25,7 +25,7 @@ class User < ActiveRecord::Base
   validates :age, :numericality => { :only_integer => true }
   validates_inclusion_of :age, :in => 0..150
 
-  validates :latitude, :longitude, :numericality => true
+  validates :latitude, :longitude, :numericality => true, :allow_nil => true
 
   has_many :comments, :dependent => :destroy
   has_many :videos
