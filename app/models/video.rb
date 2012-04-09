@@ -39,6 +39,9 @@ class Video < ActiveRecord::Base
 
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
   scope :for_user, lambda {|user| where("user_id = ?", user.id) }
+
+  self.per_page = Settings.paggination.per_page
+
   #one convenient method to pass jq_upload the necessary information
   def to_jq_upload
     {

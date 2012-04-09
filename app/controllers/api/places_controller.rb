@@ -24,7 +24,7 @@ class Api::PlacesController < Api::BaseController
     end
 
     if @places.count > 0
-      @places = @places.paginate(:page => params[:page], :per_page => Settings.paggination.per_page)
+      @places = @places.paginate(:page => params[:page], :per_page => params[:per_page])
     else
       render :status => :not_found, json: {}
     end

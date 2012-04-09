@@ -25,7 +25,7 @@ class Api::SongsController < Api::BaseController
     end
     
     if @songs.count > 0
-      @songs = @songs.paginate(:page => params[:page], :per_page => Settings.paggination.per_page)
+      @songs = @songs.paginate(:page => params[:page], :per_page => params[:per_page])
     else
       render :status => :not_found, json: {}
     end

@@ -21,8 +21,8 @@ class Api::EventsController < Api::BaseController
     end
 
     unless params[:page].nil?
-      params[:page_number] = params[:page]
-      params[:page_size] = Settings.paggination.per_page
+      search_params[:page_number] = params[:page]
+      search_params[:page_size] = params[:per_page] || Settings.paggination.per_page
     end
 
     if search_params.empty?
@@ -62,7 +62,8 @@ class Api::EventsController < Api::BaseController
     end
 
     if @events.count > 0
-      @events = @events.paginate(:page => params[:page], :per_page => Settings.paggination.per_page)
+      p params[:page]
+      @events = @events.paginate(:page => params[:page], :per_page => params[:per_page])
     else
       render :status => :not_found, json: {}
     end

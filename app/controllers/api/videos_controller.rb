@@ -15,7 +15,7 @@ class Api::VideosController < Api::BaseController
     @videos = me? ? (Video.for_user current_user) : (Video.find_videos params)
 
     if @videos.count > 0
-      @videos = @videos.paginate(:page => params[:page], :per_page => Settings.paggination.per_page)
+      @videos = @videos.paginate(:page => params[:page], :per_page => params[:per_page])
     else
       render :status => :not_found, json: {}
     end
