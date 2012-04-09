@@ -22,8 +22,7 @@ class User < ActiveRecord::Base
 
   validates :username, :email, :uniqueness => true
 
-  validates :age, :numericality => { :only_integer => true }
-  validates_inclusion_of :age, :in => 0..150
+  validates :dob, presence: true
 
   validates :latitude, :longitude, :numericality => true, :allow_nil => true
 

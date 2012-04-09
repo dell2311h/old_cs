@@ -1,0 +1,12 @@
+# production or development server Paperclip attachment config
+PAPERCLIP_STORAGE_OPTIONS = { :storage => :s3,
+                              :bucket =>  "crowdsync-production",
+                              :path => "/:style/:id/:filename",
+                              :s3_credentials => { :access_key_id => "",
+                                                   :secret_access_key => "",
+                                                 }
+                            }
+
+# Paperclip attachment config for developer's machine (Set to local file storage)
+
+PAPERCLIP_STORAGE_OPTIONS = { }
