@@ -3,6 +3,9 @@ class Api::LikesController < Api::BaseController
   before_filter :find_video, :only => [:create, :destroy]
 
   def index
+    @user = me? ? current_user : User.find(params[:user_id])
+    @videos = @user.liked_videos
+    render status: :ok, :template => "api/videos/index"
   end
 
   def create

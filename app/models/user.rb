@@ -22,8 +22,7 @@ class User < ActiveRecord::Base
 
   validates :username, :email, :uniqueness => true
 
-  validates :age, :numericality => { :only_integer => true }
-  validates_inclusion_of :age, :in => 0..150
+  validates :dob, presence: true
 
   validates :latitude, :longitude, :numericality => true, :allow_nil => true
 
@@ -33,6 +32,7 @@ class User < ActiveRecord::Base
   has_many :events
   has_many :authentications, :dependent => :destroy
   has_many :likes
+  has_many :liked_videos, :through => :likes, :source => :video
 
   # Following associations
   has_many :relationships, foreign_key: "follower_id", dependent: :destroy
@@ -111,4 +111,3 @@ class User < ActiveRecord::Base
   end
 
 end
-
