@@ -5,7 +5,7 @@ class FoursquarePlace
     raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
     check_coordinates params[:latitude], params[:longitude]
     search_params[:ll] = "#{params[:latitude]},#{params[:longitude]}"
-    search_params[:radius] = self.cast_radius SEARCH_RADIUS
+    search_params[:radius] = self.cast_radius Settings.search.radius
 
     if params[:place_name]
       search_params[:query] = params[:place_name]
@@ -54,8 +54,8 @@ class FoursquarePlace
 
     def self.foursuare_api
       if @@foursquare_api.nil?
-         @@foursquare_api = Foursquare2::Client.new(:client_id     => Crowdsync::Application.config.foursuare_client_id,
-                                                    :client_secret => Crowdsync::Application.config.foursuare_client_secret)
+         @@foursquare_api = Foursquare2::Client.new(:client_id     => Settings.foursuare.client_id,
+                                                    :client_secret => Settings.foursuare.client_secret)
       end
 
       @@foursquare_api

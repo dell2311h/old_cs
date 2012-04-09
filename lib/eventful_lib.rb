@@ -75,7 +75,7 @@ module EventfulLib
 
     def self.eventful_api
       if @@eventful_api.nil?
-        @@eventful_api = Eventful::API.new Crowdsync::Application.config.eventful_app_key
+        @@eventful_api = Eventful::API.new Settings.eventful.app_key
       end
 
       @@eventful_api

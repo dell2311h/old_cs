@@ -8,7 +8,7 @@ class Video < ActiveRecord::Base
   STATUS_STREAMING_DONE = 4
 
   attr_accessible :clip, :event_id, :user_id, :name
-  has_attached_file :clip, PAPERCLIP_STORAGE_OPTIONS
+  has_attached_file :clip, Settings.paperclip.storage_options
 
 
   validates :user_id , :event_id, :presence => true

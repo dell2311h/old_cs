@@ -7,7 +7,7 @@ class Api::EventsController < Api::BaseController
     if params[:nearby]
       raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
       check_coordinates_format
-      search_params[:within] = SEARCH_RADIUS
+      search_params[:within] = Settings.search.radius
       search_params[:latitude] = params[:latitude]
       search_params[:longitude] = params[:longitude]
     end
@@ -22,7 +22,7 @@ class Api::EventsController < Api::BaseController
 
     unless params[:page].nil?
       params[:page_number] = params[:page]
-      params[:page_size] = ITEMS_PER_PAGE
+      params[:page_size] = Settings.paggination.per_page
     end
 
     if search_params.empty?
@@ -50,7 +50,7 @@ class Api::EventsController < Api::BaseController
     if params[:nearby]
       raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
       check_coordinates_format
-      @events = @events.nearby [params[:latitude], params[:longitude]], SEARCH_RADIUS
+      @events = @events.nearby [params[:latitude], params[:longitude]], Settings.search.radius
     end
 
     if params[:date]
@@ -62,7 +62,7 @@ class Api::EventsController < Api::BaseController
     end
 
     if @events.count > 0
-      @events = @events.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
+      @events = @events.paginate(:page => params[:page], :per_page => Settings.paggination.per_page)
     else
       render :status => :not_found, json: {}
     end

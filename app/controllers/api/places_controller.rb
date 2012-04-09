@@ -16,7 +16,7 @@ class Api::PlacesController < Api::BaseController
     if params[:nearby]
       raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
       check_coordinates_format
-      @places = @places.near [params[:latitude], params[:longitude]], SEARCH_RADIUS, :order => :distance
+      @places = @places.near [params[:latitude], params[:longitude]], Settings.search.radius, :order => :distance
     end
 
     if query_str = params[:place_name] || params[:q]
@@ -24,7 +24,7 @@ class Api::PlacesController < Api::BaseController
     end
 
     if @places.count > 0
-      @places = @places.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
+      @places = @places.paginate(:page => params[:page], :per_page => Settings.paggination.per_page)
     else
       render :status => :not_found, json: {}
     end

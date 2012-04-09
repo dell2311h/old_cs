@@ -4,7 +4,7 @@ class VideosController < ApplicationController
 
 
   def index
-    @videos = current_user.videos.order("created_at DESC").paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
+    @videos = current_user.videos.order("created_at DESC").paginate(:page => params[:page], :per_page => Settings.paggination.per_page)
   end
 
   def new

@@ -26,3 +26,4 @@ public/system/clips/**
 public/system/avatars/**
 public/system/images/**
 config/initializers/paperclip.rb
+config/application.yml
