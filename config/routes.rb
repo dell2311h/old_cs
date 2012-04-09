@@ -57,6 +57,9 @@ devise_for :user, :path => '', :skip => [:registration] do
     get "users/:user_id/followings" => "relationships#followings"
     get "users/:user_id/followers" => "relationships#followers"
 
+    # Likes
+    get "users/:user_id/likes" => "likes#index"
+
     # me routes
     get 'me' => "users#show"
     put "/me/coordinates" => "users#update_coordinates"
@@ -65,6 +68,7 @@ devise_for :user, :path => '', :skip => [:registration] do
     get "me/followers" => "relationships#followers"
     post "me/followings" => "relationships#create"
     delete "me/followings/:user_id" => "relationships#destroy"
+    get "me/likes" => "likes#index"
     post "me/likes" => "likes#create"
     delete "me/likes/:video_id" => "likes#destroy"
     get "me/videos" => "videos#index"
