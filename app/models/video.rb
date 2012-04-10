@@ -13,7 +13,7 @@ class Video < ActiveRecord::Base
   has_attached_file :thumbnail, {:styles => { :iphone => "200x200>" }}.merge(PAPERCLIP_STORAGE_OPTIONS)
   validates_attachment_content_type :thumbnail, :content_type => ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif']
 
-  validates :user_id , :event_id, :presence => true
+  validates :user_id , :event_id, :uuid, :presence => true
   validates :user_id, :event_id, :numericality => { :only_integer => true }
 
   validates_attachment_presence :clip, :unless => Proc.new { |video| video.status == STATUS_UPLOADING }
@@ -130,7 +130,7 @@ class Video < ActiveRecord::Base
 
   def set_chunk_id! chunk_id
     raise "Invalid chunk id!" unless self.last_chunk_id + 1 == chunk_id
-    self.update_attribute(last_chunk_id: chunk_id)
+    self.update_attribute :last_chunk_id, chunk_id
   end
 
 end
