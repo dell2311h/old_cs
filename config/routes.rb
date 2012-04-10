@@ -78,6 +78,10 @@ Crowdsync::Application.routes.draw do
     #Authentications
     put    "/me/authentications/:provider" => "authentications#link"
     delete "/me/authentications/:provider" => "authentications#destroy"
+
+    # Chunked uploads
+    post "videos/:id/chunks" => "videos#append_chunk"
+    put "videos/:id/finalize" => "videos#finalize_upload"
   end
 
   resources :videos, :only => [:index, :new, :create, :destroy]
@@ -87,3 +91,4 @@ Crowdsync::Application.routes.draw do
   root :to => "videos#index"
 
 end
+

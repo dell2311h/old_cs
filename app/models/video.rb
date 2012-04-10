@@ -94,12 +94,12 @@ class Video < ActiveRecord::Base
 
   after_create do |video|
     # Prepare upload folder
-    video.make_uploads_folder
+    video.make_uploads_folder!
   end
 
   after_destroy do |video|
     # Remove uploaded data
-    video.remove_attached_data
+    video.remove_attached_data!
   end
 
   TMPFILES_DIR = "#{::Rails.root}/tmp/uploads"
@@ -113,17 +113,17 @@ class Video < ActiveRecord::Base
     "#{directory_fullpath}/tmpfile"
   end
 
-  def make_uploads_folder
+  def make_uploads_folder!
     Dir.mkdir(TMPFILES_DIR) unless File.directory? TMPFILES_DIR # create dir if it is not exist
     Dir.mkdir(UPLOADS_FOLDER) unless File.directory? UPLOADS_FOLDER # create dir if it is not exist
     Dir.mkdir(self.directory_fullpath) unless File.directory? self.directory_fullpath # create dir if it is not exist
   end
 
-  def remove_attached_data
+  def remove_attached_data!
     FileUtils.rm_rf self.directory_fullpath
   end
 
-  def append_chunk_to_file chunk_id, chunk_binary
+  def append_chunk_to_file! chunk_id, chunk_binary
     raise "Upload already finalized" unless self.status == STATUS_UPLOADING
     self.set_chunk_id! chunk_id
     File.open(self.tmpfile_fullpath, 'ab') { |file| file.write(chunk_binary) }
@@ -136,6 +136,10 @@ class Video < ActiveRecord::Base
 
   def tmpfile_md5_checksum
     Digest::MD5.hexdigest(File.read(self.tmpfile_fullpath))
+  end
+
+  def tmpfile_size
+    File.size self.tmpfile_fullpath
   end
 
   def finalize_upload_by_checksum! uploaded_file_checksum
