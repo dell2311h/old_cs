@@ -1,5 +1,7 @@
 module RemoteUser
 
+  attr :uid, :token
+
   def self.create provider, uid, token
     raise "Not implemented" unless self.class == "Module" || self.name == "RemoteUser"
     provider_class = @provider_classes[provider.to_sym]
@@ -9,14 +11,12 @@ module RemoteUser
   end
 
   def initialize(uid, token = nil)
-   raise 'uid not set' if uid.nil?
-   @uid   = uid
-   @token = token
-  end   
+    raise 'uid not set' if uid.nil?
+    @uid   = uid
+    @token = token
+  end
 
-  protected
-    @uid
-    @token
+  protected :uid, :token
 
   private
     @provider_classes = { facebook:   Remote::FacebookUser,
@@ -26,3 +26,4 @@ module RemoteUser
                      }
 
 end
+
