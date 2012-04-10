@@ -36,6 +36,7 @@ class Video < ActiveRecord::Base
   has_one  :demux_audio, :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_DEMUX_AUDIO }
   has_one  :streaming,   :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_STREAMING }
   has_many :likes
+  has_many :likers, :through => :likes, :source => :user
 
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
   scope :for_user, lambda {|user| where("user_id = ?", user.id) }

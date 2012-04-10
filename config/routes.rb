@@ -1,6 +1,6 @@
 Crowdsync::Application.routes.draw do
 
-devise_for :user, :path => '', :skip => [:registration] do
+  devise_for :user, :path => '', :skip => [:registration] do
     scope :controller => 'devise/registrations' do
       get :cancel, :path => 'users/cancel', :as => :cancel_user_registration
       post :create,  :path => 'sign_up', :as => :user_registration
@@ -37,6 +37,7 @@ devise_for :user, :path => '', :skip => [:registration] do
     get  'events/:event_id/videos' => 'videos#index'
     get  'users/:user_id/videos' => 'videos#index'
     get  "songs/:song_id/videos" => "videos#index"
+    get  "videos/:id/likes" => "videos#likes"
 
     constraints :commentable => /videos|places|events/ do
       get "/:commentable/:id/comments" => "comments#index", :as => :comment_create
