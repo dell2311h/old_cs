@@ -13,6 +13,7 @@ gem 'omniauth-foursquare'
 
 gem 'eventfulapi'
 gem 'foursquare2'
+gem 'twitter'
 
 gem 'aws-sdk'
 # Gems used only for assets and not required
@@ -55,3 +56,4 @@ group :test, :development do
   gem "factory_girl_rails", "~> 1.2"
   gem "ffaker"
 end
+
