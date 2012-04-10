@@ -10,17 +10,5 @@ class Authentication < ActiveRecord::Base
     # TODO: Need add verification of token
     true
   end
-  
-  def remote_friends
-    users = RemoteUser.create self.provider, self.uid, self.token
-    friends = users.friends
-
-    ids = []
-    friends.each do |friend|
-      ids.push friend["id"]
-    end
-
-    User.find_by_remote_provider self.provider, ids
-  end
 
 end
