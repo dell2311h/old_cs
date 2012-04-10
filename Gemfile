@@ -10,9 +10,10 @@ gem 'devise'
 gem "omniauth-facebook"
 gem 'omniauth-twitter'
 gem 'omniauth-foursquare'
-
+gem 'koala'
 gem 'eventfulapi'
 gem 'foursquare2'
+gem 'twitter'
 
 gem 'aws-sdk'
 # Gems used only for assets and not required
@@ -33,6 +34,7 @@ gem 'will_paginate', '~> 3.0'
 gem "geocoder"
 gem 'paperclip'
 gem 'rabl' # JSON responses renderer
+gem 'settingslogic'
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
@@ -54,3 +56,4 @@ group :test, :development do
   gem "factory_girl_rails", "~> 1.2"
   gem "ffaker"
 end
+

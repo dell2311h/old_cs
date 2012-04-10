@@ -1,7 +1,0 @@
-# production or development server Paperclip attachment config
-PAPERCLIP_STORAGE_OPTIONS = { :storage => :s3,
-                              :s3_credentials => "#{Rails.root.to_s}/config/s3.yml",
-                              :path => "/:style/:id/:filename" }
-                              
-# Paperclip attachment config for developer's machine (Set to local file storage)
-PAPERCLIP_STORAGE_OPTIONS = { }

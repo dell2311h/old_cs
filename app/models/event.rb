@@ -27,7 +27,9 @@ class Event < ActiveRecord::Base
   scope :nearby, lambda { |coordinates, radius|
     Event.joins(:place).merge(Place.near coordinates, radius, :order => :distance, :select => "places.*, places.name AS place_name, events.*")
   }
-  
+
+  self.per_page = Settings.paggination.per_page
+
   def songs
     Song.select("DISTINCT (songs.id), songs.name").joins(:videos).where("videos.event_id = ?", self.id)
   end

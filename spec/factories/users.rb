@@ -9,6 +9,11 @@ FactoryGirl.define do
     f.phone { Faker::PhoneNumber.phone_number }
     f.age      20
     f.avatar {fixture_file_upload('spec/fixtures/dark_side.jpg', 'image/jpeg', :binary)}
+    f.latitude { Faker::Geolocation.lat }
+    f.longitude { Faker::Geolocation.lng }
+    f.dob { Time.at(rand * Time.now.to_i).to_date }
+    f.website { Faker::Internet.domain_name }
+    f.bio { Faker::Lorem.sentence }
   end
 
   factory :social_user, :parent => :user do |f|

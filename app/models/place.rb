@@ -14,6 +14,7 @@ class Place < ActiveRecord::Base
   
   reverse_geocoded_by :latitude, :longitude
 
+  self.per_page = Settings.paggination.per_page
 
   def eventful_id
     

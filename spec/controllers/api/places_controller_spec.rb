@@ -24,7 +24,7 @@ describe Api::PlacesController do
         @places.should_not_receive(:near)
         @places.should_not_receive(:with_name_like)
         @places.should_receive(:count).and_return(2)
-        @places.should_receive(:paginate).with(:page => params[:page], :per_page => ITEMS_PER_PAGE).and_return(@result_array)
+        @places.should_receive(:paginate).with(:page => params[:page], :per_page => Settings.paggination.per_page).and_return(@result_array)
                
         get :index, :format => :json
         response.should be_ok
@@ -34,7 +34,7 @@ describe Api::PlacesController do
         params = { place_name: "Test Name" }       
         @places.should_receive(:with_name_like).with(params[:place_name]).and_return(@places)
         @places.should_receive(:count).and_return(2)
-        @places.should_receive(:paginate).with(:page => params[:page], :per_page => ITEMS_PER_PAGE).and_return(@result_array)
+        @places.should_receive(:paginate).with(:page => params[:page], :per_page => Settings.paggination.per_page).and_return(@result_array)
         
         get :index, place_name: "Test Name" , :format => :json
         response.should be_ok
@@ -47,9 +47,9 @@ describe Api::PlacesController do
             lng = Faker::Geolocation.lng
             params = { nearby: true, latitude: lat, longitude: lng }
             @places.should_not_receive(:with_name_like)
-            @places.should_receive(:near).with([params[:latitude].to_s, params[:longitude].to_s], SEARCH_RADIUS, :order => :distance).and_return(@places)
+            @places.should_receive(:near).with([params[:latitude].to_s, params[:longitude].to_s], Settings.search.radius, :order => :distance).and_return(@places)
             @places.should_receive(:count).and_return(2)
-            @places.should_receive(:paginate).with(:page => params[:page], :per_page => ITEMS_PER_PAGE).and_return(@result_array)
+            @places.should_receive(:paginate).with(:page => params[:page], :per_page => Settings.paggination.per_page).and_return(@result_array)
             
             get :index, nearby: true, latitude: lat, longitude: lng, :format => :json    
             response.should be_ok         

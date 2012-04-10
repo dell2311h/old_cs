@@ -1,33 +1,13 @@
-require "foursquare_lib"
 class Api::PlacesController < Api::BaseController
 
   skip_before_filter :auth_check, :only => [:index, :remote]
 
   def remote
-    search_params = {}
-    raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
-    check_coordinates_format
-    search_params[:latitude]  = params[:latitude]
-    search_params[:longitude] = params[:longitude]
-    search_params[:radius]    = SEARCH_RADIUS
-
-    if params[:place_name]
-      search_params[:query] = params[:place_name]
-    end
-
-     if search_params.empty?
+    @places = FoursquarePlace.find params
+    if @places.empty?
       respond_with [], :status => :not_found
       return
     end
-
-    places = ForsquareLib::Api.find_places search_params
-
-    if places.empty?
-      respond_with [], :status => :not_found
-      return
-    end
-
-    respond_with places, :status => :ok, :location => nil
   end
 
   def index
@@ -36,7 +16,7 @@ class Api::PlacesController < Api::BaseController
     if params[:nearby]
       raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
       check_coordinates_format
-      @places = @places.near [params[:latitude], params[:longitude]], SEARCH_RADIUS, :order => :distance
+      @places = @places.near [params[:latitude], params[:longitude]], Settings.search.radius, :order => :distance
     end
 
     if query_str = params[:place_name] || params[:q]
@@ -44,15 +24,15 @@ class Api::PlacesController < Api::BaseController
     end
 
     if @places.count > 0
-      @places = @places.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
+      @places = @places.paginate(:page => params[:page], :per_page => params[:per_page])
     else
       render :status => :not_found, json: {}
     end
 
   end
-  
+
   def create
-    @place = @current_user.places.create! params[:place]
+    @place = current_user.places.create! params[:place]
     respond_with @place, :status => :created, :location => nil
   end
 

@@ -7,7 +7,7 @@ class Api::EventsController < Api::BaseController
     if params[:nearby]
       raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
       check_coordinates_format
-      search_params[:within] = SEARCH_RADIUS
+      search_params[:within] = Settings.search.radius
       search_params[:latitude] = params[:latitude]
       search_params[:longitude] = params[:longitude]
     end
@@ -21,8 +21,8 @@ class Api::EventsController < Api::BaseController
     end
 
     unless params[:page].nil?
-      params[:page_number] = params[:page]
-      params[:page_size] = ITEMS_PER_PAGE
+      search_params[:page_number] = params[:page]
+      search_params[:page_size] = params[:per_page] || Settings.paggination.per_page
     end
 
     if search_params.empty?
@@ -50,7 +50,7 @@ class Api::EventsController < Api::BaseController
     if params[:nearby]
       raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
       check_coordinates_format
-      @events = @events.nearby [params[:latitude], params[:longitude]], SEARCH_RADIUS
+      @events = @events.nearby [params[:latitude], params[:longitude]], Settings.search.radius
     end
 
     if params[:date]
@@ -62,23 +62,24 @@ class Api::EventsController < Api::BaseController
     end
 
     if @events.count > 0
-      @events = @events.paginate(:page => params[:page], :per_page => ITEMS_PER_PAGE)
+      p params[:page]
+      @events = @events.paginate(:page => params[:page], :per_page => params[:per_page])
     else
       render :status => :not_found, json: {}
     end
 
   end
-  
+
   def show
     @event = Event.find params[:id]
   end
-  
+
   def create
     if params[:place_id]
-      @place = Place.find(params[:place_id]) 
+      @place = Place.find(params[:place_id])
       params[:event][:place_id] = @place.id
     end
-    @event = @current_user.events.create! params[:event]
+    @event = current_user.events.create! params[:event]
     respond_with @event, :status => :created, :location => nil
   end
 

@@ -59,7 +59,7 @@ module EncodingLib
     end
 
     def initialize
-      uri = URI.parse(Crowdsync::Application.config.encding_url)
+      uri = URI.parse(Settings.encoding.url)
       @base_url = uri.host
       @port     = uri.port
     end

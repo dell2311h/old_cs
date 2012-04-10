@@ -24,7 +24,7 @@ describe Api::EventsController do
         @events.should_not_receive(:order_by_video_count)
         @events.should_not_receive(:nearby)
         @events.should_receive(:count).and_return(2)
-        @events.should_receive(:paginate).with(:page => params[:page], :per_page => ITEMS_PER_PAGE).and_return(@result_array)
+        @events.should_receive(:paginate).with(:page => params[:page], :per_page => Settings.paggination.per_page).and_return(@result_array)
                
         get :index, :format => :json
         response.should be_ok
@@ -35,7 +35,7 @@ describe Api::EventsController do
         @events.should_receive(:order_by_video_count).and_return(@events)
         @events.should_not_receive(:nearby)
         @events.should_receive(:count).and_return(2)
-        @events.should_receive(:paginate).with(:page => params[:page], :per_page => ITEMS_PER_PAGE).and_return(@result_array)
+        @events.should_receive(:paginate).with(:page => params[:page], :per_page => Settings.paggination.per_page).and_return(@result_array)
         
         get :index, top: "true", :format => :json
         response.should be_ok
@@ -48,9 +48,9 @@ describe Api::EventsController do
             lng = Faker::Geolocation.lng
             params = { nearby: true, latitude: lat, longitude: lng }
             @events.should_not_receive(:order_by_video_count)
-            @events.should_receive(:nearby).with([params[:latitude].to_s, params[:longitude].to_s], SEARCH_RADIUS).and_return(@events)
+            @events.should_receive(:nearby).with([params[:latitude].to_s, params[:longitude].to_s], Settings.search.radius).and_return(@events)
             @events.should_receive(:count).and_return(2)
-            @events.should_receive(:paginate).with(:page => params[:page], :per_page => ITEMS_PER_PAGE).and_return(@result_array)
+            @events.should_receive(:paginate).with(:page => params[:page], :per_page => Settings.paggination.per_page).and_return(@result_array)
             
             get :index, nearby: true, latitude: lat, longitude: lng, :format => :json    
             response.should be_ok         

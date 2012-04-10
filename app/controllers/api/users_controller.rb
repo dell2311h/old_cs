@@ -1,6 +1,6 @@
 class Api::UsersController < Api::BaseController
 
-  skip_before_filter :auth_check, :only => [:create]
+  skip_before_filter :auth_check, :only => [:create, :index]
 
   def create
     oauth = params[:oauth]
@@ -11,33 +11,34 @@ class Api::UsersController < Api::BaseController
       raise "Wrong password" unless @user.valid_password? params[:user][:password]
       @user.authentications.create(oauth) unless @user.authentications.find_by_provider_and_uid(oauth[:provider], oauth[:uid]) if oauth
     end
-         
+
     @user.save!
     @token = @user.authentication_token
     render status: :created, action: :show
   end
 
   def show
-    @user = User.find(params[:id])
-    @status = 200
-  rescue Exception => e
-    @status = 404
-    @user = {error: e.message}
-  ensure
-    respond_with(@user, :status => @status, :location => nil)
+    @user = User.personal_details_by_id(me? ? current_user.id : params[:id])
   end
 
   def update
-    @user = User.find(params[:id])
-    @status = 400
-    @status = 200 if @user.update_attributes(params[:user])
-  rescue Exception => e
-    @status = 404
-    @user = {error: e.message}
-  ensure
-    # respond_with(@user, :status => @status, :location => nil)
-    # TODO: respond_with always return 204 No Content
-    render :json => @user.to_json, :status => @status
+    @user = current_user
+    @user.update_attributes!(params[:user])
+    render status: :accepted, action: :show
+  end
+
+  def update_coordinates
+    current_user.update_coordinates params
+    render status: :accepted, json: {}
+  end
+
+  def index
+    @users = User.find_users params
+    if @users.count < 1
+      render :status => :not_found, json: {}
+      return
+    end
   end
 
 end
+

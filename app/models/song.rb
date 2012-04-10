@@ -7,5 +7,6 @@ class Song < ActiveRecord::Base
   scope :suggestions_by_name, lambda {|name| where("UPPER(name) LIKE ?", "#{name.to_s.upcase}%") }
   
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
-  
+
+  self.per_page = Settings.paggination.per_page
 end
