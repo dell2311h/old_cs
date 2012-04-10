@@ -124,6 +124,7 @@ class Video < ActiveRecord::Base
   end
 
   def append_chunk_to_file chunk_id, chunk_binary
+    raise "Upload already finalized" unless self.status == STATUS_UPLOADING
     self.set_chunk_id! chunk_id
     File.open(self.tmpfile_fullpath, 'ab') { |file| file.write(chunk_binary) }
   end
@@ -131,6 +132,15 @@ class Video < ActiveRecord::Base
   def set_chunk_id! chunk_id
     raise "Invalid chunk id!" unless self.last_chunk_id + 1 == chunk_id
     self.update_attribute :last_chunk_id, chunk_id
+  end
+
+  def tmpfile_md5_checksum
+    Digest::MD5.hexdigest(File.read(self.tmpfile_fullpath))
+  end
+
+  def finalize_upload_by_checksum! uploaded_file_checksum
+    raise "Invalid file checksum" unless self.tmpfile_md5_checksum == uploaded_file_checksum
+    self.update_attribute :status, STATUS_NEW
   end
 
 end
