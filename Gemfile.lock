@@ -85,6 +85,9 @@ GEM
       thor (~> 0.14)
     json (1.6.5)
     kgio (2.7.2)
+    koala (1.4.0)
+      faraday (~> 0.7.0)
+      multi_json (~> 1.0)
     mail (2.4.1)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
@@ -216,6 +219,7 @@ DEPENDENCIES
   foursquare2
   geocoder
   jquery-rails
+  koala
   mysql2
   omniauth-facebook
   omniauth-foursquare

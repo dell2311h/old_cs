@@ -1,7 +1,7 @@
 class Api::VideosController < Api::BaseController
 
-  skip_before_filter :auth_check, :only => [:show]
-  skip_before_filter :auth_check, :onlt => [:index], :unless => Proc.new { |c| me? }
+  skip_before_filter :auth_check, :only => [:show, :likes]
+  skip_before_filter :auth_check, :only => [:index], :unless => Proc.new { |c| me? }
 
   def create
     @event = Event.find params[:event_id]
@@ -37,5 +37,10 @@ class Api::VideosController < Api::BaseController
     render status: :accepted, json: {}
   end
 
-end
+  def likes
+    @video = Video.find(params[:id])
+    @users = @video.likers
+    render status: :ok, :template => "api/users/index"
+  end
 
+end

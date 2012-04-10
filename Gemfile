@@ -10,7 +10,7 @@ gem 'devise'
 gem "omniauth-facebook"
 gem 'omniauth-twitter'
 gem 'omniauth-foursquare'
-
+gem 'koala'
 gem 'eventfulapi'
 gem 'foursquare2'
 gem 'twitter'
