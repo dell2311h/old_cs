@@ -1,6 +1,6 @@
 module RemoteUser
 
-  attr :uid, :token
+  attr_reader :uid, :token
 
   def self.create provider, uid, token
     raise "Not implemented" unless self.class == "Module" || self.name == "RemoteUser"
@@ -15,8 +15,6 @@ module RemoteUser
     @uid   = uid
     @token = token
   end
-
-  protected :uid, :token
 
   private
     @provider_classes = { facebook:   Remote::FacebookUser,
