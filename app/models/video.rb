@@ -141,8 +141,16 @@ class Video < ActiveRecord::Base
     FileUtils.rm_rf self.directory_fullpath
   end
 
-  def append_chunk_to_file! chunk_id, chunk_binary
-    raise "Upload already finalized" unless self.status == STATUS_UPLOADING
+  # Wrapper for http data
+  def append_chunk_to_file! chunk_params
+    raise "Empty chunk" unless chunk_params
+    raise "Chunk id is empty" unless chunk_params[:id]
+    raise "Chunk data is invalid" unless chunk_params[:data].respond_to?(:tempfile)
+    self.append_binary_to_file! chunk_params[:id].to_i, chunk_params[:data].tempfile.read
+  end
+
+  def append_binary_to_file! chunk_id, chunk_binary
+    raise "Can't add data to finalized upload" unless self.status == STATUS_UPLOADING
     self.set_chunk_id! chunk_id
     File.open(self.tmpfile_fullpath, 'ab') { |file| file.write(chunk_binary) }
   end
@@ -167,7 +175,7 @@ class Video < ActiveRecord::Base
 
   protected
     def set_chunk_id! chunk_id
-      raise "Invalid chunk id!" unless self.last_chunk_id + 1 == chunk_id.to_i
+      raise "Invalid chunk id!" unless self.last_chunk_id + 1 == chunk_id
       self.update_attribute :last_chunk_id, chunk_id
     end
 
