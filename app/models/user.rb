@@ -131,6 +131,7 @@ class User < ActiveRecord::Base
     params[:videos].each do |video_params|
       songs_params = video_params.delete(:songs)
       video = self.videos.build video_params
+      video.status = Video::STATUS_UPLOADING
       video.event = event if event
       video.save!
       video.add_songs_by(songs_params) if songs_params
