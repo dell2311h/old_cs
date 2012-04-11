@@ -165,9 +165,9 @@ class Video < ActiveRecord::Base
     self.remove_attached_data! # Remove uploaded data
   end
 
-  private
+  protected
     def set_chunk_id! chunk_id
-      raise "Invalid chunk id!" unless self.last_chunk_id + 1 == chunk_id
+      raise "Invalid chunk id!" unless self.last_chunk_id + 1 == chunk_id.to_i
       self.update_attribute :last_chunk_id, chunk_id
     end
 

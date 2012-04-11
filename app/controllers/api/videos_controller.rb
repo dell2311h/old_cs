@@ -45,7 +45,8 @@ class Api::VideosController < Api::BaseController
 
   def append_chunk
     @video = Video.unscoped_find params[:id]
-    @video.append_chunk_to_file! params[:chunk][:id], params[:chunk][:binary]
+    chunk_binary = params[:chunk][:binary].tempfile.read
+    @video.append_chunk_to_file! params[:chunk][:id], chunk_binary
     render status: :ok, action: :show
   end
 
