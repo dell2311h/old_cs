@@ -1,7 +1,7 @@
 class Api::VideosController < Api::BaseController
 
-  skip_before_filter :auth_check, :only => [:show, :likes]
-  skip_before_filter :auth_check, :only => [:index], :unless => Proc.new { |c| me? }
+  skip_before_filter :auth_check, :only => [:show, :likes, :index]
+  before_filter :auth_check_for_me, :only => [:index]
 
   def create
     @videos = current_user.create_videos_by params
@@ -54,6 +54,11 @@ class Api::VideosController < Api::BaseController
     @video.finalize_upload_by_checksum! params[:uploaded_file_checksum]
     render status: :ok, action: :show
   end
+
+  private
+    def auth_check_for_me
+      auth_check if me?
+    end
 
 end
 
