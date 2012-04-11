@@ -4,11 +4,8 @@ class Api::VideosController < Api::BaseController
   skip_before_filter :auth_check, :only => [:index], :unless => Proc.new { |c| me? }
 
   def create
-    @event = Event.find params[:event_id]
-    @video = current_user.videos.build params[:video]
-    @video.event = @event
-    @video.save!
-    render status: :created, action: :show
+    current_user.create_videos_by params
+    render status: :created, action: :index
   end
 
   def index
