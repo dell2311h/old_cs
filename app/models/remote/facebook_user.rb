@@ -1,4 +1,3 @@
-require 'koala'
 class Remote::FacebookUser
   include RemoteUser
   def friends
