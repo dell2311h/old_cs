@@ -129,10 +129,9 @@ class User < ActiveRecord::Base
 
   private
     def remote_friends_for provider
-      authenication = self.authentications.provider provider
-      authenication = authenication.first
-      users = RemoteUser.create provider, authenication.uid, authenication.token
+      authenication = self.authentications.provider(provider).first
+      user = RemoteUser.create provider, authenication.uid, authenication.token
 
-      users.friends
+      user.friends
     end
 end
