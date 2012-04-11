@@ -13,7 +13,7 @@ class Api::VideosController < Api::BaseController
 
   def index
 
-    @videos = me? ? (Video.for_user current_user) : (Video.find_videos params)
+    @videos = me? ? (Video.all_for_user current_user) : (Video.find_videos params)
 
     if @videos.count > 0
       @videos = @videos.paginate(:page => params[:page], :per_page => params[:per_page])

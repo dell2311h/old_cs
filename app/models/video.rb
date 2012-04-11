@@ -37,8 +37,14 @@ class Video < ActiveRecord::Base
   has_many :likes
   has_many :likers, :through => :likes, :source => :user
 
+  # default scope to hide videos that are not ready.
+  default_scope where(:status => STATUS_STREAMING_DONE)
+
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
-  scope :for_user, lambda {|user| where("user_id = ?", user.id) }
+
+  def self.all_for_user user
+    unscoped.where(:user_id => user.id)
+  end
 
   self.per_page = Settings.paggination.per_page
 
