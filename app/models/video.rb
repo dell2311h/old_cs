@@ -144,7 +144,9 @@ class Video < ActiveRecord::Base
 
   def finalize_upload_by_checksum! uploaded_file_checksum
     raise "Invalid file checksum" unless self.tmpfile_md5_checksum == uploaded_file_checksum
-    self.update_attribute :status, STATUS_NEW
+    self.update_attribute :status, STATUS_NEW # File upload finished
+    self.update_attribute :clip, File.read(self.tmpfile_fullpath) # Attach uploaded file to 'clip' attribute
+    self.remove_attached_data! # Remove uploaded data
   end
 
 end
