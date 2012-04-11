@@ -147,17 +147,12 @@ class Video < ActiveRecord::Base
     File.open(self.tmpfile_fullpath, 'ab') { |file| file.write(chunk_binary) }
   end
 
-  def set_chunk_id! chunk_id
-    raise "Invalid chunk id!" unless self.last_chunk_id + 1 == chunk_id
-    self.update_attribute :last_chunk_id, chunk_id
-  end
-
   def tmpfile_md5_checksum
-    Digest::MD5.hexdigest(File.read(self.tmpfile_fullpath))
+    Digest::MD5.hexdigest(File.read(self.tmpfile_fullpath)) if File.file? self.tmpfile_fullpath
   end
 
   def tmpfile_size
-    File.size self.tmpfile_fullpath
+    File.size self.tmpfile_fullpath if File.file? self.tmpfile_fullpath
   end
 
   def finalize_upload_by_checksum! uploaded_file_checksum
@@ -169,6 +164,12 @@ class Video < ActiveRecord::Base
     end
     self.remove_attached_data! # Remove uploaded data
   end
+
+  private
+    def set_chunk_id! chunk_id
+      raise "Invalid chunk id!" unless self.last_chunk_id + 1 == chunk_id
+      self.update_attribute :last_chunk_id, chunk_id
+    end
 
 end
 

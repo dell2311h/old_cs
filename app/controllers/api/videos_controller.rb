@@ -4,7 +4,7 @@ class Api::VideosController < Api::BaseController
   skip_before_filter :auth_check, :only => [:index], :unless => Proc.new { |c| me? }
 
   def create
-    current_user.create_videos_by params
+    @videos = current_user.create_videos_by params
     render status: :created, action: :index
   end
 
