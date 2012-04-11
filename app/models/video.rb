@@ -90,7 +90,7 @@ class Video < ActiveRecord::Base
     videos
   end
 
-  def add_songs songs_params
+  def add_songs_by songs_params
     songs_params.each do |song_params|
       song = song_params[:id] ? Song.find(song_params[:id]) : Song.create!(song_params)
       self.songs << song if !self.songs.find_by_id(song)

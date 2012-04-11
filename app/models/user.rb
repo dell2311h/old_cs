@@ -125,4 +125,19 @@ class User < ActiveRecord::Base
     users.all
   end
 
+  def create_videos_by params
+    videos = []
+    event = Event.find(params[:event_id]) if params[:event_id]
+    params[:videos].each do |video_params|
+      songs_params = video_params.delete(:songs)
+      video = self.videos.build video_params
+      video.event = event if event
+      video.save!
+      video.add_songs_by(songs_params) if songs_params
+      videos << video
+    end
+    videos
+  end
+
 end
+
