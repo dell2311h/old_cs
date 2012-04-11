@@ -2,22 +2,21 @@ require 'koala'
 class Remote::FacebookUser
   include RemoteUser
   def friends
-    @result = api.get_connections(self.uid, "friends")
+    result = api.get_connections(self.uid, "friends")
 
-    parse
+    parse result
   end
 
   private
-    def parse
-      @result.map do |element|
+
+    def parse result
+      result.map do |element|
         { uid: element["id"], name: element["name"], avatar_url: "http://graph.facebook.com/#{element["id"]}/picture" }
       end
     end
-    @result
-    @api
-    def api
-      @api = Koala::Facebook::API.new self.token if @api.nil?
 
-      @api
+    def api
+      Koala::Facebook::API.new self.token if @api.nil?
     end
+
 end

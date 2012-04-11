@@ -8,12 +8,9 @@ class Remote::FoursquareUser
   end
 
   private
-    @api
 
     def api
-      @api = Foursquare2::Client.new({ oauth_token: self.token }) if @api.nil?
-      
-      @api
+      Foursquare2::Client.new({ oauth_token: self.token }) if @api.nil?
     end
 
     def parse response
@@ -22,5 +19,4 @@ class Remote::FoursquareUser
       end
     end
 
-    
 end
