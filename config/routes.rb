@@ -74,6 +74,7 @@ Crowdsync::Application.routes.draw do
     delete "me/likes/:video_id" => "likes#destroy"
     get "me/videos" => "videos#index"
     get "me/provider_local_friends" => "users#provider_local_friends"
+    get "me/provider_remote_friends" => "users#provider_remote_friends"
 
     #Authentications
     put    "/me/authentications/:provider" => "authentications#link"

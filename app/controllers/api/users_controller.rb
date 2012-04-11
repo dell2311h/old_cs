@@ -46,8 +46,17 @@ class Api::UsersController < Api::BaseController
       render :status => :not_found, json: {}
       return
     end
+
     render status: :ok, :template => "api/users/index"
   end
 
+  def provider_remote_friends
+    @users = current_user.remote_friends_not_on_crowdsync_for params['provider']
+    if @users.count < 1
+      render :status => :not_found, json: {}
+      return
+    end
+
+  end
 end
 

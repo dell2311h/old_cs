@@ -47,24 +47,26 @@ class User < ActiveRecord::Base
 
   before_create :reset_authentication_token
 
+  scope :by_remote_provider_ids, lambda{|provider, uids| where("authentications.provider = ? AND authentications.uid IN (?)", provider, uids).
+                                                         includes(:authentications)
+                                       }
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
 
   # Get all users counts by one query
   scope :with_calculated_counters, select("*, (#{Video.select("COUNT(videos.user_id)").where("users.id = videos.user_id").to_sql}) AS uploaded_videos_count, (#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count,  (#{Relationship.select("COUNT(relationships.followed_id)").where("users.id = relationships.followed_id").to_sql}) AS followers_count, (#{Like.select("COUNT(likes.user_id)").where("users.id = likes.user_id").to_sql}) AS liked_videos_count")
 
   def remote_friends_on_crowdsync_for provider
-    authenication = self.authentications.provider provider
-    authenication = authenication.first
-    users = RemoteUser.create provider, authenication.uid, authenication.token
-    friends = users.friends
-
+    friends = remote_friends_for provider
     uids = friends.map { |friend| friend[:uid] }
+    users = User.by_remote_provider_ids provider, uids
 
-    User.find_by_remote_provider_ids provider, uids
+    users.all
   end
 
-  def self.find_by_remote_provider_ids provider, uids
-    User.all(:include => :authentications, :conditions => ["authentications.provider = ? AND authentications.uid IN (?)", provider, uids])
+  def remote_friends_not_on_crowdsync_for provider
+    friends = remote_friends_for provider
+
+    Authentication.not_on_remote_provider friends, provider
   end
 
   def self.personal_details_by_id(user_id)
@@ -125,4 +127,12 @@ class User < ActiveRecord::Base
     users.all
   end
 
+  private
+    def remote_friends_for provider
+      authenication = self.authentications.provider provider
+      authenication = authenication.first
+      users = RemoteUser.create provider, authenication.uid, authenication.token
+
+      users.friends
+    end
 end
