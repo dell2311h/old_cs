@@ -20,17 +20,17 @@ class Api::VideosController < Api::BaseController
   end
 
   def show
-    @video = Video.find(params[:id])
+    @video = Video.find params[:id]
   end
 
   def update
-    @video = current_user.videos.find params[:id]
+    @video = current_user.videos.unscoped_find params[:id]
     @video.update_attributes!(params[:video])
     render status: :accepted, action: :show
   end
 
   def destroy
-    @video = current_user.videos.find params[:id]
+    @video = current_user.videos.unscoped_find params[:id]
     @video.destroy
     render status: :accepted, json: {}
   end
@@ -44,13 +44,13 @@ class Api::VideosController < Api::BaseController
   # Chunked uploads
 
   def append_chunk
-    @video = Video.find params[:id]
+    @video = Video.unscoped_find params[:id]
     @video.append_chunk_to_file! params[:chunk][:id], params[:chunk][:binary]
     render status: :ok, action: :show
   end
 
   def finalize_upload
-    @video = Video.find params[:id]
+    @video = Video.unscoped_find params[:id]
     @video.finalize_upload_by_checksum! params[:uploaded_file_checksum]
     render status: :ok, action: :show
   end

@@ -104,6 +104,10 @@ class Video < ActiveRecord::Base
     self.songs
   end
 
+  def self.unscoped_find video_id
+    Video.unscoped.find video_id
+  end
+
   #----- Chunked uploading ---------------
 
   after_create do |video|
