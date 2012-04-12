@@ -9,3 +9,4 @@ if @user and @user.id == current_user.id
   end
 end
 
+node(:followed) { false }

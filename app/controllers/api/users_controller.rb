@@ -1,6 +1,6 @@
 class Api::UsersController < Api::BaseController
 
-  skip_before_filter :auth_check, :only => [:create, :index]
+  skip_before_filter :auth_check, :only => [:create]
 
   def create
     oauth = params[:oauth]
