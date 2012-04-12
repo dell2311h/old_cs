@@ -34,6 +34,8 @@ class Api::UsersController < Api::BaseController
 
   def index
     @users = User.find_users params
+    @users = @users.all
+    @followed_users = User.find_followed_by current_user
     if @users.count < 1
       render :status => :not_found, json: {}
       return
@@ -42,6 +44,7 @@ class Api::UsersController < Api::BaseController
 
   def provider_local_friends
     @users = current_user.remote_friends_on_crowdsync_for params['provider']
+    @followed_users = User.find_followed_by current_user
     if @users.count < 1
       render :status => :not_found, json: {}
       return

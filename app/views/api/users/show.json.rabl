@@ -9,4 +9,6 @@ if @user and @user.id == current_user.id
   end
 end
 
-node(:followed) { false }
+unless @followed_users.nil?
+  node(:followed) { |user| (@followed_users.include? user.id)? true: false }
+end

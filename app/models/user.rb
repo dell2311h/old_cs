@@ -55,6 +55,12 @@ class User < ActiveRecord::Base
   # Get all users counts by one query
   scope :with_calculated_counters, select("*, (#{Video.select("COUNT(videos.user_id)").where("users.id = videos.user_id").to_sql}) AS uploaded_videos_count, (#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count,  (#{Relationship.select("COUNT(relationships.followed_id)").where("users.id = relationships.followed_id").to_sql}) AS followers_count, (#{Like.select("COUNT(likes.user_id)").where("users.id = likes.user_id").to_sql}) AS liked_videos_count")
 
+  def self.find_followed_by user
+    followed_users = Relationship.where({:follower_id => user.id})
+
+    followed_users.map(&:followed_id)
+  end
+
   def remote_friends_on_crowdsync_for provider
     friends = remote_friends_for provider
     uids = friends.map { |friend| friend[:uid] }
@@ -124,7 +130,7 @@ class User < ActiveRecord::Base
       users = users.with_name_like(params[:name])
     end
 
-    users.all
+    users
   end
 
   private
