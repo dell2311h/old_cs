@@ -39,7 +39,11 @@ class Video < ActiveRecord::Base
   has_many :likers, :through => :likes, :source => :user
 
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
-  scope :for_user, lambda {|user| where("user_id = ?", user.id) }
+  scope :for_user, lambda {|user| where( :user_id => (user.is_a? User) ? user.id : user) }
+  scope :likes_count, lambda { select("videos.*, COUNT(likes.id) AS likes_count").
+                               joins("LEFT OUTER JOIN `likes` ON `likes`.`video_id` = `videos`.`id`").
+                               group "videos.id"
+                               }
 
   self.per_page = Settings.paggination.per_page
 
@@ -60,10 +64,10 @@ class Video < ActiveRecord::Base
   end
 
   def self.find_videos params
-    videos = Video
+    videos = Video.includes [:event, :user]
 
     if params[:user_id]
-      videos = videos.where(:user_id => params[:user_id])
+      videos = videos.for_user params[:user_id]
     end
 
     if params[:event_id]
