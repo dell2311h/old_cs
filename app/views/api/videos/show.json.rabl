@@ -15,4 +15,5 @@ attribute :created_at => :date
 
 node(:likes_count) { 0 }
 node(:comments_count) { 0 }
+node(:duration) { 55 }
 #node(:likes_count) { |video| video.likes_count }
