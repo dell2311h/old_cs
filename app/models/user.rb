@@ -138,6 +138,7 @@ class User < ActiveRecord::Base
   private
     def remote_friends_for provider
       authenication = self.authentications.provider(provider).first
+      raise 'Remote provider not found' if authenication.nil?
       user = RemoteUser.create provider, authenication.uid, authenication.token
 
       user.friends
