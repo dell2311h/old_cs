@@ -17,6 +17,10 @@ defaults: &defaults
     client_id:     '4P2MF2LOPGFHWM4XJDLLVDYP3YMELZW0F3UK5ZDEXV3T1N2Z'
     client_secret: 'O4TVEE0WB53JPIU1JQITDOYZQFRCAWVEDMMK0CNDDFIZ02UI'
 
+  instagram:
+    client_id:     'CLIENT_ID'
+    client_secret: 'CLIENT_SECRET'
+
   paperclip:
     storage_options: {}
 
@@ -37,4 +41,3 @@ production:
       s3_credentials:
         access_key_id: ""
         secret_access_key: ""
-
