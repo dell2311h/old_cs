@@ -63,7 +63,7 @@ class Video < ActiveRecord::Base
     Video.joins(:clips).where('clips.encoding_id' => encoding_id).first
   end
 
-  def self.find_videos params
+  def self.search params
     videos = Video.includes [:event, :user]
 
     if params[:user_id]
