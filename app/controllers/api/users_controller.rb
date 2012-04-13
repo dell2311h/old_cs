@@ -13,7 +13,8 @@ class Api::UsersController < Api::BaseController
     end
 
     @user.save!
-    @token = @user.authentication_token
+    sign_in @user
+
     render status: :created, action: :show
   end
 

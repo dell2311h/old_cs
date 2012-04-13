@@ -59,11 +59,27 @@ class Video < ActiveRecord::Base
     }
   end
 
+  def self.likes_count_by ids
+    likes_count = Like.select "video_id, COUNT(`likes`.`id`) AS count"
+    likes_count = likes_count.where "video_id in (?)", ids
+    likes_count = likes_count.group :video_id
+
+    Hash[likes_count.map { |f| [f.video_id, f.count] }]
+  end
+
+  def  self.comments_count_by ids
+    comments_count = Comment.select "commentable_id, COUNT(`comments`.`id`) AS count"
+    comments_count = comments_count.where 'commentable_type = "videos" AND commentable_id in (?)', ids
+    comments_count = comments_count.group :commentable_id
+
+    Hash[comments_count.map { |f| [f.commentable_id, f.count] }]
+  end
+
   def self.find_by_clip_encoding_id encoding_id
     Video.joins(:clips).where('clips.encoding_id' => encoding_id).first
   end
 
-  def self.find_videos params
+  def self.search params
     videos = Video.includes [:event, :user]
 
     if params[:user_id]

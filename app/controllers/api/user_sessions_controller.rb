@@ -18,7 +18,11 @@ class Api::UserSessionsController < Api::BaseController
     else
       raise "Not enough options for authorization"
     end
+
+    sign_in @user
+
     render status: :ok, json: { token: @token }
   end
 
 end
+

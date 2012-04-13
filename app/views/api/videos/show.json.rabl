@@ -13,7 +13,12 @@ end
 
 attribute :created_at => :date
 
-node(:likes_count) { 0 }
-node(:comments_count) { 0 }
+unless @likes_count.nil?
+  node(:likes_count) { |video| (@likes_count[video.id].nil?)? 0: @likes_count[video.id] }
+end
+
+unless @comments_count.nil?
+  node(:comments_count) { |video| (@comments_count[video.id].nil?)? 0: @comments_count[video.id] }
+end
+
 node(:duration) { 55 }
-#node(:likes_count) { |video| video.likes_count }

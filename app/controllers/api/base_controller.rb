@@ -11,11 +11,19 @@ class Api::BaseController < ApplicationController
     render status: :bad_request, json: { error: exeption.message }, layout: false
   end
 
-
   private
 
     def current_user
       @current_user ||= User.find_by_authentication_token(params[:authentication_token])
+    end
+
+    def current_user=(user)
+      @current_user = user
+    end
+
+    def sign_in(user)
+      @token = user.authentication_token
+      self.current_user= user
     end
 
     def check_coordinates_format
