@@ -12,3 +12,4 @@ end
 unless @followed_users.nil?
   node(:followed) { |user| (@followed_users.include? user.id)? true: false }
 end
+
