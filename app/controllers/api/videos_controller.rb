@@ -15,6 +15,9 @@ class Api::VideosController < Api::BaseController
     search_params = params
     search_params[:user_id] = current_user if me?
     @videos = Video.search search_params
+    videos_id = @videos.map &:id
+    @likes_count = Video.likes_count_by videos_id
+    @comments_count = Video.comments_count_by videos_id
 
     if @videos.count > 0
       @videos = @videos.paginate(:page => params[:page], :per_page => params[:per_page])
