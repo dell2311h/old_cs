@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120413153212) do
+ActiveRecord::Schema.define(:version => 20120414101743) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -58,7 +58,7 @@ ActiveRecord::Schema.define(:version => 20120413153212) do
     t.integer  "user_id"
     t.integer  "registered_user_id"
     t.boolean  "is_used",            :default => false
-    t.string   "method"
+    t.string   "mode"
     t.string   "invitee"
     t.string   "code"
     t.datetime "created_at",                            :null => false

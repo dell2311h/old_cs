@@ -1,7 +1,7 @@
 class InvitationSender::TwitterInvite
   include InvitationSender
 
-  def post
+  def send_invitation
 
   end
 

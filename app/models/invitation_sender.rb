@@ -1,29 +1,33 @@
 module InvitationSender
 
-  attr_reader :method, :invitee, :code
+  attr_reader :mode, :invitee, :code
 
-  def self.create method, invitee, code
+  def self.create mode, invitee, code
     raise "Not implemented" unless self.class == "Module" || self.name == "InvitationSender"
-    send_method_class = @send_method_classes[method.to_sym]
-    raise "Incorrect send method" unless send_method_class
+    send_mode_class = @send_mode_classes[mode.to_sym]
+    raise "Incorrect send mode" unless send_method_class
 
-    send_method_class.new method, invitee, code
+    send_mode_class.new mode, invitee, code
   end
 
-  def initialize(method, invitee, code)
-    raise 'method is empty' unless method
+  def initialize(mode, invitee, code)
+    raise 'mode is empty' unless mode
     raise 'invitee is empty' unless invitee
     raise 'code is empty' unless code
-    @method = method
+    @mode = mode
     @invitee = invitee
     @code = code
   end
 
+  def send_invitation
+    raise 'Not implemented'
+  end
+
   private
-    @send_method_classes = { facebook: InvitationSender::FacebookInvite,
-                             twitter:  InvitationSender::TwitterInvite,
-                             email:    InvitationSender::EmailInvite
-                           }
+    @send_mode_classes = { facebook: InvitationSender::FacebookInvite,
+                           twitter:  InvitationSender::TwitterInvite,
+                           email:    InvitationSender::EmailInvite
+                         }
 
 end
 

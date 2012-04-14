@@ -40,6 +40,9 @@ class User < ActiveRecord::Base
   has_many :reverse_relationships, :class_name => "Relationship", foreign_key: "followed_id", dependent: :destroy
   has_many :followers, through: :reverse_relationships, :source => :follower
 
+  # Invitations
+  has_many :invitations
+
 
   has_attached_file :avatar, :styles => { :medium => "300x300>", :iphone => "200x200>", :thumb => "100x100>" }
 
@@ -144,3 +147,4 @@ class User < ActiveRecord::Base
       user.friends
     end
 end
+

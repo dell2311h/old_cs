@@ -1,7 +1,7 @@
 class InvitationSender::EmailInvite
   include InvitationSender
 
-  def post
+  def send_invitation
 
   end
 
