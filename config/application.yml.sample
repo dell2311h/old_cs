@@ -2,6 +2,7 @@ defaults: &defaults
 
   application:
     name: 'CrowdSync'
+    host: 'crowdsync.dimalexsoftware.com'
 
   mailers:
     email:
