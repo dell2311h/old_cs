@@ -138,6 +138,15 @@ class User < ActiveRecord::Base
     users
   end
 
+  def find_authentication_by_provider provider
+    self.authentications.find_by_provider provider
+  end
+
+  def initiate_remote_user_by provider
+    authentication = self.find_authentication_by_provider provider
+    RemoteUser.create(authentication.provider, authentication.uid, authentication.token) if authentication
+  end
+
   private
     def remote_friends_for provider
       authenication = self.authentications.provider(provider).first

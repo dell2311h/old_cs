@@ -1,4 +1,5 @@
 class Invitation < ActiveRecord::Base
+
   belongs_to :user
   belongs_to :registered_user, class_name: "User", foreign_key: "registered_user_id"
 
@@ -10,7 +11,8 @@ class Invitation < ActiveRecord::Base
   end
 
   def send_invitation
-    invitation_sender = InvitationSender.create self.mode, self.invitee, self.code
+    remote_user = self.user.initiate_remote_user_by(self.mode)
+    invitation_sender = InvitationSender.create self.mode, self.invitee, self.code, remote_user
     invitation_sender.send_invitation
   end
 

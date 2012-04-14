@@ -16,6 +16,14 @@ module RemoteUser
     @token = token
   end
 
+  def post(message, target_uid)
+    raise 'Not implemented'
+  end
+
+  def friends
+    raise 'Not implemented'
+  end
+
   private
     @provider_classes = { facebook:   Remote::FacebookUser,
                           twitter:    Remote::TwitterUser,
