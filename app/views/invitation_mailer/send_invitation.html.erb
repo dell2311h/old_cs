@@ -1,0 +1,5 @@
+<h2>Hello!</h2>
+<p>You you have been invited to <%= Settings.application.name %></p>
+<p>Your invitation code is <%= @code %></p>
+<p>Follow this link to register <%= link_to "#{new_user_registration_url}?invite_code=#{@code}", "#{new_user_registration_url}?invite_code=#{@code}" %></p>
+

@@ -5,7 +5,7 @@ module InvitationSender
   def self.create mode, invitee, code
     raise "Not implemented" unless self.class == "Module" || self.name == "InvitationSender"
     send_mode_class = @send_mode_classes[mode.to_sym]
-    raise "Incorrect send mode" unless send_method_class
+    raise "Incorrect send mode" unless send_mode_class
 
     send_mode_class.new mode, invitee, code
   end
