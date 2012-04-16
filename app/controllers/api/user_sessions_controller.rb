@@ -6,7 +6,6 @@ class Api::UserSessionsController < Api::BaseController
     if params[:email]
       @user = User.find_by_email(params[:email])
       raise "Wrong email or password" if @user.nil? or !@user.valid_password? params[:password]
-      @token = @user.authentication_token
     elsif params[:provider]
       @auth = Authentication.find_by_provider_and_uid(params[:provider], params[:uid])
       raise "Can't find user with #{params[:provider]} provider" unless @auth
@@ -14,7 +13,7 @@ class Api::UserSessionsController < Api::BaseController
         raise "Token for #{params[:provider]} provider incorrect" unless @auth.correct_token?(params[:token])
         @auth.update_attribute(:token, params[:token])
       end
-      @token = @auth.user.authentication_token
+      @user = @auth.user
     else
       raise "Not enough options for authorization"
     end
