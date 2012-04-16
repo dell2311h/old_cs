@@ -19,7 +19,7 @@ class Api::UsersController < Api::BaseController
   end
 
   def show
-    @user = User.personal_details_by_id(me? ? current_user.id : params[:id]).with_flag_followed_by(current_user)
+    @user = User.profile_details_by_id(me? ? current_user.id : params[:id], current_user)
   end
 
   def update

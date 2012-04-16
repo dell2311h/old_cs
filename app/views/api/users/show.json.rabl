@@ -10,6 +10,6 @@ if @user and @user.id == current_user.id
 end
 
 if current_user
-  node(:followed) { |user| current_user.following?(user) ? true : false }
+  node(:followed) { |user| user.respond_to?(:followed) && (user.followed == 1) ? true : false }
 end
 

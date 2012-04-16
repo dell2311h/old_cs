@@ -82,8 +82,8 @@ class User < ActiveRecord::Base
     Authentication.not_on_remote_provider friends, provider
   end
 
-  def self.personal_details_by_id(user_id)
-    User.with_calculated_counters.find user_id
+  def self.profile_details_by_id(user_id, current_user)
+    User.with_calculated_counters.with_flag_followed_by(current_user).find user_id
   end
 
   # Followings methods

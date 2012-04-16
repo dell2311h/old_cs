@@ -4,12 +4,12 @@ class Api::RelationshipsController < Api::BaseController
   before_filter :set_source_user, :only => [:followings, :followers]
 
   def followings
-    @users = @source_user.followings
+    @users = @source_user.followings.with_flag_followed_by(current_user)
     render status: set_status_by(@users), action: :index
   end
 
   def followers
-    @users = @source_user.followers
+    @users = @source_user.followers.with_flag_followed_by(current_user)
     render status: set_status_by(@users), action: :index
   end
 
