@@ -7,19 +7,17 @@ class Video < ActiveRecord::Base
   STATUS_STREAMING_WORKING = 3
   STATUS_STREAMING_DONE = 4
 
-  attr_accessible :clip, :event_id, :user_id, :name
+  attr_accessible :clip, :event_id, :user_id, :uuid, :tags, :songs, :thumbnail
   has_attached_file :clip, PAPERCLIP_STORAGE_OPTIONS
 
+  has_attached_file :thumbnail, {:styles => { :iphone => "200x200>" }}.merge(PAPERCLIP_STORAGE_OPTIONS)
+  validates_attachment_content_type :thumbnail, :content_type => ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif']
 
-  validates :user_id , :event_id, :presence => true
+  validates :user_id , :event_id, :uuid, :presence => true
   validates :user_id, :event_id, :numericality => { :only_integer => true }
 
   validates_attachment_presence :clip, :unless => Proc.new { |video| video.status == STATUS_UPLOADING }
   validates_attachment_content_type :clip, :content_type => ['video/mp4', 'video/quicktime'], :unless => Proc.new { |video| video.status == STATUS_UPLOADING }
-
-  before_create do |video|
-    video.name = video.clip_file_name if video.name.blank?
-  end
 
   belongs_to :event
   belongs_to :user
@@ -35,15 +33,23 @@ class Video < ActiveRecord::Base
   has_one  :demux_video, :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_DEMUX_VIDEO }
   has_one  :demux_audio, :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_DEMUX_AUDIO }
   has_one  :streaming,   :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_STREAMING }
+
   has_many :likes
   has_many :likers, :through => :likes, :source => :user
 
-  scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
+  # default scope to hide videos that are not ready.
+  default_scope where(:status => STATUS_STREAMING_DONE)
+
   scope :for_user, lambda {|user| where( :user_id => (user.is_a? User) ? user.id : user) }
   scope :likes_count, lambda { select("videos.*, COUNT(likes.id) AS likes_count").
                                joins("LEFT OUTER JOIN `likes` ON `likes`.`video_id` = `videos`.`id`").
                                group "videos.id"
                                }
+
+
+  def self.all_for_user user
+    unscoped.where(:user_id => user.id)
+  end
 
   self.per_page = Settings.paggination.per_page
 
@@ -67,7 +73,7 @@ class Video < ActiveRecord::Base
     Hash[likes_count.map { |f| [f.video_id, f.count] }]
   end
 
-  def  self.comments_count_by ids
+  def self.comments_count_by ids
     comments_count = Comment.select "commentable_id, COUNT(`comments`.`id`) AS count"
     comments_count = comments_count.where 'commentable_type = "videos" AND commentable_id in (?)', ids
     comments_count = comments_count.group :commentable_id
@@ -77,6 +83,15 @@ class Video < ActiveRecord::Base
 
   def self.find_by_clip_encoding_id encoding_id
     Video.joins(:clips).where('clips.encoding_id' => encoding_id).first
+  end
+
+  # Overriding "tags=" method for adding tags by their name
+  def tags=(tags_names)
+    tags_names.each do |tag_name|
+      tag = Tag.find_or_create_by_name(tag_name.downcase)
+      self.tags << tag if !self.tags.find_by_id(tag)
+    end
+    self.tags.map(&:name)
   end
 
   def self.search params
@@ -95,23 +110,31 @@ class Video < ActiveRecord::Base
       videos = song.videos
     end
 
-    if params[:q]
-      videos = Video.with_name_like(params[:q])
-    end
-
     videos
+  end
+
+  def add_songs_by songs_params
+    songs_params.each do |song_params|
+      song = song_params[:id] ? Song.find(song_params[:id]) : Song.create!(song_params)
+      self.songs << song if !self.songs.find_by_id(song)
+    end
+    self.songs
+  end
+
+  def self.unscoped_find video_id
+    Video.unscoped.find video_id
   end
 
   #----- Chunked uploading ---------------
 
   after_create do |video|
     # Prepare upload folder
-    video.make_uploads_folder
+    video.make_uploads_folder!
   end
 
   after_destroy do |video|
     # Remove uploaded data
-    video.remove_attached_data
+    video.remove_attached_data!
   end
 
   TMPFILES_DIR = "#{::Rails.root}/tmp/uploads"
@@ -125,14 +148,53 @@ class Video < ActiveRecord::Base
     "#{directory_fullpath}/tmpfile"
   end
 
-  def make_uploads_folder
+  def make_uploads_folder!
     Dir.mkdir(TMPFILES_DIR) unless File.directory? TMPFILES_DIR # create dir if it is not exist
     Dir.mkdir(UPLOADS_FOLDER) unless File.directory? UPLOADS_FOLDER # create dir if it is not exist
     Dir.mkdir(self.directory_fullpath) unless File.directory? self.directory_fullpath # create dir if it is not exist
   end
 
-  def remove_attached_data
+  def remove_attached_data!
     FileUtils.rm_rf self.directory_fullpath
   end
 
+  # Wrapper for http data
+  def append_chunk_to_file! chunk_params
+    raise "Empty chunk" unless chunk_params
+    raise "Chunk id is empty" unless chunk_params[:id]
+    raise "Chunk data is invalid" unless chunk_params[:data].respond_to?(:tempfile)
+    self.append_binary_to_file! chunk_params[:id].to_i, chunk_params[:data].tempfile.read
+  end
+
+  def append_binary_to_file! chunk_id, chunk_binary
+    raise "Can't add data to finalized upload" unless self.status == STATUS_UPLOADING
+    self.set_chunk_id! chunk_id
+    File.open(self.tmpfile_fullpath, 'ab') { |file| file.write(chunk_binary) }
+  end
+
+  def tmpfile_md5_checksum
+    Digest::MD5.hexdigest(File.read(self.tmpfile_fullpath)) if File.file? self.tmpfile_fullpath
+  end
+
+  def tmpfile_size
+    File.size self.tmpfile_fullpath if File.file? self.tmpfile_fullpath
+  end
+
+  def finalize_upload_by_checksum! uploaded_file_checksum
+    raise "Invalid file checksum" unless self.tmpfile_md5_checksum == uploaded_file_checksum
+    self.update_attribute :status, STATUS_NEW # File upload finished
+    File.open(self.tmpfile_fullpath) do |file|
+      self.clip = file              #Attach uploaded file to 'clip' attribute
+      self.save
+    end
+    self.remove_attached_data! # Remove uploaded data
+  end
+
+  protected
+    def set_chunk_id! chunk_id
+      raise "Invalid chunk id!" unless self.last_chunk_id + 1 == chunk_id
+      self.update_attribute :last_chunk_id, chunk_id
+    end
+
 end
+

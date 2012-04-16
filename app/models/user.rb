@@ -149,6 +149,21 @@ class User < ActiveRecord::Base
     RemoteUser.create(authentication.provider, authentication.uid, authentication.token) if authentication
   end
 
+  def create_videos_by params
+    videos = []
+    event = Event.find(params[:event_id]) if params[:event_id]
+    params[:videos].each do |video_params|
+      songs_params = video_params.delete(:songs)
+      video = self.videos.build video_params
+      video.status = Video::STATUS_UPLOADING
+      video.event = event if event
+      video.save!
+      video.add_songs_by(songs_params) if songs_params
+      videos << video
+    end
+    videos
+  end
+
   private
     def remote_friends_for provider
       authenication = self.authentications.provider(provider).first
