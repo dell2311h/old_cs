@@ -25,5 +25,9 @@ public/system/clips/**
 !public/system/clips/.gitkeep
 public/system/avatars/**
 public/system/images/**
+config/initializers/paperclip.rb
+public/system/thumbnails/**
+!public/system/thumbnails/.gitkeep
 config/initializers/paperclip_storage.rb
 config/application.yml
+

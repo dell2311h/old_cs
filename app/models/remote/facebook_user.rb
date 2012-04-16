@@ -6,6 +6,10 @@ class Remote::FacebookUser
     parse result
   end
 
+  def post(message, target_uid)
+    api.put_wall_post(message, {}, target_uid)
+  end
+
   private
 
     def parse result
@@ -19,3 +23,4 @@ class Remote::FacebookUser
     end
 
 end
+

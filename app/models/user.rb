@@ -40,6 +40,9 @@ class User < ActiveRecord::Base
   has_many :reverse_relationships, :class_name => "Relationship", foreign_key: "followed_id", dependent: :destroy
   has_many :followers, through: :reverse_relationships, :source => :follower
 
+  # Invitations
+  has_many :invitations
+
 
   has_attached_file :avatar, :styles => { :medium => "300x300>", :iphone => "200x200>", :thumb => "100x100>" }
 
@@ -54,6 +57,8 @@ class User < ActiveRecord::Base
 
   # Get all users counts by one query
   scope :with_calculated_counters, select("*, (#{Video.select("COUNT(videos.user_id)").where("users.id = videos.user_id").to_sql}) AS uploaded_videos_count, (#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count,  (#{Relationship.select("COUNT(relationships.followed_id)").where("users.id = relationships.followed_id").to_sql}) AS followers_count, (#{Like.select("COUNT(likes.user_id)").where("users.id = likes.user_id").to_sql}) AS liked_videos_count")
+
+  scope :with_followed_by, lambda { |user| select("*, (#{Relationship.select('COUNT(follower_id)').where('relationships.followed_id = users.id AND relationships.follower_id = ?', user.id).to_sql}) AS followed") }
 
   self.per_page = Settings.paggination.per_page
 
@@ -135,11 +140,37 @@ class User < ActiveRecord::Base
     users
   end
 
+  def find_authentication_by_provider provider
+    self.authentications.find_by_provider provider
+  end
+
+  def initiate_remote_user_by provider
+    authentication = self.find_authentication_by_provider provider
+    RemoteUser.create(authentication.provider, authentication.uid, authentication.token) if authentication
+  end
+
+  def create_videos_by params
+    videos = []
+    event = Event.find(params[:event_id]) if params[:event_id]
+    params[:videos].each do |video_params|
+      songs_params = video_params.delete(:songs)
+      video = self.videos.build video_params
+      video.status = Video::STATUS_UPLOADING
+      video.event = event if event
+      video.save!
+      video.add_songs_by(songs_params) if songs_params
+      videos << video
+    end
+    videos
+  end
+
   private
     def remote_friends_for provider
       authenication = self.authentications.provider(provider).first
+      raise 'Remote provider not found' if authenication.nil?
       user = RemoteUser.create provider, authenication.uid, authenication.token
 
       user.friends
     end
 end
+

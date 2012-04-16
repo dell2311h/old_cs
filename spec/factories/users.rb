@@ -7,7 +7,6 @@ FactoryGirl.define do
     f.sequence(:email) { |n| "username_#{n}_#{(1..99999).to_a.sample}@gmail.com" }
     f.password    "passwordddd"
     f.phone { Faker::PhoneNumber.phone_number }
-    f.age      20
     f.avatar {fixture_file_upload('spec/fixtures/dark_side.jpg', 'image/jpeg', :binary)}
     f.latitude { Faker::Geolocation.lat }
     f.longitude { Faker::Geolocation.lng }

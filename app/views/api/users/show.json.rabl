@@ -9,7 +9,7 @@ if @user and @user.id == current_user.id
   end
 end
 
-unless @followed_users.nil?
-  node(:followed) { |user| (@followed_users.include? user.id)? true: false }
+if current_user
+  node(:followed) { |user| current_user.following?(user) ? true : false }
 end
 

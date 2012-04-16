@@ -36,4 +36,9 @@ Crowdsync::Application.configure do
   config.assets.debug = true
 
   config.action_mailer.default_url_options = { :host => 'crowdsync.dimalexsoftware.com' }
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = Hash[Settings.mail_config.smtp_settings].symbolize_keys
+
 end
+
