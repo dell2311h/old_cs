@@ -19,7 +19,7 @@ class Api::UsersController < Api::BaseController
   end
 
   def show
-    @user = User.personal_details_by_id(me? ? current_user.id : params[:id])
+    @user = User.personal_details_by_id(me? ? current_user.id : params[:id]).with_flag_followed_by(current_user)
   end
 
   def update
@@ -34,8 +34,7 @@ class Api::UsersController < Api::BaseController
   end
 
   def index
-    @users = User.find_users params
-    @followed_users = User.find_followed_by current_user
+    @users = User.find_users(params).with_flag_followed_by(current_user)
     if @users.count > 0
       @users = @users.paginate(:page => params[:page], :per_page => params[:per_page])
     else
