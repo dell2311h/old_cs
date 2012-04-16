@@ -21,6 +21,7 @@ Crowdsync::Application.routes.draw do
     get 'places' => 'places#index'
 
     get 'events/remote' => 'events#remote'
+    get 'events/recommended' => 'events#recommended'
 
     resources :events, :only => [:index, :create, :show]
 

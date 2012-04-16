@@ -1,6 +1,6 @@
 class Api::EventsController < Api::BaseController
 
-  skip_before_filter :auth_check, :only => [:index, :remote, :show]
+  skip_before_filter :auth_check, :only => [:index, :remote, :show, :recommended]
 
   def remote
     search_params = {}
@@ -83,6 +83,24 @@ class Api::EventsController < Api::BaseController
     respond_with @event, :status => :created, :location => nil
   end
 
-
+  def recommended
+    @events = []
+    raise I18n.t 'errors.parameters.empty_videos' if params[:videos].nil?
+    params[:videos].each do |video|
+      events = Event
+      if video[:date]
+        events = events.around_date Date.parse(video[:date])
+      end
+      if video[:latitude] && video[:longitude]
+        events = events.nearby [Float(video[:latitude]), Float(video[:longitude])], Settings.search.radius
+      end
+      @events += events if events.count > 0
+    end
+    if @events.count > 0
+      @events.uniq!
+      render status: :ok, :template => "api/events/index"
+    else
+      render :status => :not_found, json: {}
+    end
+  end
 end
-

@@ -3,3 +3,6 @@
 
 en:
   hello: "Hello world"
+  errors:
+    parameters:
+      empty_videos: "Not defined parameter 'videos' for search recommended events"
