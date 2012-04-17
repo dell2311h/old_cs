@@ -38,6 +38,10 @@ defaults: &defaults
       width: 125
       height: 125
 
+  avatar:
+    width: 100
+    height: 100
+
 development:
   <<: *defaults
 
