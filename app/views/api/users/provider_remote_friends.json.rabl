@@ -5,5 +5,6 @@ if @users
 end
 
 node :users do
-  @users.map{ |user| user}
+  @users.map{ |user| user.merge!(:is_invited_by_me => [true,false].sample) }
 end
+
