@@ -10,7 +10,7 @@ class Invitation < ActiveRecord::Base
     invitation.code = SecureRandom.urlsafe_base64
   end
 
-  def send_invitation
+  def send_invitation!
     remote_user = self.user.initiate_remote_user_by(self.mode)
     invitation_sender = InvitationSender.create self.mode, self.invitee, self.code, remote_user
     invitation_sender.send_invitation

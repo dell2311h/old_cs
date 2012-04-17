@@ -1,7 +1,7 @@
 class Api::InvitationsController < Api::BaseController
 
   def create
-    current_user.invite_by! params[:invitation]
+    current_user.send_invitation_by! params[:invitation]
     render status: :ok, json: {}
   end
 
