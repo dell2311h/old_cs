@@ -1,0 +1,29 @@
+module CarrierWave
+  module MiniMagick
+    def quality(percentage)
+      manipulate! do |img|
+        img.quality(percentage.to_s)
+        img = yield(img) if block_given?
+        img
+      end
+    end
+  end
+end
+
+CarrierWave.configure do |config|
+  # for development
+  config.storage = :file
+
+  # for production
+  #config.fog_credentials = {
+  #  :provider               => 'AWS',
+  #  :aws_access_key_id      => 'xxx',
+  #  :aws_secret_access_key  => 'yyy',
+  #  :region                 => 'us-east-1'
+  #}
+  #config.fog_directory  = 'name_of_bucket'
+  #config.fog_host       = 'https://assets.example.com'
+  #config.fog_public     = true
+  #config.fog_attributes = {'Cache-Control' => 'max-age=315576000'}
+  #config.storage = :fog
+end

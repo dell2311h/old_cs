@@ -15,8 +15,10 @@ gem 'eventfulapi'
 gem 'foursquare2'
 gem 'twitter'
 gem 'instagram'
+gem 'carrierwave'
+gem 'mini_magick'
+gem "fog", "~> 1.3.1"
 
-gem 'aws-sdk'
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -33,7 +35,6 @@ gem 'jquery-rails'
 
 gem 'will_paginate', '~> 3.0'
 gem "geocoder"
-gem 'paperclip'
 gem 'rabl' # JSON responses renderer
 gem 'settingslogic'
 # To use ActiveModel has_secure_password

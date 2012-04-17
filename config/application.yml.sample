@@ -29,8 +29,14 @@ defaults: &defaults
     client_id:     'CLIENT_ID'
     client_secret: 'CLIENT_SECRET'
 
-  paperclip:
-    storage_options: {}
+  thumbnail:
+    quality: 90
+    small:
+      width: 50
+      height: 50
+    medium:
+      width: 125
+      height: 125
 
 development:
   <<: *defaults
@@ -49,13 +55,3 @@ test:
 
 production:
   <<: *defaults
-
-  paperclip:
-    storage_options:
-      storage: "s3"
-      bucket:  "crowdsync-production"
-      path:    "/:style/:id/:filename"
-      s3_credentials:
-        access_key_id: ""
-        secret_access_key: ""
-

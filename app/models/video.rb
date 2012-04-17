@@ -8,10 +8,11 @@ class Video < ActiveRecord::Base
   STATUS_STREAMING_DONE = 4
 
   attr_accessible :clip, :event_id, :user_id, :uuid, :tags, :songs, :thumbnail
+
   has_attached_file :clip, PAPERCLIP_STORAGE_OPTIONS
 
-  has_attached_file :thumbnail, {:styles => { :iphone => "200x200>" }}.merge(PAPERCLIP_STORAGE_OPTIONS)
-  validates_attachment_content_type :thumbnail, :content_type => ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif']
+  mount_uploader :thumbnail, ThumbnailUploader
+  validates_presence_of :thumbnail
 
   validates :user_id , :event_id, :uuid, :presence => true
   validates :user_id, :event_id, :numericality => { :only_integer => true }
@@ -197,4 +198,3 @@ class Video < ActiveRecord::Base
     end
 
 end
-

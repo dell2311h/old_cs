@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120414101743) do
+ActiveRecord::Schema.define(:version => 20120417114943) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -156,20 +156,13 @@ ActiveRecord::Schema.define(:version => 20120414101743) do
   create_table "videos", :force => true do |t|
     t.integer  "user_id"
     t.integer  "event_id"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
-    t.string   "clip_file_name"
-    t.string   "clip_content_type"
-    t.integer  "clip_file_size"
-    t.datetime "clip_updated_at"
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
     t.string   "encoding_id"
-    t.integer  "status",                 :default => -1
-    t.integer  "last_chunk_id",          :default => 0
-    t.string   "thumbnail_file_name"
-    t.string   "thumbnail_content_type"
-    t.integer  "thumbnail_file_size"
-    t.datetime "thumbnail_updated_at"
+    t.integer  "status",            :default => -1
+    t.integer  "last_chunk_id",     :default => 0
     t.string   "uuid"
+    t.string   "thumbnail"
   end
 
 end
