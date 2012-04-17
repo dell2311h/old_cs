@@ -23,7 +23,8 @@ config/unicorn.conf.rb
 
 public/system/clips/**
 !public/system/clips/.gitkeep
-public/system/avatars/**
+public/images/user/**
+!public/images/user/.gitkeep
 public/images/video/**
 !public/images/video/.gitkeep
 config/initializers/carrierwave.rb

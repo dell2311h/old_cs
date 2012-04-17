@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
          :recoverable,  :validatable, :encryptable,
          :token_authenticatable, :omniauthable
 
+  mount_uploader :avatar, AvatarUploader
+
   validates :name, :username, :email, :presence => true
   validates :password, :presence => true, :if => lambda {|u| u.new_record? }
   validates :email, :email => true
@@ -42,9 +44,6 @@ class User < ActiveRecord::Base
 
   # Invitations
   has_many :invitations
-
-
-  has_attached_file :avatar, :styles => { :medium => "300x300>", :iphone => "200x200>", :thumb => "100x100>" }
 
   accepts_nested_attributes_for :authentications
 
@@ -180,4 +179,3 @@ class User < ActiveRecord::Base
       user.friends
     end
 end
-

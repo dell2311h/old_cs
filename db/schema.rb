@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120417172308) do
+ActiveRecord::Schema.define(:version => 20120417183338) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -127,15 +127,12 @@ ActiveRecord::Schema.define(:version => 20120417172308) do
     t.datetime "reset_password_sent_at"
     t.string   "password_salt"
     t.string   "authentication_token"
-    t.string   "avatar_file_name"
-    t.string   "avatar_content_type"
-    t.integer  "avatar_file_size"
-    t.datetime "avatar_updated_at"
     t.date     "dob"
     t.string   "website"
     t.text     "bio"
     t.float    "latitude"
     t.float    "longitude"
+    t.string   "avatar"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
