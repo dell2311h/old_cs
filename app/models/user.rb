@@ -164,6 +164,10 @@ class User < ActiveRecord::Base
     videos
   end
 
+  def invite! mode, invitee
+    self.invitations.create! :mode => mode, :invitee => invitee
+  end
+
   private
     def remote_friends_for provider
       authenication = self.authentications.provider(provider).first

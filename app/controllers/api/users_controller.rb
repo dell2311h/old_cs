@@ -13,6 +13,9 @@ class Api::UsersController < Api::BaseController
     end
 
     @user.save!
+
+    Invitation.apply_for(@user, params[:invitation][:code]) if params[:invitation]
+
     sign_in @user
 
     render status: :created, action: :show

@@ -16,5 +16,10 @@ class Invitation < ActiveRecord::Base
     invitation_sender.send_invitation
   end
 
+  def self.apply_for registered_user, code
+    invitation = Invitation.find_by_code code
+    invitation.update_attributes(:registered_user_id => registered_user.id, :is_used => true) if invitation
+  end
+
 end
 

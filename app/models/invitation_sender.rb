@@ -27,7 +27,7 @@ module InvitationSender
   end
 
   def invitation_message
-    "<p>You you have been invited to #{Settings.application.name}</p><p>Your invitation code is #{self.code}</p><p>Follow this link to register #{self.registration_url}</p>".html_safe
+    "You you have been invited to #{Settings.application.name} Your invitation code is #{self.code}"
   end
 
   private
