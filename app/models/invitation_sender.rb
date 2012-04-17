@@ -27,7 +27,7 @@ module InvitationSender
   end
 
   def invitation_message
-    "You you have been invited to #{Settings.application.name} Your invitation code is #{self.code}"
+    "You you have been invited to #{Settings.application.name}. Your invitation code is #{self.code}"
   end
 
   private
