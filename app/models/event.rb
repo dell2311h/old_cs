@@ -4,12 +4,8 @@ class Event < ActiveRecord::Base
   belongs_to :place
   has_many :videos
   has_many :comments, :as => :commentable, :class_name => "Comment", :dependent => :destroy
-   
   has_many :taggings, as: :taggable, class_name: "Tagging", dependent: :destroy
   has_many :tags, through: :taggings
-
-  has_attached_file :image, :styles => { :iphone => "200x200>" }
-  validates_attachment_content_type :image, :content_type => ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif']
 
   validates :name, :date, presence: true
   validates :user_id, :place_id, presence: true
@@ -33,9 +29,9 @@ class Event < ActiveRecord::Base
   def songs
     Song.select("DISTINCT (songs.id), songs.name").joins(:videos).where("videos.event_id = ?", self.id)
   end
-    
+
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
-  
+
   scope :around_date, lambda { |search_date| where(:date => (search_date - 1.day)..(search_date)) }
 
   private
@@ -69,4 +65,3 @@ class Event < ActiveRecord::Base
     end
 
 end
-

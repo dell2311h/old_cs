@@ -36,7 +36,7 @@ module EventfulLib
       output_events = []
       return [] if results["total_items"] < 1
       events = results["events"]["event"]
-      
+
       if results["total_items"] == 1
         events_array = []
         events_array.push events
@@ -47,8 +47,9 @@ module EventfulLib
         tmp[:eventful_id]     = event["id"]
         tmp[:name]            = event["title"]
         tmp[:date]            = event["start_time"]
-        tmp[:image_url] = nil
-        tmp[:image_url] = event["image"]["url"] unless event["image"].nil? || event["image"]["url"].nil?
+        # TODO: fix after build
+        #tmp[:image_url] = nil
+        #tmp[:image_url] = event["image"]["url"] unless event["image"].nil? || event["image"]["url"].nil?
         output_events.push tmp
       end
 
@@ -70,7 +71,7 @@ module EventfulLib
 
        interval
     end
-    
+
     @@eventful_api = nil
 
     def self.eventful_api

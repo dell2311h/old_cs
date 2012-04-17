@@ -1,7 +1,8 @@
 object @event
 attributes :id, :name, :date
 
-node(:image_url) { |event| event.image.url(:iphone) if event.image.file? }
+# TODO: need fix after build
+node(:image_url) { "http://dummyimage.com/200x200/54575c/ffffff.jpg" }
 
 child :place do
   extends "api/places/show"
