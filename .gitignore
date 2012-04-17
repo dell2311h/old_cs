@@ -21,8 +21,8 @@ config/database.yml
 config/s3.yml
 config/unicorn.conf.rb
 
-public/system/clips/**
-!public/system/clips/.gitkeep
+public/uploads/video/clip/**
+!public/uploads/video/clip/.gitkeep
 public/images/user/**
 !public/images/user/.gitkeep
 public/images/video/**
