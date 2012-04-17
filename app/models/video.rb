@@ -9,16 +9,14 @@ class Video < ActiveRecord::Base
 
   attr_accessible :clip, :event_id, :user_id, :uuid, :tags, :songs, :thumbnail
 
-  has_attached_file :clip, PAPERCLIP_STORAGE_OPTIONS
-
   mount_uploader :thumbnail, ThumbnailUploader
   validates_presence_of :thumbnail
 
+  mount_uploader :clip, ClipUploader
+  validates_presence_of :clip, :unless => Proc.new { |video| video.status == STATUS_UPLOADING }
+
   validates :user_id , :event_id, :uuid, :presence => true
   validates :user_id, :event_id, :numericality => { :only_integer => true }
-
-  validates_attachment_presence :clip, :unless => Proc.new { |video| video.status == STATUS_UPLOADING }
-  validates_attachment_content_type :clip, :content_type => ['video/mp4', 'video/quicktime'], :unless => Proc.new { |video| video.status == STATUS_UPLOADING }
 
   belongs_to :event
   belongs_to :user
@@ -58,7 +56,7 @@ class Video < ActiveRecord::Base
   def to_jq_upload
     {
       "name" => self.name,
-      "size" => self.clip.size,
+      "size" => self.clip.file.size,
       "url" => self.clip.url,
       "thumbnail_url" => "",
       "delete_url" => "/videos/#{self.id}",
