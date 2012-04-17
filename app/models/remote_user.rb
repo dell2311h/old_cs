@@ -16,7 +16,7 @@ module RemoteUser
     @token = token
   end
 
-  def post(message, target_uid)
+  def post(message, link, target_uid)
     raise 'Not implemented'
   end
 

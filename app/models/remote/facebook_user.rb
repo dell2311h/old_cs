@@ -6,8 +6,8 @@ class Remote::FacebookUser
     parse result
   end
 
-  def post(message, target_uid)
-    api.put_wall_post(message, {}, target_uid)
+  def post(message, link, target_uid)
+    api.put_wall_post(message, {:link => link} , target_uid)
   end
 
   private
