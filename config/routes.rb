@@ -84,6 +84,10 @@ Crowdsync::Application.routes.draw do
     # Chunked uploads
     post "videos/:id/chunks" => "videos#append_chunk"
     put "videos/:id/finalize" => "videos#finalize_upload"
+
+    # Invitations
+    post 'invitations' => "invitations#create"
+
   end
 
   resources :videos, :only => [:index, :new, :create, :destroy]

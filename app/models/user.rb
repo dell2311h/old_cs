@@ -164,7 +164,9 @@ class User < ActiveRecord::Base
     videos
   end
 
-  def invite! mode, invitee
+  def invite_by! invitation_params
+    mode = invitation_params[:mode]
+    invitee = invitation_params[:invitee]
     self.invitations.create! :mode => mode, :invitee => invitee
   end
 
