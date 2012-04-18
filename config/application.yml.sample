@@ -29,6 +29,11 @@ defaults: &defaults
     client_id:     'CLIENT_ID'
     client_secret: 'CLIENT_SECRET'
 
+  twitter:
+    consumer_key: ''
+    consumer_secret: ''
+
+
   thumbnail:
     quality: 90
     small:
@@ -59,3 +64,4 @@ test:
 
 production:
   <<: *defaults
+
