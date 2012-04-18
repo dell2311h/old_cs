@@ -9,7 +9,7 @@ class AvatarUploader < CarrierWave::Uploader::Base
   # include Sprockets::Helpers::IsolatedHelper
 
   def store_dir
-    "images/#{model.class.to_s.underscore}/#{model.id}"
+    "images/#{model.class.to_s.underscore.pluralize}/#{model.id}"
   end
 
   # Provide a default URL as a default if there hasn't been a file uploaded:

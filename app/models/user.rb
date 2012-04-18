@@ -153,7 +153,9 @@ class User < ActiveRecord::Base
     event = Event.find(params[:event_id]) if params[:event_id]
     params[:videos].each do |video_params|
       songs_params = video_params.delete(:songs)
+      thumbnail_key_name = video_params.delete(:thumbnail)
       video = self.videos.build video_params
+      video.thumbnail = params[thumbnail_key_name].tempfile
       video.status = Video::STATUS_UPLOADING
       video.event = event if event
       video.save!
@@ -179,3 +181,4 @@ class User < ActiveRecord::Base
       user.friends
     end
 end
+
