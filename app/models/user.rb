@@ -154,10 +154,12 @@ class User < ActiveRecord::Base
     params[:videos].each do |video_params|
       songs_params = video_params.delete(:songs)
       thumbnail_key_name = video_params.delete(:thumbnail)
+      p "thumbnail_key_name = #{thumbnail_key_name}"
       video = self.videos.build video_params
       video.thumbnail = params[thumbnail_key_name].tempfile
       video.status = Video::STATUS_UPLOADING
       video.event = event if event
+      p "video = #{video}"
       video.save!
       video.add_songs_by(songs_params) if songs_params
       videos << video
