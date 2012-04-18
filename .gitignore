@@ -21,11 +21,11 @@ config/database.yml
 config/s3.yml
 config/unicorn.conf.rb
 
-public/uploads/video/clip/**
-!public/uploads/video/clip/.gitkeep
-public/images/user/**
-!public/images/user/.gitkeep
-public/images/video/**
-!public/images/video/.gitkeep
+public/uploads/videos/clip/**
+!public/uploads/videos/clip/.gitkeep
+public/images/users/**
+!public/images/users/.gitkeep
+public/images/videos/**
+!public/images/videos/.gitkeep
 config/initializers/carrierwave.rb
 config/application.yml

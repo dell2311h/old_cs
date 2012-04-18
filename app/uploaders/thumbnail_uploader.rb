@@ -28,7 +28,7 @@ class ThumbnailUploader < CarrierWave::Uploader::Base
 
   version :normal do
     def store_dir
-      "images/#{model.class.to_s.underscore}/#{model.id}/normal"
+      "images/#{model.class.to_s.underscore.pluralize}/#{model.id}/normal"
     end
 
     version :small do
@@ -50,7 +50,7 @@ class ThumbnailUploader < CarrierWave::Uploader::Base
 
   version :doublesized do
     def store_dir
-      "images/#{model.class.to_s.underscore}/#{model.id}/doublesized"
+      "images/#{model.class.to_s.underscore.pluralize}/#{model.id}/doublesized"
     end
 
     version :small do
