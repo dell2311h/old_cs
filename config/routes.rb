@@ -76,6 +76,8 @@ Crowdsync::Application.routes.draw do
     get "me/videos" => "videos#index"
     get "me/provider_local_friends" => "users#provider_local_friends"
     get "me/provider_remote_friends" => "users#provider_remote_friends"
+    get "me/invitations" => "invitations#index"
+    get "me/invitations/:mode" => "invitations#index"
 
     #Authentications
     put    "/me/authentications/:provider" => "authentications#link"
@@ -97,4 +99,3 @@ Crowdsync::Application.routes.draw do
   root :to => "videos#index"
 
 end
-
