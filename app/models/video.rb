@@ -13,7 +13,6 @@ class Video < ActiveRecord::Base
   validates_presence_of :thumbnail
 
   mount_uploader :clip, ClipUploader
-  validates_presence_of :clip, :unless => Proc.new { |video| video.status == STATUS_UPLOADING }
 
   validates :user_id , :event_id, :uuid, :presence => true
   validates :user_id, :event_id, :numericality => { :only_integer => true }
@@ -198,3 +197,4 @@ class Video < ActiveRecord::Base
     end
 
 end
+
