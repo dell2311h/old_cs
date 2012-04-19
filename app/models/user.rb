@@ -157,7 +157,7 @@ class User < ActiveRecord::Base
       video = self.videos.build video_params
       video.status = Video::STATUS_UPLOADING
       video.event = event if event
-      video.thumbnail = params[thumbnail_key_name].tempfile
+      video.thumbnail = params[thumbnail_key_name]
       video.save!
       video.add_songs_by(songs_params) if songs_params
       videos << video

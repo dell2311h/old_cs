@@ -25,3 +25,4 @@ end
 node(:duration) { 55 }
 
 node(:uploaded_file_size) { |video| video.tmpfile_size }
+
