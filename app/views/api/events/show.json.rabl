@@ -11,3 +11,4 @@ end
 node(:songs_count) { |event| event.songs.count }
 node(:videos_count) { |event| event.videos.count }
 node(:comments_count) { |event| event.comments.count }
+node(:most_popular_video_id) { |event| event.most_popular_video.id if event.most_popular_video }

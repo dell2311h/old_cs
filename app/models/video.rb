@@ -43,8 +43,10 @@ class Video < ActiveRecord::Base
   scope :likes_count, lambda { select("videos.*, COUNT(likes.id) AS likes_count").
                                joins("LEFT OUTER JOIN `likes` ON `likes`.`video_id` = `videos`.`id`").
                                group "videos.id"
-                               }
-
+                              }
+  scope :most_popular, lambda {
+    select("videos.*").select("(#{Like.select("COUNT(likes.video_id)").where("videos.id = likes.video_id").to_sql}) AS likes_count").order('likes_count DESC')
+  }
 
   def self.all_for_user user
     unscoped.where(:user_id => user.id)
