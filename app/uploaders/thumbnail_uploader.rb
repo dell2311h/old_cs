@@ -22,6 +22,10 @@ class ThumbnailUploader < CarrierWave::Uploader::Base
 
   process :quality => Settings.thumbnail.quality
 
+  def store_dir
+    "images/#{model.class.to_s.underscore.pluralize}/#{model.id}"
+  end
+
   def filename
     "original.#{model.thumbnail.file.extension}" if original_filename
   end
@@ -71,3 +75,4 @@ class ThumbnailUploader < CarrierWave::Uploader::Base
   end
 
 end
+
