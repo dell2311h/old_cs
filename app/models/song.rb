@@ -9,5 +9,8 @@ class Song < ActiveRecord::Base
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
 
   self.per_page = Settings.paggination.per_page
-end
 
+  def most_popular_video
+    self.videos.most_popular.first
+  end
+end

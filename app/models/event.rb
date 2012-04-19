@@ -24,6 +24,10 @@ class Event < ActiveRecord::Base
     Event.joins(:place).merge(Place.near coordinates, radius, :order => :distance, :select => "places.*, places.name AS place_name, events.*")
   }
 
+  def most_popular_video
+    self.videos.most_popular.first
+  end
+
   self.per_page = Settings.paggination.per_page
 
   def songs
