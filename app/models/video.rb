@@ -184,7 +184,12 @@ class Video < ActiveRecord::Base
     "#{directory_fullpath}/#{filename}"
   end
 
-  def finalize_upload_by! filename, uploaded_file_checksum
+  def finalize_upload_by! file_params
+    raise "Empty file params" unless file_params
+    raise "File name is empty" unless file_params[:name]
+    raise "File checksum is empty" unless file_params[:checksum]
+    filename = file_params[:name]
+    uploaded_file_checksum = file_params[:checksum]
     raise "Invalid file checksum" unless self.tmpfile_md5_checksum == uploaded_file_checksum
     File.rename(self.tmpfile_fullpath, self.renamed_file_fullpath_by(filename))
     self.update_attribute :status, STATUS_NEW # File upload finished

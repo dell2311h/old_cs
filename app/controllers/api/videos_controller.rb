@@ -56,7 +56,7 @@ class Api::VideosController < Api::BaseController
 
   def finalize_upload
     @video = Video.unscoped_find params[:id]
-    @video.finalize_upload_by_checksum! params[:uploaded_file_checksum]
+    @video.finalize_upload_by! params[:file]
     render status: :ok, action: :show
   end
 
