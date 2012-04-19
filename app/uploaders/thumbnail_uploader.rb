@@ -21,13 +21,14 @@ class ThumbnailUploader < CarrierWave::Uploader::Base
   end
 
   process :quality => Settings.thumbnail.quality
+  process :convert => 'jpg'
 
   def store_dir
     "images/#{model.class.to_s.underscore.pluralize}/#{model.id}"
   end
 
   def filename
-    "original.#{model.thumbnail.file.extension}" if original_filename
+    "original.jpg" if original_filename
   end
 
   version :normal do
