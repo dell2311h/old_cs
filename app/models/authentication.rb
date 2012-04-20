@@ -8,15 +8,10 @@ class Authentication < ActiveRecord::Base
 
   def self.not_on_remote_provider remote_users, provider
         uids = remote_users.map { |remote_user| remote_user[:uid] }
-
-        local_users = Authentication.provider provider
-        local_users = local_users.where "uid IN (?)", uids
-        local_users = local_users.select "uid"
-
+        local_users = Authentication.provider(provider).where("uid IN (?)", uids).select("uid")
         local_users.map do |local_user|
           remote_users.delete_if {|user| user[:uid] == local_user.uid.to_s }
         end
-
         remote_users
   end
 
