@@ -9,6 +9,11 @@ class Remote::InstagramUser
     end
   end
 
+  def post(message, link, target_uid)
+    medias = Instagram.user_recent_media(target_uid)
+    Instagram.create_media_comment(medias.first.id, "#{message} #{link}") if medias.first
+  end
+
   private
   def configure
     Instagram.configure do |config|
