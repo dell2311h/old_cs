@@ -35,12 +35,11 @@ class Api::UsersController < Api::BaseController
   end
 
   def index
-    @users = User.find_users(params).with_flag_followed_by(current_user)
+    @users = User.search_by params, current_user
     if @users.count > 0
       @users = @users.paginate(:page => params[:page], :per_page => params[:per_page])
     else
       render :status => :not_found, json: {}
-      return
     end
   end
 
