@@ -59,6 +59,8 @@ class User < ActiveRecord::Base
 
   scope :with_flag_followed_by, lambda { |user| select('users.*').select("(#{Relationship.select('COUNT(follower_id)').where('relationships.followed_id = users.id AND relationships.follower_id = ?', user.id).to_sql}) AS followed") }
 
+  scope :without_user, lambda { |user| where("id <> ?", user.id) }
+
   self.per_page = Settings.paggination.per_page
 
   def self.find_followed_by user
@@ -131,8 +133,8 @@ class User < ActiveRecord::Base
                               })
   end
 
-  def self.find_users params
-    users = User
+  def self.search_by(params, current_user)
+    users = User.without_user(current_user).with_flag_followed_by(current_user)
     if params[:name]
       users = users.with_name_like(params[:name])
     end
