@@ -10,7 +10,7 @@ class Video < ActiveRecord::Base
   attr_accessible :clip, :event_id, :user_id, :uuid, :tags, :songs, :thumbnail
 
   mount_uploader :thumbnail, ThumbnailUploader
-  validates_presence_of :thumbnail
+#  validates_presence_of :thumbnail
 
   mount_uploader :clip, ClipUploader
 
@@ -168,7 +168,7 @@ class Video < ActiveRecord::Base
 
   def append_binary_to_file! chunk_id, chunk_binary
     raise "Can't add data to finalized upload" unless self.status == STATUS_UPLOADING
-    self.set_chunk_id! chunk_id
+    set_chunk_id! chunk_id
     File.open(self.tmpfile_fullpath, 'ab') { |file| file.write(chunk_binary) }
   end
 
@@ -180,17 +180,27 @@ class Video < ActiveRecord::Base
     File.size self.tmpfile_fullpath if File.file? self.tmpfile_fullpath
   end
 
-  def finalize_upload_by_checksum! uploaded_file_checksum
+  def renamed_file_fullpath_by filename
+    "#{directory_fullpath}/#{filename}"
+  end
+
+  def finalize_upload_by! file_params
+    raise "Empty file params" unless file_params
+    raise "File name is empty" unless file_params[:name]
+    raise "File checksum is empty" unless file_params[:checksum]
+    filename = file_params[:name]
+    uploaded_file_checksum = file_params[:checksum]
     raise "Invalid file checksum" unless self.tmpfile_md5_checksum == uploaded_file_checksum
+    File.rename(self.tmpfile_fullpath, self.renamed_file_fullpath_by(filename))
     self.update_attribute :status, STATUS_NEW # File upload finished
-    File.open(self.tmpfile_fullpath) do |file|
+    File.open(self.renamed_file_fullpath_by(filename)) do |file|
       self.clip = file              #Attach uploaded file to 'clip' attribute
-      self.save
+      self.save!
     end
     self.remove_attached_data! # Remove uploaded data
   end
 
-  protected
+  private
     def set_chunk_id! chunk_id
       raise "Invalid chunk id!" unless self.last_chunk_id + 1 == chunk_id
       self.update_attribute :last_chunk_id, chunk_id
