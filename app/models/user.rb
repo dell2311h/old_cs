@@ -79,7 +79,7 @@ class User < ActiveRecord::Base
 
   def remote_friends_not_on_crowdsync_for provider
     friends = remote_friends_for provider
-    invitations = self.user.invitations.where(:mode => provider).map(&:invitee)
+    invitations = self.invitations.where(:mode => provider).map(&:invitee)
     friends.map! { |user| user.merge!(:is_invited_by_me => invitations.include?(user[:uid])) }
     Authentication.not_on_remote_provider friends, provider
   end
