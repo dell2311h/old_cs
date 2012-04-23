@@ -62,7 +62,6 @@ class Api::EventsController < Api::BaseController
     end
 
     if @events.count > 0
-      p params[:page]
       @events = @events.paginate(:page => params[:page], :per_page => params[:per_page])
     else
       render :status => :not_found, json: {}

@@ -31,10 +31,10 @@ module InvitationSender
   end
 
   private
-    @send_mode_classes = { facebook: InvitationSender::FacebookInvite,
-                           twitter:  InvitationSender::TwitterInvite,
-                           email:    InvitationSender::EmailInvite
+    @send_mode_classes = { facebook:  InvitationSender::FacebookInvite,
+                           twitter:   InvitationSender::TwitterInvite,
+                           email:     InvitationSender::EmailInvite,
+                           instagram: InvitationSender::InstagramInvite
                          }
 
 end
-

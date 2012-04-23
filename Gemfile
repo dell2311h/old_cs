@@ -14,7 +14,7 @@ gem 'koala'
 gem 'eventfulapi'
 gem 'foursquare2'
 gem 'twitter'
-gem 'instagram'
+gem 'instagram', :git => "https://github.com/Instagram/instagram-ruby-gem"
 gem 'carrierwave'
 gem 'mini_magick'
 gem "fog", "~> 1.3.1"

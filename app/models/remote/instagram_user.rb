@@ -4,9 +4,14 @@ class Remote::InstagramUser
 
   def friends
     configure
-    Instagram.follows.map do |friend|
-      { uid: friend.id, name: "#{friend.first_name} #{friend.last_name}", avatar_url: friend.profile_image_url }
+    Instagram.user_follows.map do |friend|
+      { uid: friend.id, name: friend.full_name, avatar_url: friend.profile_picture }
     end
+  end
+
+  def post(message, link, target_uid)
+    medias = Instagram.user_recent_media(target_uid)
+    Instagram.create_media_comment(medias.first.id, "#{message} #{link}") if medias.first
   end
 
   private
