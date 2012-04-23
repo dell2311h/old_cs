@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120418132302) do
+ActiveRecord::Schema.define(:version => 20120420162919) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -62,6 +62,13 @@ ActiveRecord::Schema.define(:version => 20120418132302) do
   create_table "likes", :force => true do |t|
     t.integer  "user_id"
     t.integer  "video_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "performers", :force => true do |t|
+    t.string   "name"
+    t.string   "picture"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
@@ -125,11 +132,11 @@ ActiveRecord::Schema.define(:version => 20120418132302) do
     t.datetime "reset_password_sent_at"
     t.string   "password_salt"
     t.string   "authentication_token"
+    t.float    "latitude"
+    t.float    "longitude"
     t.date     "dob"
     t.string   "website"
     t.text     "bio"
-    t.float    "latitude"
-    t.float    "longitude"
     t.string   "avatar"
   end
 
