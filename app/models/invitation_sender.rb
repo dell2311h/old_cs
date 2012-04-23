@@ -34,7 +34,7 @@ module InvitationSender
     @send_mode_classes = { facebook:  InvitationSender::FacebookInvite,
                            twitter:   InvitationSender::TwitterInvite,
                            email:     InvitationSender::EmailInvite,
-                           instagram: InvitationSender::Instagram
+                           instagram: InvitationSender::InstagramInvite
                          }
 
 end
