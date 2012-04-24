@@ -2,6 +2,7 @@ class Api::VideosController < Api::BaseController
 
   skip_before_filter :auth_check, :only => [:show, :likes, :index]
   before_filter :auth_check_for_me, :only => [:index]
+  before_filter :find_videos, :only => [:index, :show]
 
   def create
     @videos = current_user.create_videos_by params
@@ -9,10 +10,10 @@ class Api::VideosController < Api::BaseController
   end
 
   def index
-
     search_params = params
-    search_params[:user_id] = current_user if me?
-    @videos = me? ? (Video.all_for_user current_user) : (Video.search search_params)
+    search_params[:user_id] = current_user.id if me?
+    @videos = @videos.search(search_params)
+
     videos_id = @videos.map &:id
     @likes_count = Video.likes_count_by videos_id
     @comments_count = Video.comments_count_by videos_id
@@ -25,7 +26,7 @@ class Api::VideosController < Api::BaseController
   end
 
   def show
-    @video = Video.find params[:id]
+    @video = @videos.where("videos.id = ?", params[:id]).first
   end
 
   def update
@@ -65,5 +66,9 @@ class Api::VideosController < Api::BaseController
       auth_check if me?
     end
 
+    def find_videos
+      @videos = Video
+      @videos = @videos.unscoped if me?
+      @videos = @videos.with_flag_liked_by_me(current_user) if current_user
+    end
 end
-

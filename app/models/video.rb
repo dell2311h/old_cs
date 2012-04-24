@@ -38,7 +38,7 @@ class Video < ActiveRecord::Base
   # default scope to hide videos that are not ready.
   default_scope where(:status => STATUS_STREAMING_DONE)
 
-  scope :for_user, lambda {|user| where( :user_id => (user.is_a? User) ? user.id : user) }
+  scope :for_user, lambda { |user| where(:user_id => user.id) }
   scope :likes_count, lambda { select("videos.*, COUNT(likes.id) AS likes_count").
                                joins("LEFT OUTER JOIN `likes` ON `likes`.`video_id` = `videos`.`id`").
                                group "videos.id"
@@ -47,9 +47,13 @@ class Video < ActiveRecord::Base
     select("videos.*").select("(#{Like.select("COUNT(likes.video_id)").where("videos.id = likes.video_id").to_sql}) AS likes_count").order('likes_count DESC')
   }
 
-  def self.all_for_user user
-    unscoped.where(:user_id => user.id)
-  end
+  scope :search, lambda {|params| videos = includes [:event, :user]
+                          videos = videos.where(:id => params[:user_id]) if params[:user_id]
+                          videos = videos.where(:event_id => params[:event_id]) if params[:event_id]
+                          videos = videos.joins(:songs).where("songs.id = ?", params[:song_id]) if params[:song_id]
+                        }
+
+  scope :with_flag_liked_by_me, lambda { |user| select('videos.*').select("(#{Like.select('COUNT(user_id)').where('likes.video_id = videos.id AND likes.user_id = ?', user.id).to_sql}) AS liked_by_me") }
 
   self.per_page = Settings.paggination.per_page
 
@@ -92,25 +96,6 @@ class Video < ActiveRecord::Base
       self.tags << tag if !self.tags.find_by_id(tag)
     end
     self.tags.map(&:name)
-  end
-
-  def self.search params
-    videos = Video.includes [:event, :user]
-
-    if params[:user_id]
-      videos = videos.for_user params[:user_id]
-    end
-
-    if params[:event_id]
-      videos = videos.where(:event_id => params[:event_id])
-    end
-
-    if params[:song_id]
-      song = Song.find params[:song_id]
-      videos = song.videos
-    end
-
-    videos
   end
 
   def add_songs_by songs_params
@@ -207,4 +192,3 @@ class Video < ActiveRecord::Base
     end
 
 end
-

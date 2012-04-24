@@ -26,3 +26,6 @@ node(:duration) { 55 }
 
 node(:uploaded_file_size) { |video| video.tmpfile_size }
 
+if current_user
+  node(:liked_by_me) { |user| user.respond_to?(:liked_by_me) && (user.liked_by_me == 1) ? true : false }
+end
