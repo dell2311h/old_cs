@@ -47,6 +47,8 @@ class Video < ActiveRecord::Base
     select("videos.*").select("(#{Like.select("COUNT(likes.video_id)").where("videos.id = likes.video_id").to_sql}) AS likes_count").order('likes_count DESC')
   }
 
+  scope :with_calculated_counters, select('videos.*').select("(#{Like.select("COUNT(likes.video_id)").where("videos.id = likes.video_id").to_sql}) AS likes_count, (#{Comment.select("COUNT(comments.commentable_id)").where("videos.id = comments.commentable_id AND comments.commentable_type = 'Video'").to_sql}) AS comments_count")
+
   def self.all_for_user user
     unscoped.where(:user_id => user.id)
   end
