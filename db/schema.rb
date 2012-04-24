@@ -137,11 +137,11 @@ ActiveRecord::Schema.define(:version => 20120424160951) do
     t.datetime "reset_password_sent_at"
     t.string   "password_salt"
     t.string   "authentication_token"
-    t.float    "latitude"
-    t.float    "longitude"
     t.date     "dob"
     t.string   "website"
     t.text     "bio"
+    t.float    "latitude"
+    t.float    "longitude"
     t.string   "avatar"
   end
 
