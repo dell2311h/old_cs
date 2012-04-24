@@ -16,7 +16,7 @@ class Api::CommentsController < Api::BaseController
     @comment = @commentable.comments.build params[:comment]
     @comment.user = current_user
     @comment.save!
-    respond_with @comment, :status => :created, :location => nil
+    render status: :ok, action: :show
   end
 
   private

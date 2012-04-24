@@ -11,7 +11,7 @@ class Remote::InstagramUser
 
   def post(message, link, target_uid)
     medias = Instagram.user_recent_media(target_uid)
-    Instagram.create_media_comment(medias.first.id, "#{message} #{link}") if medias.first
+    Instagram.create_media_comment(medias.first.id, "#{message} http://#{link}") if medias.first
   end
 
   private

@@ -74,6 +74,7 @@ Crowdsync::Application.routes.draw do
     post "me/likes" => "likes#create"
     delete "me/likes/:video_id" => "likes#destroy"
     get "me/videos" => "videos#index"
+    get "me/videos/:id" => "videos#show"
     get "me/provider_local_friends" => "users#provider_local_friends"
     get "me/provider_remote_friends" => "users#provider_remote_friends"
     get "me/invitations" => "invitations#index"
@@ -90,6 +91,10 @@ Crowdsync::Application.routes.draw do
     # Invitations
     post 'invitations' => "invitations#create"
 
+    # Performers
+    get 'performers'        => 'performers#index'
+    get 'performers/remote' => 'performers#remote'
+
   end
 
   resources :videos, :only => [:index, :new, :create, :destroy]
@@ -99,3 +104,4 @@ Crowdsync::Application.routes.draw do
   root :to => "videos#index"
 
 end
+

@@ -54,6 +54,7 @@ class Video < ActiveRecord::Base
                         }
 
   scope :with_flag_liked_by_me, lambda { |user| select('videos.*').select("(#{Like.select('COUNT(user_id)').where('likes.video_id = videos.id AND likes.user_id = ?', user.id).to_sql}) AS liked_by_me") }
+  scope :with_calculated_counters, select('videos.*').select("(#{Like.select("COUNT(likes.video_id)").where("videos.id = likes.video_id").to_sql}) AS likes_count, (#{Comment.select("COUNT(comments.commentable_id)").where("videos.id = comments.commentable_id AND comments.commentable_type = 'Video'").to_sql}) AS comments_count")
 
   self.per_page = Settings.paggination.per_page
 
@@ -67,22 +68,6 @@ class Video < ActiveRecord::Base
       "delete_url" => "/videos/#{self.id}",
       "delete_type" => "DELETE"
     }
-  end
-
-  def self.likes_count_by ids
-    likes_count = Like.select "video_id, COUNT(`likes`.`id`) AS count"
-    likes_count = likes_count.where "video_id in (?)", ids
-    likes_count = likes_count.group :video_id
-
-    Hash[likes_count.map { |f| [f.video_id, f.count] }]
-  end
-
-  def self.comments_count_by ids
-    comments_count = Comment.select "commentable_id, COUNT(`comments`.`id`) AS count"
-    comments_count = comments_count.where 'commentable_type = "videos" AND commentable_id in (?)', ids
-    comments_count = comments_count.group :commentable_id
-
-    Hash[comments_count.map { |f| [f.commentable_id, f.count] }]
   end
 
   def self.find_by_clip_encoding_id encoding_id
