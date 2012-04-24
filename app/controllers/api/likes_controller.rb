@@ -4,18 +4,18 @@ class Api::LikesController < Api::BaseController
 
   def index
     @user = me? ? current_user : User.find(params[:user_id])
-    @videos = @user.liked_videos
+    @videos = @user.liked_videos.with_calculated_counters
     render status: :ok, :template => "api/videos/index"
   end
 
   def create
     current_user.like!(@video)
-    render status: :created, json: {}
+    render status: :ok, json: {}
   end
 
   def destroy
     current_user.unlike!(@video)
-    render status: :accepted, json: {}
+    render status: :ok, json: {}
   end
 
   private
@@ -23,3 +23,4 @@ class Api::LikesController < Api::BaseController
       @video = Video.find params[:video_id]
     end
 end
+
