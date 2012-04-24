@@ -6,6 +6,8 @@ class Performer < ActiveRecord::Base
 
   has_and_belongs_to_many :events
 
+  self.per_page = Settings.paggination.per_page
+
   def self.search params
     performers = self
     unless params[:performer_name].nil?
