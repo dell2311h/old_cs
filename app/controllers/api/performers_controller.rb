@@ -12,9 +12,10 @@ class Api::PerformersController < Api::BaseController
 
   def index
     @performers = Performer.search params
-    if @performers.empty?
-      respond_with [], :status => :not_found
-      return
+    if @performers.count > 0
+      @performers = @performers.paginate(:page => params[:page], :per_page => params[:per_page])
+    else
+      render :status => :not_found, json: {}
     end
   end
 
