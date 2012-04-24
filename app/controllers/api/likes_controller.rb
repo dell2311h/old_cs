@@ -4,7 +4,7 @@ class Api::LikesController < Api::BaseController
 
   def index
     @user = me? ? current_user : User.find(params[:user_id])
-    @videos = @user.liked_videos.with_calculated_counters
+    @videos = @user.liked_videos.with_calculated_counters.with_flag_liked_by_me(current_user)
     render status: :ok, :template => "api/videos/index"
   end
 
@@ -23,4 +23,3 @@ class Api::LikesController < Api::BaseController
       @video = Video.find params[:video_id]
     end
 end
-
