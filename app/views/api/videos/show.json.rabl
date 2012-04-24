@@ -1,6 +1,6 @@
 object @video
 
-attributes :id, :user_id, :event_id, :uuid, :last_chunk_id, :status
+attributes :id, :user_id, :event_id, :uuid, :last_chunk_id, :status, :likes_count, :comments_count
 
 node(:video_url) { |video| video.clip.url if video.clip? }
 
@@ -14,15 +14,10 @@ end
 
 attribute :created_at => :date
 
-unless @likes_count.nil?
-  node(:likes_count) { |video| (@likes_count[video.id].nil?)? 0: @likes_count[video.id] }
-end
-
-unless @comments_count.nil?
-  node(:comments_count) { |video| (@comments_count[video.id].nil?)? 0: @comments_count[video.id] }
-end
-
 node(:duration) { 55 }
 
 node(:uploaded_file_size) { |video| video.tmpfile_size }
 
+if current_user
+  node(:liked_by_me) { |user| user.respond_to?(:liked_by_me) && (user.liked_by_me == 1) ? true : false }
+end
