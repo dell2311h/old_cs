@@ -25,7 +25,7 @@ class Api::VideosController < Api::BaseController
   end
 
   def show
-    @video = Video.find params[:id]
+    @video = me? ? current_user.videos.unscoped_find(params[:id]) : Video.find(params[:id])
   end
 
   def update
