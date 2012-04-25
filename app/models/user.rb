@@ -153,7 +153,7 @@ class User < ActiveRecord::Base
   end
 
   def create_videos_by params
-    videos = []
+    new_videos = []
     event = Event.find(params[:event_id]) if params[:event_id]
     params[:videos].each do |video_params|
       songs_params = video_params.delete(:songs)
@@ -164,9 +164,9 @@ class User < ActiveRecord::Base
       video.thumbnail = params[thumbnail_key_name]
       video.save!
       video.add_songs_by(songs_params) if songs_params
-      videos << video
+      new_videos << video
     end
-    videos
+    new_videos
   end
 
   def send_invitation_by! invitation_params
@@ -185,3 +185,4 @@ class User < ActiveRecord::Base
       user.friends
     end
 end
+
