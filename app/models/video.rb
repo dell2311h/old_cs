@@ -47,7 +47,7 @@ class Video < ActiveRecord::Base
     select("videos.*").select("(#{Like.select("COUNT(likes.video_id)").where("videos.id = likes.video_id").to_sql}) AS likes_count").order('likes_count DESC')
   }
 
-  scope :search, lambda {|params| videos = includes [:event, :user]
+  scope :search, lambda {|params| videos = self
                           videos = videos.where("videos.user_id = ?", params[:user_id]) if params[:user_id]
                           videos = videos.where("videos.event_id = ?", params[:event_id]) if params[:event_id]
                           videos = videos.joins(:songs).where("songs.id = ?", params[:song_id]) if params[:song_id]
