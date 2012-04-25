@@ -55,7 +55,13 @@ class Video < ActiveRecord::Base
                         }
 
   scope :with_flag_liked_by_me, lambda { |user| select('videos.*').select("(#{Like.select('COUNT(user_id)').where('likes.video_id = videos.id AND likes.user_id = ?', user.id).to_sql}) AS liked_by_me") }
-  scope :with_calculated_counters, select('videos.*').select("(#{Like.select("COUNT(likes.video_id)").where("videos.id = likes.video_id").to_sql}) AS likes_count, (#{Comment.select("COUNT(comments.commentable_id)").where("videos.id = comments.commentable_id AND comments.commentable_type = 'Video'").to_sql}) AS comments_count")
+
+  scope :with_likes_count, select('videos.*').select("(#{Like.select("COUNT(likes.video_id)").where("videos.id = likes.video_id").to_sql}) AS likes_count")
+
+  scope :with_comments_count, select('videos.*').select("(#{Comment.select("COUNT(comments.commentable_id)").where("videos.id = comments.commentable_id AND comments.commentable_type = 'Video'").to_sql}) AS comments_count")
+
+  scope :with_calculated_counters, with_likes_count.with_comments_count
+
 
   self.per_page = Settings.paggination.per_page
 
