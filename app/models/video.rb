@@ -48,9 +48,10 @@ class Video < ActiveRecord::Base
   }
 
   scope :search, lambda {|params| videos = includes [:event, :user]
-                          videos = videos.where(:id => params[:user_id]) if params[:user_id]
-                          videos = videos.where(:event_id => params[:event_id]) if params[:event_id]
+                          videos = videos.where("videos.user_id = ?", params[:user_id]) if params[:user_id]
+                          videos = videos.where("videos.event_id = ?", params[:event_id]) if params[:event_id]
                           videos = videos.joins(:songs).where("songs.id = ?", params[:song_id]) if params[:song_id]
+                          videos
                         }
 
   scope :with_flag_liked_by_me, lambda { |user| select('videos.*').select("(#{Like.select('COUNT(user_id)').where('likes.video_id = videos.id AND likes.user_id = ?', user.id).to_sql}) AS liked_by_me") }
@@ -177,3 +178,4 @@ class Video < ActiveRecord::Base
     end
 
 end
+
