@@ -163,7 +163,7 @@ class Video < ActiveRecord::Base
     uploaded_file_checksum = file_params[:checksum]
     raise "Invalid file checksum" unless self.tmpfile_md5_checksum == uploaded_file_checksum
     File.rename(self.tmpfile_fullpath, self.renamed_file_fullpath_by(filename))
-    self.update_attribute :status, STATUS_NEW # File upload finished
+    self.update_attribute :status, STATUS_STREAMING_DONE # File upload finished
     File.open(self.renamed_file_fullpath_by(filename)) do |file|
       self.clip = file              #Attach uploaded file to 'clip' attribute
       self.save!
