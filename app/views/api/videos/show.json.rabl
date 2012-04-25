@@ -10,6 +10,7 @@ end
 
 child :user => :user do
   attributes :id, :name
+  node(:avatar_url) { |user| user.avatar.thumb.url if user.avatar? }
 end
 
 attribute :created_at => :date
