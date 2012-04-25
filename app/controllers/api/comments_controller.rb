@@ -5,7 +5,7 @@ class Api::CommentsController < Api::BaseController
   skip_before_filter :auth_check, :only => [:index]
 
   def index
-    @comments = @commentable.comments
+    @comments = @commentable.comments.order("created_at DESC")
 
     @comments = @comments.paginate(:page => params[:page], :per_page => params[:per_page])
 
@@ -30,4 +30,3 @@ class Api::CommentsController < Api::BaseController
     end
 
 end
-
