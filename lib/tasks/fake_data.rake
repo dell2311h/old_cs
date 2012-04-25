@@ -64,6 +64,17 @@ namespace :cs do
       puts "\n#{count} songs were added to DB"
     end
 
+    desc "Populate DB by fake performers (Amount can be specified by NUM_RECORDS env variable. Default is #{DEFAULT_COUNT})"
+    task :performers => :environment do
+      records_number = ENV['NUM_RECORDS'] ? ENV['NUM_RECORDS'].to_i : DEFAULT_COUNT
+        events = Event.limit(COUNT)
+        records_number.times do
+          performer = Factory.create :performer, :events => events
+          print '.'
+        end
+      puts "\n#{records_number} performers were added to DB"
+    end
+
   end  
 end
 

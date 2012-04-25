@@ -6,9 +6,15 @@ class Performer < ActiveRecord::Base
 
   has_and_belongs_to_many :events
 
-  def self.search params
+  self.per_page = Settings.paggination.per_page
 
-    self.first 2
+  def self.search params
+    performers = self
+    unless params[:performer_name].nil?
+      performers = performers.where("UPPER(name) LIKE ?", "%#{params[:performer_name].to_s.upcase}%")
+    end
+
+    performers
   end
 
 end
