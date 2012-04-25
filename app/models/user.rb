@@ -50,7 +50,7 @@ class User < ActiveRecord::Base
   before_create :reset_authentication_token
 
   scope :by_remote_provider_ids, lambda{|provider, uids| where("authentications.provider = ? AND authentications.uid IN (?)", provider, uids).
-                                                         includes(:authentications)
+                                                         joins(:authentications)
                                        }
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
 
@@ -73,6 +73,7 @@ class User < ActiveRecord::Base
     friends = remote_friends_for provider
     uids = friends.map { |friend| friend[:uid] }
     users = User.by_remote_provider_ids provider, uids
+    users = users.with_flag_followed_by(self)
 
     users.all
   end
