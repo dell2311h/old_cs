@@ -71,11 +71,11 @@ class Video < ActiveRecord::Base
   self.per_page = Settings.paggination.per_page
 
   def cached_user
-    @@users ? @@users.select { |user| user.id == self.user_id } : self.user
+    @@users ? @@users.select { |user| user.id == self.user_id }.first : self.user
   end
 
   def cached_event
-    @@events ? @@events.select { |event| event.id == self.event_id } : self.event
+    @@events ? @@events.select { |event| event.id == self.event_id }.first : self.event
   end
   
   #one convenient method to pass jq_upload the necessary information
