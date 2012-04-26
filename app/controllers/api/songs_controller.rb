@@ -4,27 +4,9 @@ class Api::SongsController < Api::BaseController
 
   def index
 
-    @songs = Song
+    @songs = Song.search params
 
-    if params[:video_id]
-      @video = Video.find params[:video_id]
-      @songs = @video.songs
-    end
-
-    if params[:event_id]
-      @event = Event.find params[:event_id]
-      @songs = @event.songs
-    end
-
-    if params[:song_name]
-      @songs = Song.suggestions_by_name(params[:song_name])
-    end
-
-    if params[:q]
-      @songs = Song.with_name_like(params[:q])
-    end
-
-    if (@songs_count = @songs.count) > 0
+    if (@songs_count = @songs.count(:distinct => true)) > 0
       @songs = @songs.paginate(:page => params[:page], :per_page => params[:per_page]).with_calculated_counters
     else
       render :status => :not_found, json: {}

@@ -14,18 +14,26 @@ class Song < ActiveRecord::Base
 
   scope :with_calculated_counters, with_videos_count.with_comments_count
 
+  scope :search, lambda { |params|
+
+    # ATTENTION:
+    #  scope chaining will be overrided if any of that keys:
+    #  :video_id, :event_id, :song_name or :q are presented at params
+
+    songs = scoped
+    songs = Video.find(params[:video_id]).songs if params[:video_id]
+    songs = Event.find(params[:event_id]).songs if params[:event_id]
+    songs = Song.suggestions_by_name(params[:song_name]) if params[:song_name]
+    songs = Song.with_name_like(params[:q]) if params[:q]
+
+    songs.scoped
+  }
+
   self.per_page = Settings.paggination.per_page
 
   def most_popular_video
     self.videos.most_popular.first
   end
 
-  def comments_count
-    comments_amount = 0
-    self.videos.each do |video|
-      comments_amount += video.comments.count
-    end
-    comments_amount
-  end
 end
 
