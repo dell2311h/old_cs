@@ -3,41 +3,12 @@ class Api::EventsController < Api::BaseController
   skip_before_filter :auth_check, :only => [:index, :remote, :show, :recommended]
 
   def remote
-    search_params = {}
-    if params[:nearby]
-      raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
-      check_coordinates_format
-      search_params[:within] = Settings.search.radius
-      search_params[:latitude] = params[:latitude]
-      search_params[:longitude] = params[:longitude]
-    end
+    @events = EventfulEvent.search params
+    if @events[:events].empty?
+      render :status => :not_found, json: []
 
-    if params[:date]
-      search_params[:date] = params[:date]
-    end
-
-    if params[:event_name]
-      search_params[:keywords] = params[:event_name]
-    end
-
-    unless params[:page].nil?
-      search_params[:page_number] = params[:page]
-      search_params[:page_size] = params[:per_page] || Settings.paggination.per_page
-    end
-
-    if search_params.empty?
-      respond_with [], :status => :not_found
       return
     end
-
-    events = EventfulLib::Api.find_events search_params
-
-    if events.empty?
-      respond_with [], :status => :not_found
-      return
-    end
-
-    respond_with events, :status => :ok, :location => nil
   end
 
   def index
