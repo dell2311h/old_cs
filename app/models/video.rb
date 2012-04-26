@@ -62,9 +62,22 @@ class Video < ActiveRecord::Base
 
   scope :with_calculated_counters, with_likes_count.with_comments_count
 
+  scope :with_events_and_users, lambda{
+                                        @@users = User.find scoped.map(&:user_id).uniq
+                                        @@events = Event.find scoped.map(&:event_id).uniq
+                                        scoped
+                                      }
 
   self.per_page = Settings.paggination.per_page
 
+  def cached_user
+    @@users ? @@users.select { |user| user.id == self.user_id } : self.user
+  end
+
+  def cached_event
+    @@events ? @@events.select { |event| event.id == self.event_id } : self.event
+  end
+  
   #one convenient method to pass jq_upload the necessary information
   def to_jq_upload
     {
@@ -178,6 +191,10 @@ class Video < ActiveRecord::Base
   end
 
   private
+
+    @@users = nil
+    @@events = nil
+
     def set_chunk_id! chunk_id
       raise "Invalid chunk id!" unless self.last_chunk_id + 1 == chunk_id
       self.update_attribute :last_chunk_id, chunk_id

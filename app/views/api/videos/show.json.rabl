@@ -4,11 +4,11 @@ attributes :id, :user_id, :event_id, :uuid, :last_chunk_id, :status, :likes_coun
 
 node(:video_url) { |video| video.clip.url if video.clip? }
 
-child :event => :event do
+child :cached_event => :event do
   attributes :id, :name
 end
 
-child :user => :user do
+child :cached_user => :user do
   attributes :id, :name
   node(:avatar_url) { |user| user.avatar.thumb.url if user.avatar? }
 end
