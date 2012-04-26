@@ -6,7 +6,6 @@ class Api::BaseController < ApplicationController
 
   respond_to :json
 
-
   rescue_from Exception do |exeption|
     status = (exeption.class == ActiveRecord::RecordNotFound) ? :not_found : :bad_request
     render status: status, json: { error: exeption.message }, layout: false
