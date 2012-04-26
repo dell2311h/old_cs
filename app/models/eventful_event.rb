@@ -1,6 +1,14 @@
 require 'eventful/api'
 class EventfulEvent
 
+  def self.create_event params
+    return self.eventful_api.call 'events/new', params
+  end
+
+  def self.get_event id
+    return self.eventful_api 'events/get', id
+  end
+
   def self.search params
     search_params = {}
     if params[:nearby]

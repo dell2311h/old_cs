@@ -53,7 +53,7 @@ class Event < ActiveRecord::Base
     end
 
     def self.get_eventful_event id
-      event = EventfulLib::Api.get_event :id => id
+      event = EventfulEvent.get_event :id => id
 
       event
     end
@@ -61,7 +61,7 @@ class Event < ActiveRecord::Base
     def self.create_eventful_event event
       params = {:title => event.name, :start_time => event.date}
       params[:venur_id] = event.place.eventful_id unless event.place.eventful_id.nil?
-      output = EventfulLib::Api.create_event params
+      output = EventfulEvent.create_event params
 
       return output.id unless output[:id].nil?
 
