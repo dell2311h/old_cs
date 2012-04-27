@@ -4,7 +4,7 @@ class Invitation < ActiveRecord::Base
 
   validates :mode, :invitee, presence: true
   validates :code, uniqueness: true
-  validates :mode, uniqueness: {:scope => :invitee}
+  validates :mode, uniqueness: {:scope => [:invitee, :user_id]}
 
   before_create do |invitation|
     invitation.code = SecureRandom.urlsafe_base64
