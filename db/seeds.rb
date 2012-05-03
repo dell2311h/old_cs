@@ -11,6 +11,4 @@ end
   Factory.create :event, name: name
 end
 
-["Andy Hauck's guitar solo", "Vildhjarta - All These Feelings", "Meteoroids Fall"].collect do |name|
-  Factory.create :video, name: name
-end
+3.times { Factory.create :video }
