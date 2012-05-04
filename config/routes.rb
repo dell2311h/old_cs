@@ -46,6 +46,8 @@ Crowdsync::Application.routes.draw do
       post "/:commentable/:id/comments" => "comments#create", :as => :comments_list
     end
 
+    get 'events/:event_id/videos_comments' => "comments#event_videos_comments_list"
+
     constraints :taggable => /videos|places|events/ do
       get "/:taggable/:id/tags" => "tags#index", :as => :create_tag
       post "/:taggable/:id/tags" => "tags#create", :as => :tags_list

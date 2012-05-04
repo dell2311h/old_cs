@@ -26,6 +26,10 @@ class Event < ActiveRecord::Base
 
   scope :with_videos_comments_count, select("events.*").select("SUM((#{Comment.select("COUNT(comments.commentable_id)").where("videos.id = comments.commentable_id AND comments.commentable_type = 'Video'").to_sql})) as comments_count").joins(:videos).group("events.id")
 
+  def videos_comments
+    videos.joins(:comments).select("comments.*")
+  end
+
   def most_popular_video
     self.videos.most_popular.first
   end

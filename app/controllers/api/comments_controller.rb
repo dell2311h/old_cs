@@ -1,8 +1,8 @@
 class Api::CommentsController < Api::BaseController
 
-  before_filter :find_commentable
+  before_filter :find_commentable, :only => [:index, :create]
 
-  skip_before_filter :auth_check, :only => [:index]
+  skip_before_filter :auth_check, :only => [:index, :event_videos_comments_list]
 
   def index
     @comments = @commentable.comments.order("created_at DESC")
@@ -10,6 +10,17 @@ class Api::CommentsController < Api::BaseController
     @comments = @comments.paginate(:page => params[:page], :per_page => params[:per_page])
 
     render :status => :not_found, json: {} if @comments.count == 0
+  end
+
+  def event_videos_comments_list
+    @event = Event.find params[:event_id]
+    @comments = @event.videos_comments.paginate(:page => params[:page], :per_page => params[:per_page])
+
+    if @comments.count > 0
+      render status: :ok, action: :index
+    else
+      render status: :not_found, json: {}
+    end
   end
 
   def create
@@ -30,3 +41,4 @@ class Api::CommentsController < Api::BaseController
     end
 
 end
+
