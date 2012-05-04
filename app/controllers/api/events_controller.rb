@@ -32,8 +32,8 @@ class Api::EventsController < Api::BaseController
       @events = @events.with_name_like query_str
     end
 
-    if @events.count > 0
-      @events = @events.paginate(:page => params[:page], :per_page => params[:per_page])
+    if (@events_count = @events.count) > 0
+      @events = @events.paginate(:page => params[:page], :per_page => params[:per_page]).with_videos_comments_count
     else
       render :status => :not_found, json: {}
     end
@@ -41,7 +41,7 @@ class Api::EventsController < Api::BaseController
   end
 
   def show
-    @event = Event.find params[:id]
+    @event = Event.with_videos_comments_count.find(params[:id])
   end
 
   def create
@@ -74,3 +74,4 @@ class Api::EventsController < Api::BaseController
     end
   end
 end
+
