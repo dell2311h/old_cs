@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120424160951) do
+ActiveRecord::Schema.define(:version => 20120504110633) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -137,11 +137,11 @@ ActiveRecord::Schema.define(:version => 20120424160951) do
     t.datetime "reset_password_sent_at"
     t.string   "password_salt"
     t.string   "authentication_token"
+    t.float    "latitude"
+    t.float    "longitude"
     t.date     "dob"
     t.string   "website"
     t.text     "bio"
-    t.float    "latitude"
-    t.float    "longitude"
     t.string   "avatar"
   end
 
@@ -167,6 +167,8 @@ ActiveRecord::Schema.define(:version => 20120424160951) do
     t.string   "uuid"
     t.string   "thumbnail"
     t.string   "clip"
+    t.integer  "start_time"
+    t.integer  "end_time"
   end
 
 end
