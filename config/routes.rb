@@ -39,6 +39,7 @@ Crowdsync::Application.routes.draw do
     get  'users/:user_id/videos' => 'videos#index'
     get  "songs/:song_id/videos" => "videos#index"
     get  "videos/:id/likes" => "videos#likes"
+    get 'events/:event_id/songs/:song_id/videos' => 'videos#index'
 
     constraints :commentable => /videos|places|events/ do
       get "/:commentable/:id/comments" => "comments#index", :as => :comment_create
