@@ -4,6 +4,7 @@ if @comments
   node(:count) { @comments.count }
 end
 
-child @comments do
+child @comments => :comments do
   extends "api/comments/show"
 end
+
