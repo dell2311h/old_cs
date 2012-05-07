@@ -33,6 +33,10 @@ defaults: &defaults
     consumer_key: ''
     consumer_secret: ''
 
+  pluraleyes:
+    login: ''
+    password: ''
+
 
   thumbnail:
     quality: 90
