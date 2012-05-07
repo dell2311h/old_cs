@@ -23,6 +23,8 @@ Crowdsync::Application.routes.draw do
     get 'events/remote' => 'events#remote'
     get 'events/recommended' => 'events#recommended'
 
+    get 'events/:event_id/playlist' => 'events#playlist'
+
     resources :events, :only => [:index, :create, :show]
 
     resources :places, :only => [:create]

@@ -44,6 +44,14 @@ class Event < ActiveRecord::Base
 
   scope :around_date, lambda { |search_date| where(:date => (search_date - 1.day)..(search_date)) }
 
+  def playlist
+    videos = Video.find_videos_for_playlist self.id
+
+    playlist = Playlist.new
+    playlist.format videos
+
+  end
+
   private
 
     def add_eventful_event

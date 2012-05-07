@@ -1,6 +1,6 @@
 class Api::EventsController < Api::BaseController
 
-  skip_before_filter :auth_check, :only => [:index, :remote, :show, :recommended]
+  skip_before_filter :auth_check, :only => [:index, :remote, :show, :recommended, :playlist]
 
   def remote
     @events = EventfulEvent.search params
@@ -72,6 +72,11 @@ class Api::EventsController < Api::BaseController
     else
       render :status => :not_found, json: {}
     end
+  end
+
+  def playlist
+    @event = Event.find params[:event_id]
+    @event.playlist
   end
 end
 
