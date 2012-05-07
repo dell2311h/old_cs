@@ -8,10 +8,14 @@ class Song < ActiveRecord::Base
 
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
 
-  scope :with_videos_count, lambda { |params = {}| select("songs.*").select("(#{VideoSong.select("COUNT(video_songs.song_id)").where("songs.id = video_songs.song_id").joins(:video).where("(videos.event_id = ?) OR (? IS NULL)", params[:event_id], params[:event_id]).to_sql}) AS videos_count")
+  scope :with_videos_count, lambda { |params = {}|
+    query_str = params[:event_id] ? "joins(:video).where(\"videos.event_id = ?\", params[:event_id])" : "scoped"
+    select("songs.*").select("(#{VideoSong.select("COUNT(video_songs.song_id)").where("songs.id = video_songs.song_id").instance_eval(query_str).to_sql}) AS videos_count")
   }
 
-  scope :with_comments_count, lambda { |params = {}| select("songs.*").select("SUM((#{Comment.select("COUNT(comments.commentable_id)").where("videos.id = comments.commentable_id AND comments.commentable_type = 'Video'").where("(videos.event_id = ?) OR (? IS NULL)", params[:event_id], params[:event_id]).to_sql})) AS comments_count").joins(:videos).group("songs.id")
+  scope :with_comments_count, lambda { |params = {}|
+    query_str = params[:event_id] ? "where(\"videos.event_id = ?\", params[:event_id])" : "scoped"
+    select("songs.*").select("SUM((#{Comment.select("COUNT(comments.commentable_id)").where("videos.id = comments.commentable_id AND comments.commentable_type = 'Video'").instance_eval(query_str).to_sql})) AS comments_count").joins(:videos).group("songs.id")
   }
 
   scope :with_calculated_counters, lambda { |params = {}| with_videos_count(params).with_comments_count(params) }
