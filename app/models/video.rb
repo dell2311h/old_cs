@@ -71,7 +71,7 @@ class Video < ActiveRecord::Base
   self.per_page = Settings.paggination.per_page
 
   def self.find_videos_for_playlist event_id
-    videos = Video.select "videos.id, videos.start_time, videos.end_time, clips.source , (SELECT count(*) from likes where videos.id = likes.video_id) as rating"
+    videos = Video.select "videos.id, videos.start_time, videos.end_time, clips.source as source, (SELECT count(*) from likes where videos.id = likes.video_id) as rating"
     videos = videos.joins 'LEFT JOIN clips on clips.clip_type = "demux_video" AND clips.video_id = videos.id'
     videos = videos.where "videos.event_id = ?", event_id
     videos = videos.group "rating desc, start_time, end_time"

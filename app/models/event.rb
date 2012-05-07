@@ -50,6 +50,7 @@ class Event < ActiveRecord::Base
     playlist = Playlist.new
     playlist.format videos
 
+    playlist.timelines
   end
 
   private

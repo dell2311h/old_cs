@@ -1,7 +1,7 @@
 class Playlist
-  
+  attr_reader :timelines
   def format videos
-    @playlist = []
+    @timelines = []
     videos.each do|video|
       unless video.start_time.nil? && video.end_time.nil?
         add_video video
@@ -14,8 +14,9 @@ class Playlist
     track_to_add = 0
     track_place_to_add = 0
     begin
-      @playlist.each do |track|
-        track.each do |track_video|
+      @timelines.each do |track|
+        track_videos = track[:clips]
+        track_videos.each do |track_video|
           throw 'Break loops' if should_add? video, track_video
           track_place_to_add = track_place_to_add + 1
         end
@@ -37,11 +38,15 @@ class Playlist
   end
 
   def add_to_track video, track = 0, place = 0
-    @playlist[track] = [] if @playlist[track].nil?
-    @playlist[track].insert place - 1, video
-
+    if @timelines[track].nil?
+      tmp = {}
+      tmp[:position] = @timelines.size
+      tmp[:size] = 0
+      tmp[:clips] = []
+      @timelines[track] = tmp
+    end
+    @timelines[track][:clips].insert place - 1, video
+    @timelines[track][:size] = @timelines[track][:size] + 1
   end
 
-  private
-  @playlist
 end
