@@ -7,7 +7,7 @@ class Api::SongsController < Api::BaseController
     @songs = Song.search params
 
     if (@songs_count = @songs.count(:distinct => true)) > 0
-      @songs = @songs.paginate(:page => params[:page], :per_page => params[:per_page]).with_calculated_counters
+      @songs = @songs.paginate(:page => params[:page], :per_page => params[:per_page]).with_calculated_counters(params)
     else
       render :status => :not_found, json: {}
     end
