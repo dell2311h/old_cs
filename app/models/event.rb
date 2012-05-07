@@ -12,6 +12,8 @@ class Event < ActiveRecord::Base
 
   before_create :add_eventful_event
 
+  after_create :create_pluraleyes_project
+
   scope :order_by_video_count, lambda {
     videos = Video.arel_table
     events = Event.arel_table
@@ -26,6 +28,11 @@ class Event < ActiveRecord::Base
 
   scope :with_videos_comments_count, select("events.*").select("SUM((#{Comment.select("COUNT(comments.commentable_id)").where("videos.id = comments.commentable_id AND comments.commentable_type = 'Video'").to_sql})) as comments_count").joins(:videos).group("events.id")
 
+  scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
+
+  scope :around_date, lambda { |search_date| where(:date => (search_date - 1.day)..(search_date)) }
+
+
   def videos_comments
     videos.joins(:comments).select("comments.*")
   end
@@ -39,10 +46,6 @@ class Event < ActiveRecord::Base
   def songs
     Song.select("DISTINCT (songs.id), songs.name").joins(:videos).where("videos.event_id = ?", self.id)
   end
-
-  scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
-
-  scope :around_date, lambda { |search_date| where(:date => (search_date - 1.day)..(search_date)) }
 
   private
 
@@ -72,6 +75,14 @@ class Event < ActiveRecord::Base
       return output.id unless output[:id].nil?
 
       nil
+    end
+
+    def create_pluraleyes_project
+      require 'pe_hydra'
+      hydra = PeHydra::Query.new Settings.pluraleyes.login, Settings.pluraleyes.password
+      pe_project = hydra.create_project self.name
+      self.update_attribute :pluraleyes_id, pe_project[:id]
+      Rails.logger.info "PluralEyes project created. Project ID #{self.pluraleyes_id}"
     end
 
 end
