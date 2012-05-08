@@ -53,7 +53,7 @@ module PeHydra
         obj = {}
         fields = project.css('*')
         fields.each do |field|
-          obj[field.name.to_sym] = field.text
+          obj[field.name.underscore.to_sym] = field.text
         end
         list << obj
       end
@@ -70,7 +70,7 @@ module PeHydra
       response = request_send(:add_media, xml, {:project_id => project_id})
       media = {}
       response.css('Media *').each do |field|
-        media[field.name.to_sym] = field.text
+        media[field.name.underscore.to_sym] = field.text
       end
       media
     end
@@ -83,7 +83,7 @@ module PeHydra
         obj = {}
         fields = media.css('*')
         fields.each do |field|
-          obj[field.name.to_sym] = field.text
+          obj[field.name.underscore.to_sym] = field.text
         end
         list << obj
       end
@@ -101,7 +101,7 @@ module PeHydra
           obj = {}
           fields = clip.css('*')
           fields.each do |field|
-            obj[field.name.to_sym] = field.text
+            obj[field.name.underscore.to_sym] = field.text
           end
           current_group << obj
         end
