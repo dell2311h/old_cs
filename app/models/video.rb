@@ -34,6 +34,8 @@ class Video < ActiveRecord::Base
 
   has_many :likes
   has_many :likers, :through => :likes, :source => :user
+  
+  has_many :timings
 
   # default scope to hide videos that are not ready.
   default_scope where(:status => STATUS_STREAMING_DONE)

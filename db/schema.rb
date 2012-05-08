@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120507094121) do
+ActiveRecord::Schema.define(:version => 20120508140037) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -42,13 +42,14 @@ ActiveRecord::Schema.define(:version => 20120507094121) do
 
   create_table "events", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
     t.integer  "place_id"
     t.integer  "user_id"
     t.date     "date"
     t.string   "eventful_id"
     t.string   "pluraleyes_id"
+    t.integer  "master_track_version"
   end
 
   create_table "events_performers", :id => false, :force => true do |t|
@@ -126,6 +127,15 @@ ActiveRecord::Schema.define(:version => 20120507094121) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "timings", :force => true do |t|
+    t.integer  "video_id"
+    t.integer  "start_time"
+    t.integer  "end_time"
+    t.integer  "version"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "users", :force => true do |t|
     t.string   "name"
     t.string   "email"
@@ -168,8 +178,6 @@ ActiveRecord::Schema.define(:version => 20120507094121) do
     t.string   "uuid"
     t.string   "thumbnail"
     t.string   "clip"
-    t.integer  "start_time"
-    t.integer  "end_time"
   end
 
 end
