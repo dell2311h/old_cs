@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120508140037) do
+ActiveRecord::Schema.define(:version => 20120508182224) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -30,6 +30,8 @@ ActiveRecord::Schema.define(:version => 20120508140037) do
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
   end
+
+  add_index "clips", ["video_id"], :name => "index_clips_on_video_id"
 
   create_table "comments", :force => true do |t|
     t.integer  "user_id"
@@ -72,6 +74,8 @@ ActiveRecord::Schema.define(:version => 20120508140037) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "likes", ["video_id"], :name => "index_likes_on_video_id"
 
   create_table "performers", :force => true do |t|
     t.string   "name"
@@ -136,6 +140,8 @@ ActiveRecord::Schema.define(:version => 20120508140037) do
     t.datetime "updated_at", :null => false
   end
 
+  add_index "timings", ["video_id"], :name => "index_timings_on_video_id"
+
   create_table "users", :force => true do |t|
     t.string   "name"
     t.string   "email"
@@ -148,11 +154,11 @@ ActiveRecord::Schema.define(:version => 20120508140037) do
     t.datetime "reset_password_sent_at"
     t.string   "password_salt"
     t.string   "authentication_token"
+    t.float    "latitude"
+    t.float    "longitude"
     t.date     "dob"
     t.string   "website"
     t.text     "bio"
-    t.float    "latitude"
-    t.float    "longitude"
     t.string   "avatar"
   end
 
@@ -179,5 +185,7 @@ ActiveRecord::Schema.define(:version => 20120508140037) do
     t.string   "thumbnail"
     t.string   "clip"
   end
+
+  add_index "videos", ["event_id"], :name => "index_videos_on_event_id"
 
 end
