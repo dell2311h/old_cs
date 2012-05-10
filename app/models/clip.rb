@@ -7,6 +7,8 @@ class Clip < ActiveRecord::Base
   validates :source, :encoding_id, :presence => true
   validates_presence_of :video_id
 
+  validates :video_id, uniqueness: { :scope => :clip_type }
+
   after_create :add_to_pluraleyes
 
   private
