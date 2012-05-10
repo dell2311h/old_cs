@@ -34,8 +34,8 @@ class Video < ActiveRecord::Base
 
   has_many :likes
   has_many :likers, :through => :likes, :source => :user
-  
-  has_many :timings
+
+  has_many :timings, dependent: :destroy
 
   # default scope to hide videos that are not ready.
   default_scope where(:status => STATUS_STREAMING_DONE)
@@ -90,7 +90,7 @@ class Video < ActiveRecord::Base
   def cached_event
     @@events ? @@events.select { |event| event.id == self.event_id }.first : self.event
   end
-  
+
   #one convenient method to pass jq_upload the necessary information
   def to_jq_upload
     {
