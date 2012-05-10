@@ -67,11 +67,12 @@ class Event < ActiveRecord::Base
     require 'pe_hydra'
     hydra = PeHydra::Query.new Settings.pluraleyes.login, Settings.pluraleyes.password
     sync_results = hydra.sync self.pluraleyes_id
-    self.create_timings_by_pluraleyes_sync sync_results
+    self.create_timings_by_pluraleyes_sync_results sync_results
   end
 
   # Timings creation
-  def create_timings_by_pluraleyes_sync pe_sync_results = []
+  def create_timings_by_pluraleyes_sync_results pe_sync_results = []
+
     # Prepare new master track
     new_master_track = self.create_not_ready_master_track
 
