@@ -37,6 +37,8 @@ class Video < ActiveRecord::Base
 
   has_many :timings, dependent: :destroy
 
+  has_one :meta_info, dependent: :destroy
+
   # default scope to hide videos that are not ready.
   default_scope where(:status => STATUS_STREAMING_DONE)
 
