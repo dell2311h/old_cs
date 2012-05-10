@@ -27,8 +27,9 @@ ActiveRecord::Schema.define(:version => 20120508182224) do
     t.string   "source"
     t.string   "encoding_id"
     t.string   "clip_type"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+    t.string   "pluraleyes_id"
   end
 
   add_index "clips", ["video_id"], :name => "index_clips_on_video_id"
@@ -154,11 +155,11 @@ ActiveRecord::Schema.define(:version => 20120508182224) do
     t.datetime "reset_password_sent_at"
     t.string   "password_salt"
     t.string   "authentication_token"
-    t.float    "latitude"
-    t.float    "longitude"
     t.date     "dob"
     t.string   "website"
     t.text     "bio"
+    t.float    "latitude"
+    t.float    "longitude"
     t.string   "avatar"
   end
 
