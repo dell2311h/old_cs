@@ -47,6 +47,16 @@ class Event < ActiveRecord::Base
     Song.select("DISTINCT (songs.id), songs.name").joins(:videos).where("videos.event_id = ?", self.id)
   end
 
+  def playlist
+    videos = Video.find_videos_for_playlist self.id
+
+    playlist = Playlist.new
+    playlist.format videos
+
+    playlist.timelines
+  end
+
+
   private
 
     def add_eventful_event

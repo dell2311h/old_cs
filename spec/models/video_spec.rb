@@ -6,6 +6,7 @@ describe Video do
   it { should validate_presence_of(:uuid) }
   it { should belong_to(:user) }
   it { should belong_to(:event) }
+  it { should have_many(:timings) }
 
   context "chunked uploads" do
     subject { Video.new }

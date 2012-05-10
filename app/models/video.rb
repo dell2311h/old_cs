@@ -34,6 +34,8 @@ class Video < ActiveRecord::Base
 
   has_many :likes
   has_many :likers, :through => :likes, :source => :user
+  
+  has_many :timings
 
   # default scope to hide videos that are not ready.
   default_scope where(:status => STATUS_STREAMING_DONE)
@@ -69,6 +71,17 @@ class Video < ActiveRecord::Base
                                       }
 
   self.per_page = Settings.paggination.per_page
+
+  def self.find_videos_for_playlist event_id
+    videos = Video.select "videos.id, timings.start_time as start_time, timings.end_time as end_time, clips.source as source, (SELECT count(*) from likes where videos.id = likes.video_id) as rating"
+    videos = videos.joins 'LEFT JOIN clips on clips.clip_type = "demux_video" AND clips.video_id = videos.id'
+    videos = videos.joins 'LEFT JOIN events on events.id = videos.event_id'
+    videos = videos.joins 'LEFT JOIN timings on videos.id = timings.video_id AND timings.version = events.master_track_version'
+    videos = videos.where "videos.event_id = ?", event_id
+    videos = videos.group "rating desc, start_time, end_time"
+
+    videos
+  end
 
   def cached_user
     @@users ? @@users.select { |user| user.id == self.user_id }.first : self.user
