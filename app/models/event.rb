@@ -63,6 +63,13 @@ class Event < ActiveRecord::Base
     self.master_tracks.create :version => (last_master_track ? (last_master_track.version + 1) : 0)
   end
 
+  def sync_with_pluraleyes
+    require 'pe_hydra'
+    hydra = PeHydra::Query.new Settings.pluraleyes.login, Settings.pluraleyes.password
+    sync_results = hydra.sync self.pluraleyes_id
+    self.create_timings_by_pluraleyes_sync sync_results
+  end
+
   # Timings creation
   def create_timings_by_pluraleyes_sync pe_sync_results = []
     # Prepare new master track
@@ -76,7 +83,7 @@ class Event < ActiveRecord::Base
       clip = Clip.find_by_pluraleyes_id first_synched_clip[:media_id]
       timestamp = clip.video.meta_info.recorded_at.to_i
       last_synched_clip = sorted_group.last
-      group_duration = last_synched_clip[:end]
+      group_duration = last_synched_clip[:end].to_i
       groups_with_timestamp_and_duration << { pe_group: sorted_group, starts_at: timestamp, duration: group_duration }
     end
 
@@ -90,7 +97,7 @@ class Event < ActiveRecord::Base
       pluraleyes_group = group[:pe_group]
       pluraleyes_group.each do |synced_clip|
         clip = Clip.find_by_pluraleyes_id synced_clip[:media_id]
-        timing = clip.video.timings.create! :start_time => synced_clip[:start], :end_time => synced_clip[:end], :version => new_master_track.version
+        timing = clip.video.timings.create! :start_time => synced_clip[:start].to_i + group_time_offset, :end_time => synced_clip[:end].to_i + group_time_offset, :version => new_master_track.version
       end
       group_time_offset += group[:duration]
     end
