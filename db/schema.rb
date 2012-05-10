@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120510093516) do
+ActiveRecord::Schema.define(:version => 20120510131506) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -77,6 +77,15 @@ ActiveRecord::Schema.define(:version => 20120510093516) do
   end
 
   add_index "likes", ["video_id"], :name => "index_likes_on_video_id"
+
+  create_table "master_tracks", :force => true do |t|
+    t.integer  "event_id"
+    t.string   "source"
+    t.integer  "version"
+    t.boolean  "is_ready",   :default => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+  end
 
   create_table "meta_infos", :force => true do |t|
     t.integer  "video_id"

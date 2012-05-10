@@ -6,6 +6,7 @@ class Event < ActiveRecord::Base
   has_many :taggings, as: :taggable, class_name: "Tagging", dependent: :destroy
   has_many :tags, through: :taggings
   has_and_belongs_to_many :performers
+  has_many :master_tracks, dependent: :destroy
 
   validates :name, :date, presence: true
   validates :user_id, :place_id, presence: true
