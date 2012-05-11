@@ -18,6 +18,7 @@ gem 'instagram', :git => "https://github.com/Instagram/instagram-ruby-gem"
 gem 'carrierwave'
 gem 'mini_magick'
 gem "fog", "~> 1.3.1"
+gem 'resque'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -58,3 +59,4 @@ group :test, :development do
   gem "factory_girl_rails", "~> 1.2"
   gem "ffaker"
 end
+
