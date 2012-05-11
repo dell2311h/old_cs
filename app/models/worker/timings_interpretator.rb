@@ -1,4 +1,4 @@
-class TimingsInterpetator
+class Worker::TimingsInterpretator
 
   @queue = :timings_queue
 
