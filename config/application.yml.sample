@@ -37,6 +37,8 @@ defaults: &defaults
     login: ''
     password: ''
 
+  sync_with_pluraleyes:
+    minimal_amount_of_videos: 2
 
   thumbnail:
     quality: 90
