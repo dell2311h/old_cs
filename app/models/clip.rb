@@ -15,11 +15,13 @@ class Clip < ActiveRecord::Base
     def add_to_pluraleyes
       if self.clip_type == TYPE_DEMUX_AUDIO
         require 'pe_hydra'
-        pluraleyes_project_id = self.video.event.pluraleyes_id
+        event = self.video.event
+        pluraleyes_project_id = event.pluraleyes_id
         hydra = PeHydra::Query.new Settings.pluraleyes.login, Settings.pluraleyes.password
         pe_media = hydra.create_media("clip ID #{self.id}", self.source, pluraleyes_project_id)
         self.update_attribute :pluraleyes_id, pe_media[:id]
         Rails.logger.info "PluralEyes media created. Media ID #{self.pluraleyes_id}"
+        Resque.enqueue(TimingsInterpetator, event.id) if event.sync_with_pluraleyes?
       end
     end
 
