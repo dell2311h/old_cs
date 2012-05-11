@@ -63,6 +63,10 @@ class Event < ActiveRecord::Base
     self.master_tracks.create :version => (last_master_track ? (last_master_track.version + 1) : 0)
   end
 
+  def sync_with_pluraleyes?
+    self.videos.joins(:clips).where("clips.clip_type = ?", Clip::TYPE_DEMUX_AUDIO).count >= Settings.sync_with_pluraleyes.minimal_amount_of_videos
+  end
+
   def sync_with_pluraleyes
     require 'pe_hydra'
     hydra = PeHydra::Query.new Settings.pluraleyes.login, Settings.pluraleyes.password
