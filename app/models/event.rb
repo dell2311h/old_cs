@@ -97,15 +97,33 @@ class Event < ActiveRecord::Base
 
     # create timings by prepared PluralEyes results
     group_time_offset = 0 # miliseconds
+
+    clips_to_cut = [] # Encoding media ids
+    timings_to_cut = [] # Timings for this medias to cut them
+
     groups_with_timestamp_and_duration.each do |group|
       # group { :pe_group => [...], :starts_at => timestamp, :duration => miliseconds }
       pluraleyes_group = group[:pe_group]
+
+      previous_clip = nil # Previous synced_clip inside group
+
       pluraleyes_group.each do |synced_clip|
         clip = Clip.find_by_pluraleyes_id synced_clip[:media_id]
         timing = clip.video.timings.create! :start_time => synced_clip[:start].to_i + group_time_offset, :end_time => synced_clip[:end].to_i + group_time_offset, :version => new_master_track.version
+
+        # Prepare timings for Encoding master track creation
+        if !previous_clip or (previous_clip and (previous_clip[:end].to_i < synced_clip[:end].to_i))
+          cut_start = previous_clip ? (previous_clip[:end].to_i - synced_clip[:start].to_i) : 0
+          clip_duration = synced_clip[:end].to_i - synced_clip[:start].to_i
+          timings_to_cut << { start_time: cut_start, end_time: clip_duration }
+          clips_to_cut << clip.encoding_id
+          previous_clip = synced_clip
+        end
       end
       group_time_offset += group[:duration]
     end
+
+    { media_ids: clips_to_cut, cutting_timings: timings_to_cut } # Prepared data for cutting medias at Encoding
   end
 
 
