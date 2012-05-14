@@ -109,6 +109,8 @@ class Event < ActiveRecord::Base
 
       pluraleyes_group.each do |synced_clip|
         clip = Clip.find_by_pluraleyes_id synced_clip[:media_id]
+
+        # Create timings for videos
         timing = clip.video.timings.create! :start_time => synced_clip[:start].to_i + group_time_offset, :end_time => synced_clip[:end].to_i + group_time_offset, :version => new_master_track.version
 
         # Prepare timings for Encoding master track creation
