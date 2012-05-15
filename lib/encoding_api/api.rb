@@ -1,5 +1,5 @@
 require 'net/http'
-module EncodingLib
+module EncodingApi
 
   class Api
 
@@ -8,23 +8,20 @@ module EncodingLib
       when :add_media
         response = self.instance.request '/medias', params, :post
 
-        return response.id
+        return response["media"]["id"]
       when :demux
         send_params = {:command => "demux"}
-        action = '/demux/' + params[:encoding_id] + '/encode'
+        action = '/medias/' + params[:encoding_id] + '/encode'
         response = self.instance.request action, send_params, :post
-        
-        return true unless response.id.nil?
-        
-        return false
+
+        return true
+
       when :streaming
         send_params = {:command => "streaming"}
-        action = '/demux/' + params[:encoding_id] + '/encode'
+        action = '/medias/' + params[:encoding_id] + '/encode'
         response = self.instance.request action, send_params, :post
-        
-        return true unless response.id.nil?
-        
-        return false
+
+        return true
       else
         raise 'unknown action'
       end
@@ -52,8 +49,8 @@ module EncodingLib
           raise 'unknown request method'
         end
 
-        raise 'Request "' + action + '" unsuccessfull params(' + (params.to_json) + ')' if response != Net::HTTPSuccess
-        response = response.get_response
+        raise 'Request "' + action + '" unsuccessfull params(' + (params.to_json) + ')' unless response.is_a? Net::HTTPSuccess
+        response = ActiveSupport::JSON.decode response.read_body
 
         response
     end
