@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120508182224) do
+ActiveRecord::Schema.define(:version => 20120515160553) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -40,6 +40,13 @@ ActiveRecord::Schema.define(:version => 20120508182224) do
     t.text     "text"
     t.datetime "created_at",       :null => false
     t.datetime "updated_at",       :null => false
+  end
+
+  create_table "encoding_profiles", :force => true do |t|
+    t.string   "profile_id"
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "events", :force => true do |t|
