@@ -16,7 +16,9 @@ defaults: &defaults
     per_page: 20
 
   encoding:
-    url: ""
+    url:
+      host: 'localhost'
+      port: 3002
 
   eventful:
     app_key: "fFNCjc4kh2Gc3XVW"

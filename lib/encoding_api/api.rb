@@ -56,9 +56,8 @@ module EncodingApi
     end
 
     def initialize
-      uri = URI.parse(Settings.encoding.url)
-      @base_url = uri.host
-      @port     = uri.port
+      @base_url = Settings.encoding.url.host
+      @port     = Settings.encoding.url.port
     end
 
       private

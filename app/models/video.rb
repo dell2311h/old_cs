@@ -1,6 +1,7 @@
 require "encoding_api/factory"
 class Video < ActiveRecord::Base
-
+  before_save :create_encoding_media
+  
   STATUS_UPLOADING = -1
   STATUS_NEW = 0
   STATUS_DEMUX_WORKING = 1
@@ -219,13 +220,13 @@ class Video < ActiveRecord::Base
 
 #---------Encoding---------
 
-  def demux!
+  def demux
     self.update_attributes( {:encoding_id => get_encoding_id} ) if self.encoding_id.nil?
     send_to_demux
     self.update_attributes( {:status => Video::STATUS_DEMUX_WORKING} )
   end
 
-  def stream!
+  def stream
     raise 'Unable to stream' unless self.status == Video::STATUS_DEMUX_DONE
     status = EncodingApi::Factory.process_media :stream, self.demux_video.encoding_id
     raise 'Failed to send video to stream' if !status
@@ -317,12 +318,12 @@ class Video < ActiveRecord::Base
     return true, nil
   end
 
-  private
-    def get_encoding_id
-      id = EncodingApi::Factory.process_media :create_media, self.clip.url
-      raise 'Failed to get encoding_id' if !id
-
-      id
+    def create_encoding_media
+      if self.encoding_id.nil? && self.status = STATUS_NEW
+        encoding_id = EncodingApi::Factory.process_media :create_media, self.clip.url
+        raise 'Failed to get encoding_media id' if encoding_id.nil?
+        self.encoding_id = encoding_id
+      end
     end
 
     def send_to_demux
