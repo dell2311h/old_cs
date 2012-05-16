@@ -1,21 +1,7 @@
-module EncodingHandler
+class EncodingHandler::Demux
 
-  def self.handle(event, params)
-    EncodingHandler.send(event, params)
-
-  end
-
-  private
-
-    def self.meta_info params
-      encoding_id = params[:data][:input_media_ids][0]
-      video = Video.find_by_encoding_id encoding_id
-
-      status = EncodingApi::Factory.process_media :demux, encoding_id
-      raise 'Unable to add video to demux' unless status
-    end
-
-    def self.demux params
+  def perform params
+    p '??????????????????????'
         #  video = Video.find_by
     #  status = EncodingApi::Factory.process_media :demux, self.encoding_id
     #  raise 'Failed to send video to demux' if !status
@@ -76,7 +62,5 @@ module EncodingHandler
     #end
     #
     #return true, nil
-
+  end
     end
-
-end
