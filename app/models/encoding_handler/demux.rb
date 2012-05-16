@@ -1,24 +1,31 @@
 class EncodingHandler::Demux
 
   def perform params
-    p '??????????????????????'
-        #  video = Video.find_by
-    #  status = EncodingApi::Factory.process_media :demux, self.encoding_id
-    #  raise 'Failed to send video to demux' if !status
-    #end
-    #
-    #def self.demux params
-    #end
-    #
-    #def self.normalize
-    #end
-    #
-    #def self.demux
-    #      begin
-    #  video = Video.find result[:video_id]
-    #  media = nil
-    #
-    #  unless result[:demux_audio].nil?
+    media = get_media params
+
+    video = find_fideo media
+
+    
+  end
+
+  private
+
+    def get_media params
+      raise 'Wrong params' if params[:media].nill || params[:media].first.nil?
+
+      params[:media].first
+    end
+
+    def find_fideo media
+
+      Video.find_by_encoding_id! media[:origin_media_id]
+    end
+    
+end
+    
+    
+        
+     # unless result[:demux_audio].nil?
     #    media = result[:demux_audio]
     #    clip_type = Clip::TYPE_DEMUX_AUDIO
     #    clip_other_type = Clip::TYPE_DEMUX_VIDEO
@@ -62,5 +69,3 @@ class EncodingHandler::Demux
     #end
     #
     #return true, nil
-  end
-    end

@@ -221,13 +221,21 @@ class Video < ActiveRecord::Base
 #---------Encoding---------
     def create_encoding_media
       if self.encoding_id.nil? && self.status = STATUS_NEW
-        encoding_id = EncodingApi::Factory.process_media :create_media, self.clip.url
+        params = {:media => {:source =>  self.clip.url } }
+        encoding_id = EncodingApi::Factory.process_media 'add_media', params
         raise 'Failed to get encoding_media id' if encoding_id.nil?
 
         self.encoding_id = encoding_id
         self.status = STATUS_IN_PROCESSING
         self.save
-        status = EncodingApi::Factory.process_media :metadata, self.encoding_id
+        profile = EncodingProfile.find_by_name "meta_info"
+
+        params = { :profile_id => profile.profile_id,
+                   :encoder => { :input_media_ids => [encoding_id],
+                                 :params => { :media_id => encoding_id }
+                               }
+                 }
+        status = EncodingApi::Factory.process_media 'meta_info', params
         raise 'Failed to send video to metadata extraction' unless status
       end
     end
