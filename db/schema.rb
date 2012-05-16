@@ -27,8 +27,9 @@ ActiveRecord::Schema.define(:version => 20120515160553) do
     t.string   "source"
     t.string   "encoding_id"
     t.string   "clip_type"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+    t.string   "pluraleyes_id"
   end
 
   add_index "clips", ["video_id"], :name => "index_clips_on_video_id"
@@ -83,6 +84,25 @@ ActiveRecord::Schema.define(:version => 20120515160553) do
   end
 
   add_index "likes", ["video_id"], :name => "index_likes_on_video_id"
+
+  create_table "master_tracks", :force => true do |t|
+    t.integer  "event_id"
+    t.string   "source"
+    t.integer  "version"
+    t.boolean  "is_ready",   :default => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+  end
+
+  create_table "meta_infos", :force => true do |t|
+    t.integer  "video_id"
+    t.datetime "recorded_at"
+    t.float    "latitude"
+    t.float    "longitude"
+    t.integer  "duration"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
 
   create_table "performers", :force => true do |t|
     t.string   "name"
@@ -161,11 +181,11 @@ ActiveRecord::Schema.define(:version => 20120515160553) do
     t.datetime "reset_password_sent_at"
     t.string   "password_salt"
     t.string   "authentication_token"
-    t.float    "latitude"
-    t.float    "longitude"
     t.date     "dob"
     t.string   "website"
     t.text     "bio"
+    t.float    "latitude"
+    t.float    "longitude"
     t.string   "avatar"
   end
 

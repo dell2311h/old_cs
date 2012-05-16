@@ -6,11 +6,14 @@ class Event < ActiveRecord::Base
   has_many :taggings, as: :taggable, class_name: "Tagging", dependent: :destroy
   has_many :tags, through: :taggings
   has_and_belongs_to_many :performers
+  has_many :master_tracks, dependent: :destroy
 
   validates :name, :date, presence: true
   validates :user_id, :place_id, presence: true
 
   before_create :add_eventful_event
+
+  after_create :create_pluraleyes_project
 
   scope :order_by_video_count, lambda {
     videos = Video.arel_table
@@ -26,6 +29,11 @@ class Event < ActiveRecord::Base
 
   scope :with_videos_comments_count, select("events.*").select("SUM((#{Comment.select("COUNT(comments.commentable_id)").where("videos.id = comments.commentable_id AND comments.commentable_type = 'Video'").to_sql})) as comments_count").joins(:videos).group("events.id")
 
+  scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
+
+  scope :around_date, lambda { |search_date| where(:date => (search_date - 1.day)..(search_date)) }
+
+
   def videos_comments
     videos.joins(:comments).select("comments.*")
   end
@@ -40,10 +48,6 @@ class Event < ActiveRecord::Base
     Song.select("DISTINCT (songs.id), songs.name").joins(:videos).where("videos.event_id = ?", self.id)
   end
 
-  scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
-
-  scope :around_date, lambda { |search_date| where(:date => (search_date - 1.day)..(search_date)) }
-
   def playlist
     videos = Video.find_videos_for_playlist self.id
 
@@ -52,6 +56,78 @@ class Event < ActiveRecord::Base
 
     playlist.timelines
   end
+
+  # Create mastetrack placeholder
+  def create_not_ready_master_track
+    last_master_track = self.master_tracks.first
+    self.master_tracks.create :version => (last_master_track ? (last_master_track.version + 1) : 0)
+  end
+
+  def sync_with_pluraleyes?
+    self.videos.joins(:clips).where("clips.clip_type = ?", Clip::TYPE_DEMUX_AUDIO).count >= Settings.sync_with_pluraleyes.minimal_amount_of_videos
+  end
+
+  def sync_with_pluraleyes
+    require 'pe_hydra'
+    hydra = PeHydra::Query.new Settings.pluraleyes.login, Settings.pluraleyes.password
+    sync_results = hydra.sync self.pluraleyes_id
+    self.create_timings_by_pluraleyes_sync_results sync_results
+  end
+
+  # Timings creation
+  def create_timings_by_pluraleyes_sync_results pe_sync_results = []
+
+    # Prepare new master track
+    new_master_track = self.create_not_ready_master_track
+
+    # prepare PluralEyes results for timings creation
+    groups_with_timestamp_and_duration = []
+    pe_sync_results.each do |group|
+      sorted_group = group.sort { |x, y| x[:start].to_i <=> y[:start].to_i }
+      first_synched_clip = sorted_group[0]
+      clip = Clip.find_by_pluraleyes_id first_synched_clip[:media_id]
+      timestamp = clip.video.meta_info.recorded_at.to_i
+      last_synched_clip = sorted_group.last
+      group_duration = last_synched_clip[:end].to_i
+      groups_with_timestamp_and_duration << { pe_group: sorted_group, starts_at: timestamp, duration: group_duration }
+    end
+
+    # Sort groups by their chronological order
+    groups_with_timestamp_and_duration.sort! { |x, y| x[:starts_at] <=> y[:starts_at] }
+
+    # create timings by prepared PluralEyes results
+    group_time_offset = 0 # miliseconds
+
+    clips_to_cut = [] # Encoding media ids
+    timings_to_cut = [] # Timings for this medias to cut them
+
+    groups_with_timestamp_and_duration.each do |group|
+      # group { :pe_group => [...], :starts_at => timestamp, :duration => miliseconds }
+      pluraleyes_group = group[:pe_group]
+
+      previous_clip = nil # Previous synced_clip inside group
+
+      pluraleyes_group.each do |synced_clip|
+        clip = Clip.find_by_pluraleyes_id synced_clip[:media_id]
+
+        # Create timings for videos
+        timing = clip.video.timings.create! :start_time => synced_clip[:start].to_i + group_time_offset, :end_time => synced_clip[:end].to_i + group_time_offset, :version => new_master_track.version
+
+        # Prepare timings for Encoding master track creation
+        if !previous_clip or (previous_clip and (previous_clip[:end].to_i < synced_clip[:end].to_i))
+          cut_start = previous_clip ? (previous_clip[:end].to_i - synced_clip[:start].to_i) : 0
+          clip_duration = synced_clip[:end].to_i - synced_clip[:start].to_i
+          timings_to_cut << { start_time: cut_start, end_time: clip_duration }
+          clips_to_cut << clip.encoding_id
+          previous_clip = synced_clip
+        end
+      end
+      group_time_offset += group[:duration]
+    end
+
+    { media_ids: clips_to_cut, cutting_timings: timings_to_cut } # Prepared data for cutting medias at Encoding
+  end
+
 
   private
 
@@ -81,6 +157,14 @@ class Event < ActiveRecord::Base
       return output.id unless output[:id].nil?
 
       nil
+    end
+
+    def create_pluraleyes_project
+      require 'pe_hydra'
+      hydra = PeHydra::Query.new Settings.pluraleyes.login, Settings.pluraleyes.password
+      pe_project = hydra.create_project self.name
+      self.update_attribute :pluraleyes_id, pe_project[:id]
+      Rails.logger.info "PluralEyes project created. Project ID #{self.pluraleyes_id}"
     end
 
 end
