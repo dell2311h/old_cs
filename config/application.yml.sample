@@ -39,6 +39,10 @@ defaults: &defaults
     login: ''
     password: ''
 
+  aws_s3:
+    bucket: 'your_aws_s3_bucket'
+    host: 'your_aws_s3_host'
+
   sync_with_pluraleyes:
     minimal_amount_of_videos: 2
 
