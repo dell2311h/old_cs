@@ -1,4 +1,4 @@
-class EncodingHandler::Demux
+class EncodingHandler::Streaming
 
   def perform params
     video = find_video params
@@ -6,22 +6,12 @@ class EncodingHandler::Demux
     update_clips video.id, Clip::TYPE_DEMUX_AUDIO, medias[:audio]
     clip = update_clips video.id, Clip::TYPE_DEMUX_VIDEO, medias[:video]
 
-    send_to_streaming clip, video
+    video.status = Video::STATUS_PROCESSING_DONE
+
+    video.save
   end
 
   private
-
-    def send_to_streaming clip, video
-      params = { :profile_id => profile.profile_id,
-                 :encoder => { :input_media_ids => clip.encoding_id,
-                               :params => { :media_id => clip.encoding_id,
-                                            :destination => "encoded/#{video.event_id}/#{video.id}/streaming"
-                                          }
-                             }
-              }
-      status = EncodingApi::Factory.process_media "streaming", params
-      raise 'Unable to add video to demux' unless status
-    end
 
     def update_clips video_id, type, media
       clip = Clip.find_or_initialize_by_video_id_and_clip_type(video_id, type)
