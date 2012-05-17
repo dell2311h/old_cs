@@ -1,12 +1,11 @@
-require "encoding_api/factory"
+require "pandrino/api"
 class Video < ActiveRecord::Base
   after_save :create_encoding_media
-  
+
   STATUS_UPLOADING = 0
   STATUS_NEW = 1
   STATUS_IN_PROCESSING = 2
   STATUS_PROCESSING_DONE = 4
-
 
   attr_accessible :clip, :event_id, :user_id, :uuid, :tags, :songs, :thumbnail, :encoding_id, :status
 
@@ -219,24 +218,23 @@ class Video < ActiveRecord::Base
 
 #---------Encoding---------
     def create_encoding_media
-      if self.encoding_id.nil? && self.status = STATUS_NEW
-        params = {:media => {:source =>  self.clip.url } }
-        encoding_id = EncodingApi::Factory.process_media 'add_media', params
+      if self.encoding_id.nil? && self.status == STATUS_NEW
+        params = {:media => {:location =>  self.clip.url } }
+        response = Pandrino::Api.deliver Settings.encoding.url.actions.medias, params
+        raise 'Unable to create media' unless response
+        encoding_id = response["media"]["id"]
         raise 'Failed to get encoding_media id' if encoding_id.nil?
-
-        self.encoding_id = encoding_id
-        self.status = STATUS_IN_PROCESSING
-        self.save
         profile = EncodingProfile.find_by_name "meta_info"
-
         params = { :profile_id => profile.profile_id,
                    :encoder => { :input_media_ids => [encoding_id],
                                  :params => { :media_id => encoding_id }
                                }
                  }
-        status = EncodingApi::Factory.process_media 'meta_info', params
-        raise 'Failed to send video to metadata extraction' unless status
+        response = Pandrino::Api.deliver Settings.encoding.url.actions.encoders, params
+        raise 'Failed to send video to metadata extraction' unless response["status"] == 'ok'
+        self.encoding_id = encoding_id
+        self.status = STATUS_IN_PROCESSING
+        self.save
       end
     end
 end
-

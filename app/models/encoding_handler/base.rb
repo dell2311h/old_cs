@@ -1,7 +1,7 @@
 class EncodingHandler::Base
 
   protected
-      def update_clips video_id, medias
+    def update_clips video_id, medias
       clips = {}
       medias.each do |media|
         clip = Clip.find_or_initialize_by_video_id_and_clip_type(video_id, media[:type])

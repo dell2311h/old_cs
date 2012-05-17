@@ -1,6 +1,6 @@
 class Clip < ActiveRecord::Base
-  TYPE_DEMUX_VIDEO = 'demux_video'
-  TYPE_DEMUX_AUDIO = 'demux_audio'
+  TYPE_DEMUX_VIDEO = 'demuxed_video'
+  TYPE_DEMUX_AUDIO = 'demuxed_audio'
   belongs_to :video
 
   validates :source, :encoding_id, :presence => true
@@ -26,4 +26,3 @@ class Clip < ActiveRecord::Base
 
 
 end
-

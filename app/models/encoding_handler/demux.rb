@@ -24,8 +24,8 @@ class EncodingHandler::Demux < EncodingHandler::Base
                                           }
                              }
               }
-      status = EncodingApi::Factory.process_media "streaming", params
-      raise 'Unable to add video to demux' unless status
+      response = Pandrino::Api.deliver Settings.encoding.url.actions.encoders, params
+      raise 'Failed to send video to streaming' unless response["status"] == 'ok'
     end
 
     def find_video params

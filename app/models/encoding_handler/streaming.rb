@@ -12,10 +12,11 @@ class EncodingHandler::Streaming < EncodingHandler::Base
 
     def find_video params
       raise 'Wrong params' if params[:input_media_ids].nil? || params[:input_media_ids].first.nil?
+      Video.unscoped.joins(:clips).readonly(false)
+                    .where("clips.encoding_id = ? AND clip_type = ? ",
+                            params[:input_media_ids].first,
+                            Clip::TYPE_DEMUX_VIDEO).first
 
-      video = Video.unscoped.join(:clip)
-
-      video.where("clips.encoding_id = ? AND clip_type = ? ", params[:input_media_ids].first, Video::TYPE_DEMUX_VIDEO).first
     end
 
 end
