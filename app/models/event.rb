@@ -125,7 +125,7 @@ class Event < ActiveRecord::Base
       group_time_offset += group[:duration]
     end
 
-    { media_ids: clips_to_cut, cutting_timings: timings_to_cut, master_track_id: new_master_track.id } # Prepared data for cutting medias at Encoding
+    { media_ids: clips_to_cut, cutting_timings: timings_to_cut, master_track: new_master_track } # Prepared data for cutting medias at Encoding
   end
 
 
