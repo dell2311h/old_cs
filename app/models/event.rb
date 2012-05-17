@@ -69,10 +69,8 @@ class Event < ActiveRecord::Base
 
   def sync_with_pluraleyes
     require 'pe_hydra'
-    hydra = PeHydra::Query.new Settings.pluraleyes.login, Settings.pluraleyes.password
-    sync_results = hydra.sync self.pluraleyes_id
-    result = self.create_timings_by_pluraleyes_sync_results sync_results
-    self.send_master_track_creation_to_encoding_with(result)
+    hydra = PeHydra::Query.new(Settings.pluraleyes.login, Settings.pluraleyes.password)
+    hydra.sync(self.pluraleyes_id)
   end
 
   def send_master_track_creation_to_encoding_with(data)
@@ -144,6 +142,11 @@ class Event < ActiveRecord::Base
     { media_ids: clips_to_cut, cutting_timings: timings_to_cut, master_track: new_master_track } # Prepared data for cutting medias at Encoding
   end
 
+  def make_new_master_track
+    sync_results = self.sync_with_pluraleyes # Sync with PluralEyes
+    result = self.create_timings_by_pluraleyes_sync_results(sync_results) # Create timings
+    self.send_master_track_creation_to_encoding_with(result) # Enqueue master track creation at Encoding Server
+  end
 
   private
 
