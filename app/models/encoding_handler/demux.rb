@@ -1,71 +1,48 @@
 class EncodingHandler::Demux
 
   def perform params
-    media = get_media params
+    video = find_video params
+    medias = get_medias params
+    update_clips video.id, Clip::TYPE_DEMUX_AUDIO, medias[:audio]
+    update_clips video.id, Clip::TYPE_DEMUX_VIDEO, medias[:video]
 
-    video = find_fideo media
-
-    
   end
 
   private
 
-    def get_media params
-      raise 'Wrong params' if params[:media].nill || params[:media].first.nil?
+    def update_clips video_id, type, media
+      clip = Clip.find_or_initialize_by_video_id_and_clip_type(video_id, type)
+      clip.update_attributes({ :source      => media[:source],
+                               :encoding_id => media[:encoding_id],
+                               :clip_type   => type,
+                            })
 
-      params[:media].first
+      raise 'Unable to save clip errors: ' + clip.errors.to_json unless clip.errors.empty?
+      clip.save
+      Rails.logger.info "Created demux clip(encoding_id #{media[:encoding_id]}) for video id# #{video_id.to_s}"
     end
 
-    def find_fideo media
+    def get_medias params
+      audio = nil
+      video = nil
 
-      Video.find_by_encoding_id! media[:origin_media_id]
+      params[:medias].each do |media|
+        tmp = {}
+        tmp[:source] = media["location"]
+        tmp[:encoding_id] = media["_id"]
+        audio = tmp if media["type"] == 'audio'
+        video = tmp if media["type"] == 'video'
+      end
+
+      raise 'Unable to get medias' if audio.nil? || video.nil?
+
+      { :audio =>audio, :video => video }
     end
-    
+
+    def find_video params
+      raise 'Wrong params' if params[:input_media_ids].nil? || params[:input_media_ids].first.nil?
+
+      Video.unscoped.find_by_encoding_id! params[:input_media_ids].first
+    end
+
 end
-    
-    
-        
-     # unless result[:demux_audio].nil?
-    #    media = result[:demux_audio]
-    #    clip_type = Clip::TYPE_DEMUX_AUDIO
-    #    clip_other_type = Clip::TYPE_DEMUX_VIDEO
-    #  end
-    #  unless result[:demux_video].nil?
-    #    media = result[:demux_video]
-    #    clip_type = Clip::TYPE_DEMUX_VIDEO
-    #    clip_other_type = Clip::TYPE_DEMUX_AUDIO
-    #  end
-    #
-    #  raise 'demux_audio or demux_video not_set' if media.nil?
-    #  raise 'media source not set' if media[:source].nil?
-    #  raise 'media encoding_id not set' if media[:encoding_id].nil?
-    #
-    #  clip = Clip.find_or_initialize_by_video_id_and_clip_type(video.id, clip_type)
-    #  clip.update_attributes({ :source      => media[:source],
-    #                           :encoding_id => media[:encoding_id],
-    #                           :clip_type   => clip_type,
-    #                        })
-    #
-    #  unless clip.errors.empty?
-    #    raise 'Unable to save clip errors: ' + clip.errors.to_json
-    #  end
-    #
-    #  logger.info "Created demux clip(encoding_id #{media[:encoding_id]}) for video id# #{video.id.to_s}"
-    #
-    #  if video.status == Video::STATUS_DEMUX_WORKING
-    #    other_clip = Clip.where(:clip_type => clip_other_type, :video_id => video.id)
-    #    unless other_clip.first.nil?
-    #      video.update_attributes({ :status => Video::STATUS_DEMUX_DONE })
-    #      video.stream!
-    #    end
-    #  end
-    #rescue Exception => e
-    #   message = 'Failer to create clip reason: '
-    #   message = 'Failer to create clip for video id# ' + result[:video_id] + ' reason: 'unless result[:video_id].nil?
-    #
-    #   logger.error message + e.message
-    #
-    #   return false, e.message
-    #end
-    #
-    #return true, nil
