@@ -7,8 +7,8 @@ module EncodingApi
       begin
         raise 'Params is empty' unless params
         raise 'Encoder params is empty' unless params[:encoder]
-        raise 'Destination is not provided' unless params[:encoder][:destination]
-        raise 'Timings are not provided' unless params[:encoder][:cutting_timings]
+        raise 'Destination is not provided' unless params[:encoder][:params][:destination]
+        raise 'Timings are not provided' unless params[:encoder][:params][:cutting_timings]
         raise 'Timings are not provided' unless params[:encoder][:input_media_ids]
 
         url = '/encoders'
