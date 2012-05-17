@@ -71,7 +71,23 @@ class Event < ActiveRecord::Base
     require 'pe_hydra'
     hydra = PeHydra::Query.new Settings.pluraleyes.login, Settings.pluraleyes.password
     sync_results = hydra.sync self.pluraleyes_id
-    self.create_timings_by_pluraleyes_sync_results sync_results
+    result = self.create_timings_by_pluraleyes_sync_results sync_results
+    self.send_master_track_creation_to_encoding_with(result)
+  end
+
+  def send_master_track_creation_to_encoding_with(data)
+    profile = EncodingProfile.find_by_name "master_track"
+    params = { :profile_id => profile.profile_id,
+               :encoder => { :input_media_ids => data[:media_ids],
+                             :params => { :cutting_timings => data[:cutting_timings],
+                                          :destination => "encoded/#{self.id}/master_tracks/#{data[:master_track].id}"
+                              }
+                            }
+              }
+    response = EncodingApi::Factory.process_media "master_track", params
+    raise 'Unable to send clips to master_track creation' unless response["status"]
+    raise 'encoder_id is not profided at response' unless response["encoder_id"]
+    data[:master_track].update_attribute :encoder_id, response["encoder_id"]
   end
 
   # Timings creation
