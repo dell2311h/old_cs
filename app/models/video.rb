@@ -31,7 +31,6 @@ class Video < ActiveRecord::Base
   has_many :clips, dependent: :destroy
   has_one  :demux_video, :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_DEMUX_VIDEO }
   has_one  :demux_audio, :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_DEMUX_AUDIO }
-  has_one  :streaming,   :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_STREAMING }
 
   has_many :likes
   has_many :likers, :through => :likes, :source => :user
