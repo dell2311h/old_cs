@@ -69,9 +69,23 @@ class Event < ActiveRecord::Base
 
   def sync_with_pluraleyes
     require 'pe_hydra'
-    hydra = PeHydra::Query.new Settings.pluraleyes.login, Settings.pluraleyes.password
-    sync_results = hydra.sync self.pluraleyes_id
-    self.create_timings_by_pluraleyes_sync_results sync_results
+    hydra = PeHydra::Query.new(Settings.pluraleyes.login, Settings.pluraleyes.password)
+    hydra.sync(self.pluraleyes_id)
+  end
+
+  def send_master_track_creation_to_encoding_with(data)
+    profile = EncodingProfile.find_by_name "master_track"
+    params = { :profile_id => profile.profile_id,
+               :encoder => { :input_media_ids => data[:media_ids],
+                             :params => { :cutting_timings => data[:cutting_timings],
+                                          :destination => "encoded/#{self.id}/master_tracks/#{data[:master_track].id}/audio.mp3"
+                              }
+                            }
+              }
+    response = EncodingApi::Factory.process_media "master_track", params
+    raise 'Unable to send clips to master_track creation' unless response["status"]
+    raise 'encoder_id is not profided at response' unless response["encoder_id"]
+    data[:master_track].update_attribute :encoder_id, response["encoder_id"]
   end
 
   # Timings creation
@@ -125,9 +139,14 @@ class Event < ActiveRecord::Base
       group_time_offset += group[:duration]
     end
 
-    { media_ids: clips_to_cut, cutting_timings: timings_to_cut } # Prepared data for cutting medias at Encoding
+    { media_ids: clips_to_cut, cutting_timings: timings_to_cut, master_track: new_master_track } # Prepared data for cutting medias at Encoding
   end
 
+  def make_new_master_track
+    sync_results = self.sync_with_pluraleyes # Sync with PluralEyes
+    result = self.create_timings_by_pluraleyes_sync_results(sync_results) # Create timings
+    self.send_master_track_creation_to_encoding_with(result) # Enqueue master track creation at Encoding Server
+  end
 
   private
 
