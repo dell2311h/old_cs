@@ -5,6 +5,8 @@ class EncodingHandler::MasterTrack
     media = get_media params
     master_track = find_master_track_by params
     master_track.update_attributes! :source => full_location_of(media), :is_ready => true
+    event = master_track.event
+    event.update_attribute :master_track_version, master_track.version
 
   end
 
