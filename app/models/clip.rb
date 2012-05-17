@@ -15,7 +15,7 @@ class Clip < ActiveRecord::Base
     def add_to_pluraleyes
       if self.clip_type == TYPE_DEMUX_AUDIO
         require 'pe_hydra'
-        event = self.video.event
+        event = Video.unscoped.where(:id => self.video_id).first.event
         pluraleyes_project_id = event.pluraleyes_id
         hydra = PeHydra::Query.new Settings.pluraleyes.login, Settings.pluraleyes.password
         pe_media = hydra.create_media("clip ID #{self.id}", self.source, pluraleyes_project_id)
