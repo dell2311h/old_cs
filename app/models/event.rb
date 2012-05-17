@@ -78,7 +78,7 @@ class Event < ActiveRecord::Base
     params = { :profile_id => profile.profile_id,
                :encoder => { :input_media_ids => data[:media_ids],
                              :params => { :cutting_timings => data[:cutting_timings],
-                                          :destination => "encoded/#{self.id}/master_tracks/#{data[:master_track].id}"
+                                          :destination => "encoded/#{self.id}/master_tracks/#{data[:master_track].id}/audio.mp3"
                               }
                             }
               }
