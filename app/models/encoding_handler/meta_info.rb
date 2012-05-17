@@ -10,8 +10,8 @@ class EncodingHandler::MetaInfo
     profile = EncodingProfile.find_by_name "demux"
     params = { :profile_id => profile.profile_id,
                :encoder => { :input_media_ids => [media["_id"]],
-                             :params => { :media_id => media["_id"],
-                                          :destination => "encoded/#{video.event_id}/#{video.id}/demuxed"
+                             :params => { :audio_destination => "encoded/#{video.event_id}/#{video.id}/demuxed/audio.wav",
+                                          :video_destination => "encoded/#{video.event_id}/#{video.id}/demuxed/video.mp4"
                               }
                             }
               }

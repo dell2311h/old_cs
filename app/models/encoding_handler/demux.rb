@@ -1,71 +1,36 @@
-class EncodingHandler::Demux
+class EncodingHandler::Demux < EncodingHandler::Base
 
   def perform params
-    media = get_media params
-
-    video = find_fideo media
-
-    
+    video = find_video params
+    clips = update_clips video.id, params[:medias]
+    send_to_streaming clips["demuxed_video"], video
   end
 
   private
 
-    def get_media params
-      raise 'Wrong params' if params[:media].nill || params[:media].first.nil?
-
-      params[:media].first
+    def send_to_streaming clip, video
+      profile = EncodingProfile.find_by_name "streaming"
+      params = { :profile_id => profile.profile_id,
+                 :encoder => { :input_media_ids => [clip.encoding_id],
+                               :params => { :destination_1 => "encoded/#{video.event_id}/#{video.id}/streaming/low/160x240.mp4",
+                                            :destination_2 => "encoded/#{video.event_id}/#{video.id}/streaming/normal/160x240.mp4",
+                                            :destination_3 => "encoded/#{video.event_id}/#{video.id}/streaming/high/160x240.mp4",
+                                            :destination_4 => "encoded/#{video.event_id}/#{video.id}/streaming/low/320x480.mp4",
+                                            :destination_5 => "encoded/#{video.event_id}/#{video.id}/streaming/normal/320x480.mp4",
+                                            :destination_6 => "encoded/#{video.event_id}/#{video.id}/streaming/high/320x480.mp4",
+                                            :destination_7 => "encoded/#{video.event_id}/#{video.id}/streaming/low/640x960.mp4",
+                                            :destination_8 => "encoded/#{video.event_id}/#{video.id}/streaming/normal/640x960.mp4",
+                                            :destination_9 => "encoded/#{video.event_id}/#{video.id}/streaming/high/640x960.mp4"
+                                          }
+                             }
+              }
+      status = EncodingApi::Factory.process_media "streaming", params
+      raise 'Unable to add video to demux' unless status
     end
 
-    def find_fideo media
-
-      Video.find_by_encoding_id! media[:origin_media_id]
+    def find_video params
+      raise 'Wrong params' if params[:input_media_ids].nil? || params[:input_media_ids].first.nil?
+      Video.unscoped.find_by_encoding_id! params[:input_media_ids].first
     end
-    
+
 end
-    
-    
-        
-     # unless result[:demux_audio].nil?
-    #    media = result[:demux_audio]
-    #    clip_type = Clip::TYPE_DEMUX_AUDIO
-    #    clip_other_type = Clip::TYPE_DEMUX_VIDEO
-    #  end
-    #  unless result[:demux_video].nil?
-    #    media = result[:demux_video]
-    #    clip_type = Clip::TYPE_DEMUX_VIDEO
-    #    clip_other_type = Clip::TYPE_DEMUX_AUDIO
-    #  end
-    #
-    #  raise 'demux_audio or demux_video not_set' if media.nil?
-    #  raise 'media source not set' if media[:source].nil?
-    #  raise 'media encoding_id not set' if media[:encoding_id].nil?
-    #
-    #  clip = Clip.find_or_initialize_by_video_id_and_clip_type(video.id, clip_type)
-    #  clip.update_attributes({ :source      => media[:source],
-    #                           :encoding_id => media[:encoding_id],
-    #                           :clip_type   => clip_type,
-    #                        })
-    #
-    #  unless clip.errors.empty?
-    #    raise 'Unable to save clip errors: ' + clip.errors.to_json
-    #  end
-    #
-    #  logger.info "Created demux clip(encoding_id #{media[:encoding_id]}) for video id# #{video.id.to_s}"
-    #
-    #  if video.status == Video::STATUS_DEMUX_WORKING
-    #    other_clip = Clip.where(:clip_type => clip_other_type, :video_id => video.id)
-    #    unless other_clip.first.nil?
-    #      video.update_attributes({ :status => Video::STATUS_DEMUX_DONE })
-    #      video.stream!
-    #    end
-    #  end
-    #rescue Exception => e
-    #   message = 'Failer to create clip reason: '
-    #   message = 'Failer to create clip for video id# ' + result[:video_id] + ' reason: 'unless result[:video_id].nil?
-    #
-    #   logger.error message + e.message
-    #
-    #   return false, e.message
-    #end
-    #
-    #return true, nil
