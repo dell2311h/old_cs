@@ -3,19 +3,8 @@ class EncodingHandler::MasterTrack
   def perform params
 
     media = get_media params
-
     master_track = find_master_track_by params
-    master_tracks.update_attributes! :source => params[:media][:source], :encoding_id => params[:media]["_id"], :is_ready => true
-
-    profile = EncodingProfile.find_by_name "normalize_audio"
-    params = { :profile_id => profile.profile_id,
-               :encoder => { :input_media_ids => [media["_id"]],
-                             :params => { :destination => "encoded/#{master_track.event_id}/master_tracks/#{master_track.id}/normalized"
-                              }
-                            }
-              }
-    status = EncodingApi::Factory.process_media "normalize_audio", params
-    raise 'Unable to add master_track to normalize audio levels' unless status
+    master_track.update_attributes! :source => full_location_of(media), :is_ready => true
 
   end
 
@@ -26,7 +15,11 @@ class EncodingHandler::MasterTrack
     end
 
     def find_master_track_by params
-      MasterTrack.find params[:special_keys][:master_track_id]
+      ::MasterTrack.find_by_encoder_id! params[:encoder_id]
+    end
+
+    def full_location_of(media)
+      "#{Settings.aws_s3.host}/#{Settings.aws_s3.bucket}/#{media["location"]}"
     end
 
 end
