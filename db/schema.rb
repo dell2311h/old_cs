@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120515160553) do
+ActiveRecord::Schema.define(:version => 20120517090536) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -92,6 +92,7 @@ ActiveRecord::Schema.define(:version => 20120515160553) do
     t.boolean  "is_ready",   :default => false
     t.datetime "created_at",                    :null => false
     t.datetime "updated_at",                    :null => false
+    t.string   "encoder_id"
   end
 
   create_table "meta_infos", :force => true do |t|
