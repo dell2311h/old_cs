@@ -1,6 +1,5 @@
 require "pandrino/api"
 class Video < ActiveRecord::Base
-  after_save :create_encoding_media
 
   STATUS_UPLOADING = 0
   STATUS_NEW = 1
@@ -198,12 +197,13 @@ class Video < ActiveRecord::Base
     uploaded_file_checksum = file_params[:checksum]
     raise "Invalid file checksum" unless self.tmpfile_md5_checksum == uploaded_file_checksum
     File.rename(self.tmpfile_fullpath, self.renamed_file_fullpath_by(filename))
-    self.update_attribute :status, STATUS_PROCESSING_DONE # File upload finished
+    self.status = STATUS_NEW # File upload finished
     File.open(self.renamed_file_fullpath_by(filename)) do |file|
       self.clip = file              #Attach uploaded file to 'clip' attribute
       self.save!
     end
     self.remove_attached_data! # Remove uploaded data
+    create_encoding_media
   end
 
   private

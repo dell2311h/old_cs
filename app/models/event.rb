@@ -64,7 +64,7 @@ class Event < ActiveRecord::Base
   end
 
   def sync_with_pluraleyes?
-    self.videos.joins(:clips).where("clips.clip_type = ?", Clip::TYPE_DEMUX_AUDIO).count >= Settings.sync_with_pluraleyes.minimal_amount_of_videos
+    Video.unscoped.where(:event_id => self.id).joins(:clips).where("clips.clip_type = ?", Clip::TYPE_DEMUX_AUDIO).count >= Settings.sync_with_pluraleyes.minimal_amount_of_videos
   end
 
   def sync_with_pluraleyes
@@ -100,7 +100,7 @@ class Event < ActiveRecord::Base
       sorted_group = group.sort { |x, y| x[:start].to_i <=> y[:start].to_i }
       first_synched_clip = sorted_group[0]
       clip = Clip.find_by_pluraleyes_id first_synched_clip[:media_id]
-      timestamp = clip.video.meta_info.recorded_at.to_i
+      timestamp = Video.unscoped.where(:id => clip.video_id).first.meta_info.recorded_at.to_i
       last_synched_clip = sorted_group.last
       group_duration = last_synched_clip[:end].to_i
       groups_with_timestamp_and_duration << { pe_group: sorted_group, starts_at: timestamp, duration: group_duration }
@@ -125,7 +125,7 @@ class Event < ActiveRecord::Base
         clip = Clip.find_by_pluraleyes_id synced_clip[:media_id]
 
         # Create timings for videos
-        timing = clip.video.timings.create! :start_time => synced_clip[:start].to_i + group_time_offset, :end_time => synced_clip[:end].to_i + group_time_offset, :version => new_master_track.version
+        timing = Timing.create! :video_id => clip.video_id, :start_time => synced_clip[:start].to_i + group_time_offset, :end_time => synced_clip[:end].to_i + group_time_offset, :version => new_master_track.version
 
         # Prepare timings for Encoding master track creation
         if !previous_clip or (previous_clip and (previous_clip[:end].to_i < synced_clip[:end].to_i))
