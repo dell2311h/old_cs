@@ -18,6 +18,9 @@ defaults: &defaults
   encoding:
     url:
       host: 'localhost'
+      actions:
+        encoders: "/encoders"
+        medias: "/medias"
       port: 3002
 
   eventful:
@@ -76,4 +79,3 @@ test:
 
 production:
   <<: *defaults
-
