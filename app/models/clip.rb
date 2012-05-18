@@ -10,6 +10,10 @@ class Clip < ActiveRecord::Base
 
   after_create :add_to_pluraleyes
 
+  def location
+    "#{Settings.aws_s3.host}/#{Settings.aws_s3.bucket}/#{self.source}"
+  end
+
   private
     def add_to_pluraleyes
       if self.clip_type == TYPE_DEMUX_AUDIO
@@ -23,8 +27,4 @@ class Clip < ActiveRecord::Base
         Resque.enqueue(Worker::TimingsInterpretator, event.id) if event.sync_with_pluraleyes?
       end
     end
-
-   def location
-     "#{Settings.aws_s3.host}/#{Settings.aws_s3.bucket}/#{self.source}"
-   end
 end
