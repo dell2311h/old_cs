@@ -1,13 +1,14 @@
+require "encoding_api/factory"
 class Video < ActiveRecord::Base
+  after_save :create_encoding_media
+  
+  STATUS_UPLOADING = 0
+  STATUS_NEW = 1
+  STATUS_IN_PROCESSING = 2
+  STATUS_PROCESSING_DONE = 4
 
-  STATUS_UPLOADING = -1
-  STATUS_NEW = 0
-  STATUS_DEMUX_WORKING = 1
-  STATUS_DEMUX_DONE = 2
-  STATUS_STREAMING_WORKING = 3
-  STATUS_STREAMING_DONE = 4
 
-  attr_accessible :clip, :event_id, :user_id, :uuid, :tags, :songs, :thumbnail
+  attr_accessible :clip, :event_id, :user_id, :uuid, :tags, :songs, :thumbnail, :encoding_id, :status
 
   mount_uploader :thumbnail, ThumbnailUploader
 #  validates_presence_of :thumbnail
@@ -40,7 +41,7 @@ class Video < ActiveRecord::Base
   has_one :meta_info, dependent: :destroy
 
   # default scope to hide videos that are not ready.
-  default_scope where(:status => STATUS_STREAMING_DONE)
+  default_scope where(:status => STATUS_PROCESSING_DONE)
 
   scope :for_user, lambda { |user| where(:user_id => user.id) }
   scope :likes_count, lambda { select("videos.*, COUNT(likes.id) AS likes_count").
@@ -106,8 +107,9 @@ class Video < ActiveRecord::Base
   end
 
   def self.find_by_clip_encoding_id encoding_id
-    Video.joins(:clips).where('clips.encoding_id' => encoding_id).first
+    Video.joins(:clips).where('clips.encoding_id' => encoding_id).select('videos.*').first
   end
+
 
   # Overriding "tags=" method for adding tags by their name
   def tags=(tags_names)
@@ -129,6 +131,7 @@ class Video < ActiveRecord::Base
   def self.unscoped_find video_id
     Video.unscoped.find video_id
   end
+
 
   #----- Chunked uploading ---------------
 
@@ -163,7 +166,7 @@ class Video < ActiveRecord::Base
     FileUtils.rm_rf self.directory_fullpath
   end
 
-  # Wrapper for http data
+
   def append_chunk_to_file! chunk_params
     raise "Empty chunk" unless chunk_params
     raise "Chunk id is empty" unless chunk_params[:id]
@@ -197,7 +200,7 @@ class Video < ActiveRecord::Base
     uploaded_file_checksum = file_params[:checksum]
     raise "Invalid file checksum" unless self.tmpfile_md5_checksum == uploaded_file_checksum
     File.rename(self.tmpfile_fullpath, self.renamed_file_fullpath_by(filename))
-    self.update_attribute :status, STATUS_STREAMING_DONE # File upload finished
+    self.update_attribute :status, STATUS_PROCESSING_DONE # File upload finished
     File.open(self.renamed_file_fullpath_by(filename)) do |file|
       self.clip = file              #Attach uploaded file to 'clip' attribute
       self.save!
@@ -215,5 +218,26 @@ class Video < ActiveRecord::Base
       self.update_attribute :last_chunk_id, chunk_id
     end
 
+#---------Encoding---------
+    def create_encoding_media
+      if self.encoding_id.nil? && self.status = STATUS_NEW
+        params = {:media => {:source =>  self.clip.url } }
+        encoding_id = EncodingApi::Factory.process_media 'add_media', params
+        raise 'Failed to get encoding_media id' if encoding_id.nil?
+
+        self.encoding_id = encoding_id
+        self.status = STATUS_IN_PROCESSING
+        self.save
+        profile = EncodingProfile.find_by_name "meta_info"
+
+        params = { :profile_id => profile.profile_id,
+                   :encoder => { :input_media_ids => [encoding_id],
+                                 :params => { :media_id => encoding_id }
+                               }
+                 }
+        status = EncodingApi::Factory.process_media 'meta_info', params
+        raise 'Failed to send video to metadata extraction' unless status
+      end
+    end
 end
 

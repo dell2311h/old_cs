@@ -16,7 +16,9 @@ defaults: &defaults
     per_page: 20
 
   encoding:
-    url: ""
+    url:
+      host: 'localhost'
+      port: 3002
 
   eventful:
     app_key: "fFNCjc4kh2Gc3XVW"
@@ -36,6 +38,10 @@ defaults: &defaults
   pluraleyes:
     login: ''
     password: ''
+
+  aws_s3:
+    bucket: 'your_aws_s3_bucket'
+    host: 'your_aws_s3_host'
 
   sync_with_pluraleyes:
     minimal_amount_of_videos: 2

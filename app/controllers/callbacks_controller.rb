@@ -1,14 +1,12 @@
-require "encoding_lib_worker"
 class CallbacksController < ApplicationController
 
-  def demux
-      status, message = EncodingLib::Worker.callback :demux, params
-      unless status == true
-        render status: :bad_request, json: { error: message }, layout: false
+  skip_before_filter :verify_authenticity_token
 
-        return
-      end
-
-      render :status => :ok, json:{ error: '' }, layout: false
+  def callback
+    handler = EncodingHandler::Factory.handle_profile params['profile_id']
+    handler.perform params
+    render :status => :ok, :json => "OK" , layout: false
   end
+
 end
+

@@ -104,7 +104,7 @@ Crowdsync::Application.routes.draw do
 
   resources :videos, :only => [:index, :new, :create, :destroy]
 
-  post "/callbacks/demux"
+  post "/callbacks/:profile_id" => "callbacks#callback"
 
   root :to => "videos#index"
 
