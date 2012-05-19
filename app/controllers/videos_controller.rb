@@ -14,9 +14,11 @@ class VideosController < ApplicationController
 
   def create
     @video = Video.new(params[:video])
-    @video.name = params[:video][:clip].original_filename
     @video.user = current_user
+    @video.uuid = "uuid"
+    @video.status = Video::STATUS_NEW
     if @video.save
+      @video.create_encoding_media
       respond_to do |format|
         format.html {
             render :json => [@video.to_jq_upload].to_json,

@@ -94,7 +94,7 @@ class Video < ActiveRecord::Base
   #one convenient method to pass jq_upload the necessary information
   def to_jq_upload
     {
-      "name" => self.name,
+      "name" => self.event.name,
       "size" => self.clip.file.size,
       "url" => self.clip.url,
       "thumbnail_url" => "",
@@ -206,16 +206,6 @@ class Video < ActiveRecord::Base
     create_encoding_media
   end
 
-  private
-
-    @@users = nil
-    @@events = nil
-
-    def set_chunk_id! chunk_id
-      raise "Invalid chunk id!" unless self.last_chunk_id + 1 == chunk_id
-      self.update_attribute :last_chunk_id, chunk_id
-    end
-
 #---------Encoding---------
     def create_encoding_media
       if self.encoding_id.nil? && self.status == STATUS_NEW
@@ -236,5 +226,15 @@ class Video < ActiveRecord::Base
         self.status = STATUS_IN_PROCESSING
         self.save
       end
+    end
+
+  private
+
+    @@users = nil
+    @@events = nil
+
+    def set_chunk_id! chunk_id
+      raise "Invalid chunk id!" unless self.last_chunk_id + 1 == chunk_id
+      self.update_attribute :last_chunk_id, chunk_id
     end
 end
