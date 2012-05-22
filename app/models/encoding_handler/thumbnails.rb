@@ -1,4 +1,4 @@
-class EncodingHandler::Thumbnails
+class EncodingHandler::Thumbnails < EncodingHandler::Base
 
   def perform params
     video = find_video params
