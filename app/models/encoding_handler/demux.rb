@@ -14,6 +14,8 @@ class EncodingHandler::Demux < EncodingHandler::Base
       params = { :profile_id => profile.profile_id,
                  :encoder => { :input_media_ids => [clip.encoding_id], :params => { :angle => angle }}
                }
+      response = Pandrino::Api.deliver Settings.encoding.url.actions.encoders, params
+      raise 'Failed to send video to rotate' unless response["status"] == 'ok'
     end
 
     def find_video params
