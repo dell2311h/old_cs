@@ -1,10 +1,9 @@
-class EncodingHandler::Demux < EncodingHandler::Base
+class EncodingHandler::Rotate < EncodingHandler::Base
 
   def perform params
-    video = find_video params
-    clips = update_clips video.id, params[:medias]
-    angle = video.meta_info.rotation
-    angle == 0 ? send_to_streaming(clips["demuxed_video"], video) : send_to_rotate(clips["demuxed_video"], angle)
+    clip  = find_video params
+    video = Video.unscoped.find clip.video_id
+    send_to_streaming(clip, video)
   end
 
   private
