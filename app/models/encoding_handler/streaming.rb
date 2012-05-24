@@ -3,7 +3,7 @@ class EncodingHandler::Streaming < EncodingHandler::Base
   def perform params
     video = find_video params
     clips = update_clips video.id, params[:medias]
-    send_to_thumbnalization clip[Clip::TYPE_SMALL_HIGH], video
+    send_to_thumbnalization clips[Clip::TYPE_SMALL_HIGH], video
   end
 
   private
