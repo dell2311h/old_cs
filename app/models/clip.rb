@@ -1,6 +1,7 @@
 class Clip < ActiveRecord::Base
   TYPE_DEMUX_VIDEO = 'demuxed_video'
   TYPE_DEMUX_AUDIO = 'demuxed_audio'
+  TYPE_SMALL_HIGH  = '160x240_high'
   belongs_to :video
 
   validates :source, :encoding_id, :presence => true
