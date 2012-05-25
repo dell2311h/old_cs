@@ -47,6 +47,48 @@ describe Event do
     end
   end
 
+  describe "#create_not_ready_master_track" do
+
+    let(:event) { Factory(:event) }
+
+    before :all do
+      event.master_tracks.destroy_all
+    end
+
+    context "when event doesn't have any master track records" do
+      it "should create master track with zero version" do
+        master_track = event.create_not_ready_master_track
+        master_track.version.should be equal(0)
+        master_track.is_ready.should be_false
+      end
+    end
+
+    context "when event have some master tracks" do
+      it "should create master track with next version" do
+        last_master_track = event.master_tracks.first
+        master_track.is_ready.should be_false
+      end
+    end
+
+  end
+
+
+  describe "#create_timings_by_pluraleyes_sync_results" do
+    before :all do
+      @event = Factory.create :event
+      @master_track = Factory.create :master_track, :event => @event, :is_ready => false, :source => nil, :encoder_id => nil
+    end
+
+    before :each do
+      @event.stub!(:create_not_ready_master_track).and_return(@master_track)
+    end
+
+    it "should create not ready MasterTrack record" do
+      @event.should_receive(:create_not_ready_master_track)
+      @event.create_timings_by_pluraleyes_sync_results
+    end
+  end
+
   describe "#make_new_master_track" do
     before :each do
       @event = Event.new
