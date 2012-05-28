@@ -88,7 +88,7 @@ class Event < ActiveRecord::Base
               }
     response = Pandrino::Api.deliver Settings.encoding.url.actions.encoders, params
     raise 'Unable to send clips to master_track creation' unless response["status"] == 'ok'
-    raise 'encoder_id is not profided at response' unless response["encoder_id"]
+    raise 'encoder_id is not provided at response' unless response["encoder_id"]
     data[:master_track].update_attribute :encoder_id, response["encoder_id"]
   end
 
@@ -191,3 +191,4 @@ class Event < ActiveRecord::Base
     end
 
 end
+

@@ -11,7 +11,7 @@ describe Event do
   it { should belong_to(:place) }
   it { should have_many(:videos) }
 
-  describe "#order_by_video_count" do
+  describe ".order_by_video_count" do
     it 'should give events ordered by video count in descending order' do
       event1 = Factory.create :event
       event2 = Factory.create :event
@@ -23,7 +23,7 @@ describe Event do
     end
   end
 
-  describe "#nearby" do
+  describe ".nearby" do
     before :all do
       @radius = 1 # mile
       @latitude_shift = 0.2
@@ -46,5 +46,75 @@ describe Event do
       nearby_events.should_not include @events[1]
     end
   end
+
+  describe "#create_not_ready_master_track" do
+
+    let(:event) { Factory(:event) }
+
+    before :each do
+      Event.stub!(:get_eventful_event).and_return(1)
+      Event.stub!(:create_eventful_event).and_return(1)
+    end
+
+    before :all do
+      event.master_tracks.destroy_all
+    end
+
+    context "when event doesn't have any master track records" do
+      it "should create master track with zero version" do
+        master_track = event.create_not_ready_master_track
+        master_track.version.should == 0
+        master_track.is_ready.should be_false
+      end
+    end
+
+    context "when event have some master tracks" do
+      it "should create master track with next version" do
+        last_master_track = event.master_tracks.first
+        master_track = event.create_not_ready_master_track
+        new_version = last_master_track.version + 1
+        master_track.version.should == new_version
+        master_track.is_ready.should be_false
+      end
+    end
+
+  end
+
+
+  describe "#create_timings_by_pluraleyes_sync_results" do
+    before :all do
+      @event = Factory.create :event
+      @master_track = Factory.create :master_track, :event => @event, :is_ready => false, :source => nil, :encoder_id => nil
+    end
+
+    before :each do
+      @event.stub!(:create_not_ready_master_track).and_return(@master_track)
+    end
+
+    it "should create not ready MasterTrack record" do
+      @event.should_receive(:create_not_ready_master_track)
+      @event.create_timings_by_pluraleyes_sync_results
+    end
+  end
+
+  describe "#make_new_master_track" do
+    before :each do
+      @event = Event.new
+      master_track = mock(MasterTrack)
+      @pe_results = [[{:end=>"130733", :media_id=>"decc95ff-87d9-4261-9dac-68cf0a55200c", :slope=>"0", :start=>"30700"}, {:end=>"60000", :media_id=>"efe987d4-e5fa-48f4-b4ed-af92bfe32229", :slope=>"0", :start=>"0"}, {:end=>"129933", :media_id=>"29c71338-74ba-430e-b40c-2ab0e6518d38", :slope=>"0", :start=>"89900"}]]
+      @timings_result = {:media_ids=>["4fb3781b1f112c1212000002", "4fb378331f112c1212000003"], :cutting_timings=>[{:start_time=>0, :end_time=>60000}, {:start_time=>29300, :end_time=>100033}], :master_track=> master_track}
+      @event.stub!(:sync_with_pluraleyes).and_return(@pe_results)
+      @event.stub!(:create_timings_by_pluraleyes_sync_results).and_return(@timings_result)
+      @event.stub!(:send_master_track_creation_to_encoding_with).and_return(true)
+    end
+
+    it "should call internal methods in proper order and with proper params" do
+      @event.should_receive(:sync_with_pluraleyes)
+      @event.should_receive(:create_timings_by_pluraleyes_sync_results).with(@pe_results)
+      @event.should_receive(:send_master_track_creation_to_encoding_with).with(@timings_result)
+      @event.make_new_master_track
+    end
+  end
+
 end
 
