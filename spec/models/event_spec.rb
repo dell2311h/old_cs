@@ -51,6 +51,11 @@ describe Event do
 
     let(:event) { Factory(:event) }
 
+    before :each do
+      Event.stub!(:get_eventful_event).and_return(1)
+      Event.stub!(:create_eventful_event).and_return(1)
+    end
+
     before :all do
       event.master_tracks.destroy_all
     end
@@ -58,7 +63,7 @@ describe Event do
     context "when event doesn't have any master track records" do
       it "should create master track with zero version" do
         master_track = event.create_not_ready_master_track
-        master_track.version.should be equal(0)
+        master_track.version.should == 0
         master_track.is_ready.should be_false
       end
     end
@@ -66,6 +71,9 @@ describe Event do
     context "when event have some master tracks" do
       it "should create master track with next version" do
         last_master_track = event.master_tracks.first
+        master_track = event.create_not_ready_master_track
+        new_version = last_master_track.version + 1
+        master_track.version.should == new_version
         master_track.is_ready.should be_false
       end
     end
