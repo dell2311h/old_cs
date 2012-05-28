@@ -15,7 +15,8 @@ node :clips do |timeline|
       :position   => index,
       :start_time => clip.start_time,
       :duraton    => (clip.end_time - clip.start_time),
-      :media      => "#{Settings.aws_s3.host}/#{Settings.aws_s3.bucket}/#{clip.source}"
+      :media      => "#{Settings.aws_s3.host}/#{Settings.aws_s3.bucket}/#{clip.source}",
+      :username    => clip.user_name
     }
   end
   
