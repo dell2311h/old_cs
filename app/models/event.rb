@@ -33,6 +33,10 @@ class Event < ActiveRecord::Base
 
   scope :around_date, lambda { |search_date| where(:date => (search_date - 1.day)..(search_date)) }
 
+  #TODO: WAT? FIXME!!!!
+  def current_master_track
+    MasterTrack.where("version = ?", master_track_version).first
+  end
 
   def videos_comments
     videos.joins(:comments).select("comments.*")
