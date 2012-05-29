@@ -1,6 +1,6 @@
 class Api::PerformersController < Api::BaseController
 
-  skip_before_filter :auth_check, :only => [:index, :remote]
+  skip_before_filter :auth_check, :only => [:index, :remote, :show]
 
   def remote
     @performers = EventfulPerformer.search params
@@ -17,6 +17,10 @@ class Api::PerformersController < Api::BaseController
     else
       render :status => :not_found, json: {}
     end
+  end
+
+  def show
+    @performer = Performer.find params[:id]
   end
 
 end
