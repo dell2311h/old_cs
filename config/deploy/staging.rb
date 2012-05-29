@@ -1,5 +1,3 @@
-set :application, "crowdsync" # Name of application
-set :repository,  "git@github.com:111minutes/cs-server.git"
 set :branch, "master"
 
 default_run_options[:pty] = true  # Must be set for the password prompt from git to work
