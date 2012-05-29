@@ -13,9 +13,9 @@ class Video < ActiveRecord::Base
 
   mount_uploader :clip, ClipUploader
 
-  validates :user_id , :event_id, :uuid, :presence => true
-  validates :user_id, :event_id, :numericality => { :only_integer => true }
-
+  validates :user_id , :uuid, :presence => true
+  validates :user_id, :numericality => { :only_integer => true }
+  validates :event_id, :numericality => { :only_integer => true, :allow_nil => true }
   belongs_to :event
   belongs_to :user
   has_many :comments, :as => :commentable, :class_name => "Comment", :dependent => :destroy
