@@ -31,5 +31,6 @@ RSpec.configure do |config|
   config.infer_base_class_for_anonymous_controllers = false
 
   config.include CarrierWave::Test::Matchers
+  config.include Devise::TestHelpers
 end
 

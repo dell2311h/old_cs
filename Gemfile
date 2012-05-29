@@ -48,7 +48,9 @@ gem 'settingslogic'
 gem 'unicorn'
 
 # Deploy with Capistrano
-# gem 'capistrano'
+gem 'capistrano'
+gem 'capistrano-ext' # Multistage deployments
+gem 'rvm-capistrano' # RVM support
 
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
