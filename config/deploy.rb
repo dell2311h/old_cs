@@ -7,4 +7,5 @@ set :stages, %w(staging)
 
 require "rvm/capistrano"
 require 'capistrano/ext/multistage'
+require "bundler/capistrano"
 
