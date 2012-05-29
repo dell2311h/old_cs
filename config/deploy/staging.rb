@@ -46,7 +46,6 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/config/application.yml #{latest_release}/config/application.yml"
     run "ln -nfs #{shared_path}/config/unicorn.conf #{latest_release}/config/unicorn.conf"
     run "ln -nfs #{shared_path}/config/initializers/carrierwave.rb #{latest_release}/config/initializers/carrierwave.rb"
-    run "ln -nfs #{shared_path}/config/environments/#{rails_env}.rb #{latest_release}/config/environments/#{rails_env}.rb"
   end
 
   desc "Run resque"
@@ -58,7 +57,7 @@ end
 
 desc "View logs in real time"
 namespace :logs do
-
+  desc "Application log"
   task :application do
     stream("cd #{current_path} && tail -f log/#{rails_env}.log")
   end
