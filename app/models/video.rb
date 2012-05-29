@@ -72,6 +72,10 @@ class Video < ActiveRecord::Base
 
   self.per_page = Settings.paggination.per_page
 
+  def self.first_popular count
+    Video.most_popular.limit count
+  end
+
   def self.find_videos_for_playlist event_id
     videos = Video.select "users.username as user_name, videos.id, timings.start_time as start_time, timings.end_time as end_time, clips.source as source, (SELECT count(*) from likes where videos.id = likes.video_id) as rating"
     videos = videos.joins "LEFT JOIN clips on clips.clip_type = '#{Clip::TYPE_DEMUX_VIDEO}' AND clips.video_id = videos.id"

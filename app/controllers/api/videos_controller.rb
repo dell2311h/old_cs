@@ -1,6 +1,6 @@
 class Api::VideosController < Api::BaseController
 
-  skip_before_filter :auth_check, :only => [:show, :likes, :index]
+  skip_before_filter :auth_check, :only => [:show, :likes, :index, :most_popular]
   before_filter :auth_check_for_me, :only => [:index]
   before_filter :find_videos, :only => [:index, :show]
 
@@ -43,6 +43,17 @@ class Api::VideosController < Api::BaseController
     @video = Video.find(params[:id])
     @users = @video.likers
     render status: :ok, :template => "api/users/index"
+  end
+
+  def most_popular
+    raise 'count not set!' if params[:count].nil?
+    @videos = Video.first_popular params[:count]
+
+    if (@videos.count) < 1
+      render :status => :not_found, json: {}
+      
+    end
+      render status: :ok, :template => "api/videos/index"
   end
 
   # Chunked uploads

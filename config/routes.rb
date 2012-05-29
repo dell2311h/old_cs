@@ -32,6 +32,7 @@ Crowdsync::Application.routes.draw do
     post "places/:place_id/events" => "events#create"
 
     # Videos
+    get  'videos/most_popular' => 'videos#most_popular'
     post 'events/:event_id/videos' => 'videos#create'
     get  'videos/:id' => 'videos#show'
     get  'videos'     => 'videos#index'
@@ -41,7 +42,7 @@ Crowdsync::Application.routes.draw do
     get  'users/:user_id/videos' => 'videos#index'
     get  "songs/:song_id/videos" => "videos#index"
     get  "videos/:id/likes" => "videos#likes"
-    get 'events/:event_id/songs/:song_id/videos' => 'videos#index'
+    get  'events/:event_id/songs/:song_id/videos' => 'videos#index'
 
     constraints :commentable => /videos|places|events/ do
       get "/:commentable/:id/comments" => "comments#index", :as => :comment_create
