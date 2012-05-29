@@ -13,9 +13,9 @@ class Video < ActiveRecord::Base
 
   mount_uploader :clip, ClipUploader
 
-  validates :user_id , :event_id, :uuid, :presence => true
-  validates :user_id, :event_id, :numericality => { :only_integer => true }
-
+  validates :user_id , :uuid, :presence => true
+  validates :user_id, :numericality => { :only_integer => true }
+  validates :event_id, :numericality => { :only_integer => true, :allow_nil => true }
   belongs_to :event
   belongs_to :user
   has_many :comments, :as => :commentable, :class_name => "Comment", :dependent => :destroy
@@ -73,10 +73,11 @@ class Video < ActiveRecord::Base
   self.per_page = Settings.paggination.per_page
 
   def self.find_videos_for_playlist event_id
-    videos = Video.select "videos.id, timings.start_time as start_time, timings.end_time as end_time, clips.source as source, (SELECT count(*) from likes where videos.id = likes.video_id) as rating"
+    videos = Video.select "users.username as user_name, videos.id, timings.start_time as start_time, timings.end_time as end_time, clips.source as source, (SELECT count(*) from likes where videos.id = likes.video_id) as rating"
     videos = videos.joins "LEFT JOIN clips on clips.clip_type = '#{Clip::TYPE_DEMUX_VIDEO}' AND clips.video_id = videos.id"
     videos = videos.joins 'LEFT JOIN events on events.id = videos.event_id'
     videos = videos.joins 'LEFT JOIN timings on videos.id = timings.video_id AND timings.version = events.master_track_version'
+    videos = videos.joins 'LEFT JOIN users on videos.user_id = users.id'
     videos = videos.where "videos.event_id = ?", event_id
     videos = videos.group "rating desc, start_time, end_time"
 
