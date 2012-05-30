@@ -2,6 +2,7 @@ class Clip < ActiveRecord::Base
   TYPE_DEMUX_VIDEO = 'demuxed_video'
   TYPE_DEMUX_AUDIO = 'demuxed_audio'
   TYPE_SMALL_HIGH  = '160x240_high'
+  TYPE_BIG_HIGH    = '640x960_high'
   belongs_to :video
 
   validates :source, :encoding_id, :presence => true
@@ -12,7 +13,7 @@ class Clip < ActiveRecord::Base
   after_create :add_to_pluraleyes
 
   def location
-    "#{Settings.aws_s3.host}/#{Settings.aws_s3.bucket}/#{self.source}"
+    "#{Settings.encoding.storage.host}/#{self.source}"
   end
 
   private

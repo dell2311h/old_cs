@@ -16,7 +16,9 @@ ssh_options[:forward_agent] = true
 set :use_sudo, false
 
 # Deployment server
-server "#{application}.dimalexsoftware.com", :app, :web, :db, :primary => true
+#server "#{application}.dimalexsoftware.com", :app, :web, :db, :primary => true
+server "ec2-50-19-12-203.compute-1.amazonaws.com", :app, :web, :db, :primary => true # temporary solution
+
 
 # Rails environment
 set :rails_env, "production"
@@ -69,10 +71,12 @@ namespace :logs do
 
   desc "Application log"
   task :application do
-    run "cd #{current_path} && tail -f log/#{rails_env}.log" do |channel, stream|
-      trap("INT") { puts 'Interupted'; exit 0; }
-      break if stream == :err
-    end
+    watch_log("cd #{current_path} && tail -f log/#{rails_env}.log")
+  end
+
+  desc "Encoding Api log"
+  task :encoding_api do
+    watch_log("cd #{current_path} && tail -f log/encoding_#{rails_env}.log")
   end
 
 end
@@ -80,4 +84,15 @@ end
 after "deploy:update_code", "deploy:symlink_configs"
 after "deploy:symlink_configs", "deploy:assets:precompile"
 after "deploy:assets:precompile", "deploy:run_resque"
+
+
+# View logs helper
+def watch_log(command)
+  raise "Command is nil" unless command
+  run command do |channel, stream, data|
+    print data
+    trap("INT") { puts 'Interupted'; exit 0; }
+    break if stream == :err
+  end
+end
 
