@@ -28,6 +28,8 @@ class User < ActiveRecord::Base
 
   validates :latitude, :longitude, :numericality => true, :allow_nil => true
 
+  validates :email_notification_status, :inclusion => ["none", "day", "week", "month"]
+
   has_many :comments, :dependent => :destroy
   has_many :videos
   has_many :places

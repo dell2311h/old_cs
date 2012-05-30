@@ -1,5 +1,5 @@
 object @user
-attributes :id, :name, :email, :username, :phone, :dob, :website, :bio, :uploaded_videos_count, :liked_videos_count, :followings_count, :followers_count
+attributes :id, :name, :email, :username, :phone, :dob, :website, :bio, :uploaded_videos_count, :liked_videos_count, :followings_count, :followers_count, :email_notification_status
 node(:avatar_url) { |user| user.avatar.thumb.url if user.avatar? }
 node(:token) { @token } if @token
 
