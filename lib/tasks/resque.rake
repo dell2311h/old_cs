@@ -13,12 +13,16 @@ namespace :resque do
 
   desc "Stop resque daemon"
   task :stop => :environment do
-    command = "kill -QUIT `cat #{PIDFILE_PATH}`"
-    invoke_system_command(command)
-    resque_pid = File.read(PIDFILE_PATH)
-    puts "\tResque daemon stopped. Process PID: #{resque_pid}"
-    File.delete(PIDFILE_PATH)
-    puts "\tPidfile deleted"
+    if pid_file_exists?
+      command = "kill -QUIT `cat #{PIDFILE_PATH}`"
+      invoke_system_command(command)
+      resque_pid = File.read(PIDFILE_PATH)
+      puts "\tResque daemon stopped. Process PID: #{resque_pid}"
+      File.delete(PIDFILE_PATH)
+      puts "\tPidfile deleted"
+    else
+      puts "\tNothing to stop. Resque daemon wasn't running before"
+    end
   end
 
   desc "Restart resque daemon"
@@ -48,7 +52,14 @@ namespace :resque do
     def check_resque_running
       if pid_file_exists?
         resque_pid = File.read(PIDFILE_PATH)
-        raise "Resque daemon is running already. You can't run more than 1 of resque daemons at once" if process_running?  (resque_pid.to_i)
+        raise "Resque daemon is running already. You can't run more than 1 of resque daemons at once" if rescue_running?
+      end
+    end
+
+    def rescue_running?
+      if pid_file_exists?
+        resque_pid = File.read(PIDFILE_PATH)
+        process_running?(resque_pid.to_i)
       end
     end
 end

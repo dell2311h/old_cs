@@ -76,6 +76,7 @@ class Api::EventsController < Api::BaseController
 
   def playlist
     @event = Event.with_videos_comments_count.find params[:event_id]
+    @master_track = @event.current_master_track
     @timelines = @event.playlist
   end
 end
