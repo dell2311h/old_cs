@@ -78,7 +78,7 @@ class Video < ActiveRecord::Base
 
   def self.find_videos_for_playlist event_id
     videos = Video.select "users.username as user_name, videos.id, timings.start_time as start_time, timings.end_time as end_time, clips.source as source, (SELECT count(*) from likes where videos.id = likes.video_id) as rating"
-    videos = videos.joins "LEFT JOIN clips on clips.clip_type = '#{Clip::TYPE_DEMUX_VIDEO}' AND clips.video_id = videos.id"
+    videos = videos.joins "LEFT JOIN clips on clips.clip_type = '#{Clip::TYPE_BIG_HIGH}' AND clips.video_id = videos.id"
     videos = videos.joins 'LEFT JOIN events on events.id = videos.event_id'
     videos = videos.joins 'LEFT JOIN timings on videos.id = timings.video_id AND timings.version = events.master_track_version'
     videos = videos.joins 'LEFT JOIN users on videos.user_id = users.id'

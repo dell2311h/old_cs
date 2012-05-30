@@ -15,7 +15,7 @@ node :clips do |timeline|
       :position   => index,
       :start_time => clip.start_time,
       :duraton    => (clip.end_time - clip.start_time),
-      :media      => clip.location,
+      :media      => "#{Settings.encoding.storage.host}/#{clip.source}",
       :username    => clip.user_name
     }
   end
