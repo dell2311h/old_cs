@@ -30,6 +30,7 @@ class Api::VideosController < Api::BaseController
   def update
     @video = Video.unscoped.for_user(current_user).find params[:id]
     @video.update_attributes!(params[:video])
+    @video.create_encoding_media
     render status: :accepted, action: :show
   end
 

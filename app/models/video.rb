@@ -213,7 +213,7 @@ class Video < ActiveRecord::Base
 
 #---------Encoding---------
     def create_encoding_media
-      if self.encoding_id.nil? && self.status == STATUS_NEW
+      if self.encoding_id.nil? && self.status == STATUS_NEW && self.event_id
         params = {:media => {:location =>  self.clip.path } }
         response = Pandrino::Api.deliver Settings.encoding.url.actions.medias, params
         raise 'Unable to create media' unless response
