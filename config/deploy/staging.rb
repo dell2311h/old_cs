@@ -69,7 +69,8 @@ namespace :logs do
 
   desc "Application log"
   task :application do
-    run "cd #{current_path} && tail -f log/#{rails_env}.log" do |channel, stream|
+    run "cd #{current_path} && tail -f log/#{rails_env}.log" do |channel, stream, data|
+      print data
       trap("INT") { puts 'Interupted'; exit 0; }
       break if stream == :err
     end
