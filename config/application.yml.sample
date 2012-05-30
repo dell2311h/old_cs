@@ -22,6 +22,8 @@ defaults: &defaults
         encoders: "/encoders"
         medias: "/medias"
       port: 3002
+    storage:
+      host: 'http://crowdsync.dimalexsoftware.com:8989'
 
   eventful:
     app_key: "fFNCjc4kh2Gc3XVW"

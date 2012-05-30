@@ -12,7 +12,7 @@ class Clip < ActiveRecord::Base
   after_create :add_to_pluraleyes
 
   def location
-    "#{Settings.aws_s3.host}/#{Settings.aws_s3.bucket}/#{self.source}"
+    "#{Settings.encoding.storage.host}/#{self.source}"
   end
 
   private
