@@ -16,7 +16,9 @@ ssh_options[:forward_agent] = true
 set :use_sudo, false
 
 # Deployment server
-server "#{application}.dimalexsoftware.com", :app, :web, :db, :primary => true
+#server "#{application}.dimalexsoftware.com", :app, :web, :db, :primary => true
+server "ec2-50-19-12-203.compute-1.amazonaws.com", :app, :web, :db, :primary => true # temporary solution
+
 
 # Rails environment
 set :rails_env, "production"
