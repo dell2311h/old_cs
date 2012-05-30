@@ -30,6 +30,13 @@ class Api::CommentsController < Api::BaseController
     render status: :ok, action: :show
   end
 
+  def destroy
+    @comment = Comment.find(params[:comment_id])
+    raise "You can't delete this comment" unless @comment.destroy_by(current_user)
+    render status: :accepted, json: {}
+  end
+
+
   private
     def find_commentable
       class_name = case params[:commentable]

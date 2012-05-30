@@ -48,6 +48,7 @@ Crowdsync::Application.routes.draw do
     constraints :commentable => /videos|places|events/ do
       get "/:commentable/:id/comments" => "comments#index", :as => :comment_create
       post "/:commentable/:id/comments" => "comments#create", :as => :comments_list
+      delete "comments/:comment_id" => "comments#destroy", :as => :delete_comment
     end
 
     get 'events/:event_id/videos_comments' => "comments#event_videos_comments_list"
