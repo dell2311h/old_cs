@@ -66,9 +66,13 @@ end
 
 desc "View logs in real time"
 namespace :logs do
+
   desc "Application log"
   task :application do
-    stream("cd #{current_path} && tail -f log/#{rails_env}.log")
+    run "cd #{current_path} && tail -f log/#{rails_env}.log" do |channel, stream|
+      trap("INT") { puts 'Interupted'; exit 0; }
+      break if stream == :err
+    end
   end
 
 end
