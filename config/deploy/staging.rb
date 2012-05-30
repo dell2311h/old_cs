@@ -35,7 +35,8 @@ namespace :deploy do
 
   desc "Restart application"
   task :restart, :roles => :app, :except => { :no_release => true } do
-    run "cd #{current_path} && kill -s USR2 `cat tmp/pids/unicorn.pid`"
+    stop
+    start
   end
 
   desc "Create additional symlinks"
