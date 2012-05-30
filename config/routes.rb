@@ -34,6 +34,7 @@ Crowdsync::Application.routes.draw do
     # Videos
     get  'videos/most_popular' => 'videos#most_popular'
     post 'events/:event_id/videos' => 'videos#create'
+    post 'videos' => 'videos#create'
     get  'videos/:id' => 'videos#show'
     get  'videos'     => 'videos#index'
     put  'videos/:id' => 'videos#update'
