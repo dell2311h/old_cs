@@ -104,7 +104,7 @@ Crowdsync::Application.routes.draw do
     get 'performers/remote' => 'performers#remote'
 
     # ReviewFlags
-    put 'api/videos/:video_id/review_flags' => "review_flags#create"
+    put 'videos/:video_id/review_flags' => "review_flags#create"
 
   end
 
