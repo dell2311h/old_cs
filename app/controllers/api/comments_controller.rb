@@ -39,12 +39,7 @@ class Api::CommentsController < Api::BaseController
 
   private
     def find_commentable
-      class_name = case params[:commentable]
-        when /videos|places|events/
-          params[:commentable][0..-2]
-      end
-      model_class = class_name.capitalize.constantize
-      @commentable = model_class.find(params[:id])
+      @commentable = Comment.find_commentable_by(current_user, params)
     end
 
 end
