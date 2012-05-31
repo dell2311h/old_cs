@@ -39,7 +39,7 @@ class Event < ActiveRecord::Base
   end
 
   def videos_comments
-    videos.joins(:comments).select("comments.*")
+    videos.joins(:comments).select("comments.*").order("comments.created_at DESC")
   end
 
   def most_popular_video
