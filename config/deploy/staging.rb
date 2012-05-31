@@ -82,7 +82,8 @@ namespace :logs do
 end
 
 after "deploy:update_code", "deploy:symlink_configs"
-after "deploy:symlink_configs", "deploy:assets:precompile"
+after "deploy:symlink_configs", "deploy:migrate"
+after "deploy:migrate", "deploy:assets:precompile"
 after "deploy:assets:precompile", "deploy:run_resque"
 
 
