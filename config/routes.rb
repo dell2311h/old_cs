@@ -103,6 +103,9 @@ Crowdsync::Application.routes.draw do
     resources :performers, :only => [:index, :show]
     get 'performers/remote' => 'performers#remote'
 
+    # ReviewFlags
+    put 'api/videos/:video_id/review_flags' => "review_flags#create"
+
   end
 
   resources :videos, :only => [:index, :new, :create, :destroy]

@@ -47,6 +47,9 @@ class User < ActiveRecord::Base
   # Invitations
   has_many :invitations
 
+  # Review Flags
+  has_many :review_flags, dependent: :destroy
+
   accepts_nested_attributes_for :authentications
 
   before_create :reset_authentication_token

@@ -37,6 +37,8 @@ class Video < ActiveRecord::Base
 
   has_one :meta_info, dependent: :destroy
 
+  has_many :review_flags, dependent: :destroy
+
   # default scope to hide videos that are not ready.
   default_scope where(:status => STATUS_PROCESSING_DONE)
 
@@ -134,6 +136,9 @@ class Video < ActiveRecord::Base
     Video.unscoped.find video_id
   end
 
+  def set_review_flag_by(user)
+    self.review_flags.find_or_create_by_user_id(user.id)
+  end
 
   #----- Chunked uploading ---------------
 
@@ -243,3 +248,4 @@ class Video < ActiveRecord::Base
       self.update_attribute :last_chunk_id, chunk_id
     end
 end
+
