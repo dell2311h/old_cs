@@ -40,7 +40,7 @@ class EventfulPerformer
       performers.each do |performer|
         tmp = {}
         tmp[:name] = performer["name"]
-        tmp[:image] = performer["image"]
+        tmp[:picture_url] = performer["image"]["medium"]["url"]
         output_performers.push tmp
       end
 
@@ -48,3 +48,4 @@ class EventfulPerformer
     end
 
 end
+
