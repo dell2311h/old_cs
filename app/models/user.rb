@@ -31,6 +31,7 @@ class User < ActiveRecord::Base
   validates :latitude, :longitude, :numericality => true, :allow_nil => true
 
   validates :email_notification_status, :inclusion => ["none", "day", "week", "month"]
+  validates :sex, :inclusion => ["m", "f"], :if => lambda {|u| u.sex }
 
   has_many :comments, :dependent => :destroy
   has_many :videos
