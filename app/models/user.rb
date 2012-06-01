@@ -26,8 +26,6 @@ class User < ActiveRecord::Base
 
   validates :username, :email, :uniqueness => true
 
-  validates :dob, presence: true
-
   validates :latitude, :longitude, :numericality => true, :allow_nil => true
 
   validates :email_notification_status, :inclusion => ["none", "day", "week", "month"]
