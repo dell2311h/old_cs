@@ -101,7 +101,7 @@ Crowdsync::Application.routes.draw do
     post 'invitations' => "invitations#create"
 
     # Performers
-    resources :performers, :only => [:index, :show]
+    resources :performers, :only => [:index, :show, :create]
     get 'performers/remote' => 'performers#remote'
 
     # ReviewFlags

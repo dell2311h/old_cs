@@ -23,4 +23,10 @@ class Api::PerformersController < Api::BaseController
     @performer = Performer.find params[:id]
   end
 
+  def create
+    @performer = Performer.create! params[:performer]
+    render :status => :ok, :action => :show
+  end
+
 end
+
