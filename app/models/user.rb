@@ -1,5 +1,7 @@
 class User < ActiveRecord::Base
 
+  attr_protected :points
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable,
   # :rememberable, :trackable, :timeoutable and :omniauthable
@@ -12,7 +14,7 @@ class User < ActiveRecord::Base
 
   mount_uploader :avatar, AvatarUploader
 
-  validates :name, :username, :email, :presence => true
+  validates :username, :email, :presence => true
   validates :password, :presence => true, :if => lambda {|u| u.new_record? }
   validates :email, :email => true
 

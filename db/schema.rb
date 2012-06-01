@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120531144556) do
+ActiveRecord::Schema.define(:version => 20120601082520) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -179,7 +179,6 @@ ActiveRecord::Schema.define(:version => 20120531144556) do
   add_index "timings", ["video_id"], :name => "index_timings_on_video_id"
 
   create_table "users", :force => true do |t|
-    t.string   "name"
     t.string   "email"
     t.string   "username"
     t.string   "phone"
@@ -197,6 +196,10 @@ ActiveRecord::Schema.define(:version => 20120531144556) do
     t.float    "longitude"
     t.string   "avatar"
     t.string   "email_notification_status", :default => "none"
+    t.string   "sex"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.integer  "points",                    :default => 0
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

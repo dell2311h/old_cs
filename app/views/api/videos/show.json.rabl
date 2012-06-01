@@ -9,7 +9,7 @@ child :cached_event => :event do
 end
 
 child :cached_user => :user do
-  attributes :id, :name
+  attributes :id, :first_name, :last_name, :username
   node(:avatar_url) { |user| user.avatar.thumb.url if user.avatar? }
 end
 
@@ -22,3 +22,4 @@ node(:uploaded_file_size) { |video| video.tmpfile_size }
 if current_user
   node(:liked_by_me) { |video| video.respond_to?(:liked_by_me) && (video.liked_by_me == 1) ? true : false }
 end
+
