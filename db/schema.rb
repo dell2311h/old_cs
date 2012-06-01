@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120601082520) do
+ActiveRecord::Schema.define(:version => 20120601141752) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -128,6 +128,7 @@ ActiveRecord::Schema.define(:version => 20120601082520) do
     t.float    "longitude"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.string   "address"
   end
 
   add_index "places", ["latitude", "longitude"], :name => "index_places_on_latitude_and_longitude"

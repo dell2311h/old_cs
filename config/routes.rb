@@ -19,6 +19,7 @@ Crowdsync::Application.routes.draw do
 
     get 'places/remote' => 'places#remote'
     get 'places' => 'places#index'
+    get 'places/:id' => 'places#show'
 
     get 'events/remote' => 'events#remote'
     get 'events/recommended' => 'events#recommended'
