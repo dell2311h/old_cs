@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
 
   validates :latitude, :longitude, :numericality => true, :allow_nil => true
 
-  validates :email_notification_status, :inclusion => ["none", "day", "week", "month"]
+  validates :email_notification_status, :inclusion => ["none", "immediate", "day", "week"]
   validates :sex, :inclusion => ["m", "f"], :if => lambda {|u| u.sex }
 
   has_many :comments, :dependent => :destroy
@@ -58,7 +58,8 @@ class User < ActiveRecord::Base
   scope :by_remote_provider_ids, lambda{|provider, uids| where("authentications.provider = ? AND authentications.uid IN (?)", provider, uids).
                                                          joins(:authentications)
                                        }
-  scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
+
+  scope :with_name_like, lambda { |first_name| where("UPPER(first_name) LIKE ?", "%#{first_name.to_s.upcase}%") }
 
   # Get all users counts by one query
   scope :with_calculated_counters, select('users.*').select("(#{Video.select("COUNT(videos.user_id)").where("users.id = videos.user_id").to_sql}) AS uploaded_videos_count, (#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count,  (#{Relationship.select("COUNT(relationships.followed_id)").where("users.id = relationships.followed_id").to_sql}) AS followers_count, (#{Like.select("COUNT(likes.user_id)").where("users.id = likes.user_id").to_sql}) AS liked_videos_count")

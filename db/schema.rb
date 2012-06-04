@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120601141752) do
+ActiveRecord::Schema.define(:version => 20120604160103) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -196,7 +196,7 @@ ActiveRecord::Schema.define(:version => 20120601141752) do
     t.float    "latitude"
     t.float    "longitude"
     t.string   "avatar"
-    t.string   "email_notification_status", :default => "none"
+    t.string   "email_notification_status", :default => "week"
     t.string   "sex"
     t.string   "first_name"
     t.string   "last_name"
