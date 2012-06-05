@@ -101,12 +101,12 @@ class User < ActiveRecord::Base
     self.relationships.find_by_followed_id(followed.id)
   end
 
-  def follow!(followed)
-    self.relationships.create!(:followed_id => followed.id)
+  def follow!(followable)
+    self.relationships.create!(:followable => followable)
   end
 
-  def unfollow!(followed)
-    self.relationships.find_by_followed_id(followed.id).destroy
+  def unfollow!(followable)
+    self.relationships.find_by_followable_id_and_followable_type(followable.id, followable.class.to_s).destroy
   end
 
   # Like methods
