@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120522133141) do
+ActiveRecord::Schema.define(:version => 20120604160103) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -128,6 +128,7 @@ ActiveRecord::Schema.define(:version => 20120522133141) do
     t.float    "longitude"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.string   "address"
   end
 
   add_index "places", ["latitude", "longitude"], :name => "index_places_on_latitude_and_longitude"
@@ -137,6 +138,13 @@ ActiveRecord::Schema.define(:version => 20120522133141) do
     t.integer  "followed_id"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+  end
+
+  create_table "review_flags", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "video_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "songs", :force => true do |t|
@@ -172,13 +180,12 @@ ActiveRecord::Schema.define(:version => 20120522133141) do
   add_index "timings", ["video_id"], :name => "index_timings_on_video_id"
 
   create_table "users", :force => true do |t|
-    t.string   "name"
     t.string   "email"
     t.string   "username"
     t.string   "phone"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
-    t.string   "encrypted_password",     :default => "", :null => false
+    t.datetime "created_at",                                    :null => false
+    t.datetime "updated_at",                                    :null => false
+    t.string   "encrypted_password",        :default => "",     :null => false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.string   "password_salt"
@@ -189,6 +196,11 @@ ActiveRecord::Schema.define(:version => 20120522133141) do
     t.float    "latitude"
     t.float    "longitude"
     t.string   "avatar"
+    t.string   "email_notification_status", :default => "week"
+    t.string   "sex"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.integer  "points",                    :default => 0
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

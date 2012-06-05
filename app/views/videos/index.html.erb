@@ -5,7 +5,6 @@
 <table class="table table-bordered table-striped">
   <tr>
     <th>ID</th>
-    <th>Name</th>
     <th>Event</th>
     <th>Download link</th>
     <th></th>
@@ -14,7 +13,6 @@
   <% @videos.each do |video| %>
     <tr>
       <td><%= video.id %></td>
-      <td><%= video.name %></td>
       <td><%= video.event.name %></td>
       <td><%= link_to "Download", video.clip.url %></td>
       <td><%= link_to "Delete", video, method: :delete, confirm: "Are you sure to delete this video?" %></td>

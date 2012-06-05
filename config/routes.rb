@@ -19,6 +19,7 @@ Crowdsync::Application.routes.draw do
 
     get 'places/remote' => 'places#remote'
     get 'places' => 'places#index'
+    get 'places/:id' => 'places#show'
 
     get 'events/remote' => 'events#remote'
     get 'events/recommended' => 'events#recommended'
@@ -48,6 +49,7 @@ Crowdsync::Application.routes.draw do
     constraints :commentable => /videos|places|events/ do
       get "/:commentable/:id/comments" => "comments#index", :as => :comment_create
       post "/:commentable/:id/comments" => "comments#create", :as => :comments_list
+      delete "comments/:comment_id" => "comments#destroy", :as => :delete_comment
     end
 
     get 'events/:event_id/videos_comments' => "comments#event_videos_comments_list"
@@ -99,8 +101,12 @@ Crowdsync::Application.routes.draw do
     post 'invitations' => "invitations#create"
 
     # Performers
-    resources :performers, :only => [:index, :show]
     get 'performers/remote' => 'performers#remote'
+    resources :performers, :only => [:index, :show, :create]
+
+
+    # ReviewFlags
+    put 'videos/:video_id/review_flags' => "review_flags#create"
 
   end
 

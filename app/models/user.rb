@@ -1,5 +1,7 @@
 class User < ActiveRecord::Base
 
+  attr_protected :points
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable,
   # :rememberable, :trackable, :timeoutable and :omniauthable
@@ -12,7 +14,7 @@ class User < ActiveRecord::Base
 
   mount_uploader :avatar, AvatarUploader
 
-  validates :name, :username, :email, :presence => true
+  validates :username, :email, :presence => true
   validates :password, :presence => true, :if => lambda {|u| u.new_record? }
   validates :email, :email => true
 
@@ -24,9 +26,10 @@ class User < ActiveRecord::Base
 
   validates :username, :email, :uniqueness => true
 
-  validates :dob, presence: true
-
   validates :latitude, :longitude, :numericality => true, :allow_nil => true
+
+  validates :email_notification_status, :inclusion => ["none", "immediate", "day", "week"]
+  validates :sex, :inclusion => ["m", "f"], :if => lambda {|u| u.sex }
 
   has_many :comments, :dependent => :destroy
   has_many :videos
@@ -45,6 +48,9 @@ class User < ActiveRecord::Base
   # Invitations
   has_many :invitations
 
+  # Review Flags
+  has_many :review_flags, dependent: :destroy
+
   accepts_nested_attributes_for :authentications
 
   before_create :reset_authentication_token
@@ -52,7 +58,8 @@ class User < ActiveRecord::Base
   scope :by_remote_provider_ids, lambda{|provider, uids| where("authentications.provider = ? AND authentications.uid IN (?)", provider, uids).
                                                          joins(:authentications)
                                        }
-  scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
+
+  scope :with_name_like, lambda { |first_name| where("UPPER(first_name) LIKE ?", "%#{first_name.to_s.upcase}%") }
 
   # Get all users counts by one query
   scope :with_calculated_counters, select('users.*').select("(#{Video.select("COUNT(videos.user_id)").where("users.id = videos.user_id").to_sql}) AS uploaded_videos_count, (#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count,  (#{Relationship.select("COUNT(relationships.followed_id)").where("users.id = relationships.followed_id").to_sql}) AS followers_count, (#{Like.select("COUNT(likes.user_id)").where("users.id = likes.user_id").to_sql}) AS liked_videos_count")

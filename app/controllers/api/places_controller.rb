@@ -1,6 +1,6 @@
 class Api::PlacesController < Api::BaseController
 
-  skip_before_filter :auth_check, :only => [:index, :remote]
+  skip_before_filter :auth_check, :only => [:index, :show, :remote]
 
   def remote
     @places = FoursquarePlace.find params
@@ -29,6 +29,10 @@ class Api::PlacesController < Api::BaseController
       render :status => :not_found, json: {}
     end
 
+  end
+
+  def show
+    @place = Place.find params[:id]
   end
 
   def create

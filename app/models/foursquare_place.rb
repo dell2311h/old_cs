@@ -31,7 +31,8 @@ class FoursquarePlace
         tmp[:name]          = place["name"]
         tmp[:latitude]      = place["location"]["lat"]
         tmp[:longitude]     = place["location"]["lng"]
-       
+        tmp[:location]      = place["location"].to_hash.delete_if {|key| ["lat", "lng"].include?(key) }
+
         output_places.push tmp
       end
 
@@ -61,3 +62,4 @@ class FoursquarePlace
       @@foursquare_api
     end
 end
+

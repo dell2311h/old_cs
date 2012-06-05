@@ -4,7 +4,7 @@ task "resque:setup" => :environment
 namespace :resque do
   PIDFILE_PATH = "#{::Rails.root}/tmp/pids/resque.pid"
   desc "Start resque daemon"
-  task :start => :environment do
+  task :start do
     check_resque_running
     command ="PIDFILE=#{PIDFILE_PATH} BACKGROUND=yes QUEUE=* bundle exec rake environment resque:work"
     invoke_system_command(command)
@@ -12,8 +12,8 @@ namespace :resque do
   end
 
   desc "Stop resque daemon"
-  task :stop => :environment do
-    if pid_file_exists?
+  task :stop do
+    if pid_file_exists? and rescue_running?
       command = "kill -QUIT `cat #{PIDFILE_PATH}`"
       invoke_system_command(command)
       resque_pid = File.read(PIDFILE_PATH)
@@ -26,7 +26,7 @@ namespace :resque do
   end
 
   desc "Restart resque daemon"
-  task :restart => :environment do
+  task :restart do
     Rake::Task["resque:stop"].invoke
     Rake::Task["resque:start"].invoke
   end

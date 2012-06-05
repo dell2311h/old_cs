@@ -10,6 +10,7 @@ describe User do
   it { should ensure_inclusion_of(:age).in_range(0..150) }
   it { should validate_uniqueness_of(:username) }
   it { should validate_uniqueness_of(:email) }
+  it { should validate_inclusion_check_constraint_on :email_notification_status, :allowed_values => ["none", "day", "week", "month"]}
 
   it { should ensure_length_of(:username).
                 is_at_least(3).

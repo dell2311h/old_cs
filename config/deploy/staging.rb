@@ -17,6 +17,8 @@ set :use_sudo, false
 
 # Deployment server
 server "#{application}.dimalexsoftware.com", :app, :web, :db, :primary => true
+#server "ec2-50-19-12-203.compute-1.amazonaws.com", :app, :web, :db, :primary => true # temporary solution
+
 
 # Rails environment
 set :rails_env, "production"
@@ -35,8 +37,7 @@ namespace :deploy do
 
   desc "Restart application"
   task :restart, :roles => :app, :except => { :no_release => true } do
-    stop
-    start
+    run "cd #{current_path} && kill -QUIT `cat tmp/pids/unicorn.pid` && bundle exec unicorn -E #{rails_env} -c config/unicorn.conf.rb -D"
   end
 
   desc "Create additional symlinks"
@@ -80,7 +81,8 @@ namespace :logs do
 end
 
 after "deploy:update_code", "deploy:symlink_configs"
-after "deploy:symlink_configs", "deploy:assets:precompile"
+after "deploy:symlink_configs", "deploy:migrate"
+after "deploy:migrate", "deploy:assets:precompile"
 after "deploy:assets:precompile", "deploy:run_resque"
 
 
