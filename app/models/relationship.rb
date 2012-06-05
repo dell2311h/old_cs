@@ -1,5 +1,6 @@
 class Relationship < ActiveRecord::Base
-  attr_accessible :followed_id
+
+  attr_accessible :followable_id, :followable_type
 
   belongs_to :follower, :class_name => "User"
   belongs_to :followed, :class_name => "User"
@@ -12,7 +13,7 @@ class Relationship < ActiveRecord::Base
   private
 
     def no_self_following
-      errors.add(:followed_id, "can't be the current user!") if self.follower_id == self.followed_id
+      errors.add("can't be the current user!") if (self.follower_id == self.followable_id) && (self.followable_type == "User")
     end
 
 end
