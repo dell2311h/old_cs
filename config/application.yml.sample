@@ -51,6 +51,9 @@ defaults: &defaults
   sync_with_pluraleyes:
     minimal_amount_of_videos: 2
 
+  carrierwave:
+    base_url: '/base/path/'
+
   thumbnail:
     quality: 90
     small:
