@@ -7,7 +7,7 @@ class EventfulPerformer
     search_params = {}
     search_params[:keywords] = params[:performer_name]
     unless params[:page].nil?
-      search_params[:page_number ] = params[:page]
+      search_params[:page_number] = params[:page]
       search_params[:page_size] = (params[:per_page].nil? ? Settings.paggination.per_page : params[:per_page])
     end
     results = self.eventful_api.call 'performers/search', search_params
@@ -26,7 +26,7 @@ class EventfulPerformer
       @@eventful_api
     end
 
-    def self. format_result input
+    def self.format_result input
       return [] if input["total_items"] < 1
       performers = input["performers"]["performer"]
 
@@ -40,11 +40,28 @@ class EventfulPerformer
       performers.each do |performer|
         tmp = {}
         tmp[:name] = performer["name"]
-        tmp[:image] = performer["image"]
+        tmp[:picture_url] = get_deep_hash_value(performer, ["image", "medium", "url"])
         output_performers.push tmp
       end
 
       output_performers
     end
 
+    def self.get_deep_hash_value(hash, keys)
+      value = nil
+      tmp_hash = hash
+      last_key_index = keys.size - 1
+      keys.each_with_index do |key, index|
+        if tmp_hash.has_key?(key) && (tmp_hash[key].is_a?(Hash) && (index < last_key_index))
+          tmp_hash = tmp_hash[key]
+        elsif index == last_key_index
+          value = tmp_hash[key]
+        else
+          break
+        end
+      end
+      value
+    end
+
 end
+

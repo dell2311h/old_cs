@@ -15,7 +15,7 @@ FactoryGirl.define do
     f.dob { Time.at(rand * Time.now.to_i).to_date }
     f.website { Faker::Internet.domain_name }
     f.bio { Faker::Lorem.sentence }
-    f.email_notification_status { ["none", "day", "week", "month"].to_a.sample }
+    f.email_notification_status { ["none", "immediate", "day", "week"].to_a.sample }
     f.points { rand(1000) }
   end
 

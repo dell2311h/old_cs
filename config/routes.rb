@@ -19,6 +19,7 @@ Crowdsync::Application.routes.draw do
 
     get 'places/remote' => 'places#remote'
     get 'places' => 'places#index'
+    get 'places/:id' => 'places#show'
 
     get 'events/remote' => 'events#remote'
     get 'events/recommended' => 'events#recommended'
@@ -100,8 +101,9 @@ Crowdsync::Application.routes.draw do
     post 'invitations' => "invitations#create"
 
     # Performers
-    resources :performers, :only => [:index, :show]
     get 'performers/remote' => 'performers#remote'
+    resources :performers, :only => [:index, :show, :create]
+
 
     # ReviewFlags
     put 'videos/:video_id/review_flags' => "review_flags#create"

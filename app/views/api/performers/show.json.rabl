@@ -1,2 +1,4 @@
 object @performer
-attributes :id, :name, :picture
+attributes :id, :name
+node(:picture_url) { |performer| performer.picture.url if performer.picture? }
+
