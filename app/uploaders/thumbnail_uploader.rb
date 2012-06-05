@@ -4,6 +4,8 @@ class ThumbnailUploader < CarrierWave::Uploader::Base
 
   include CarrierWave::MiniMagick
 
+  FORMAT = 'jpeg'
+
   # Include the Sprockets helpers for Rails 3.1+ asset pipeline compatibility:
   # include Sprockets::Helpers::RailsHelper
   # include Sprockets::Helpers::IsolatedHelper
@@ -21,14 +23,14 @@ class ThumbnailUploader < CarrierWave::Uploader::Base
   end
 
   process :quality => Settings.thumbnail.quality
-  process :convert => 'jpg'
+  process :convert => FORMAT
 
   def store_dir
     "images/#{model.class.to_s.underscore.pluralize}/#{model.id}"
   end
 
   def filename
-    "original.jpg" if original_filename
+    "original.#{FORMAT}" if original_filename
   end
 
   version :normal do
@@ -38,17 +40,17 @@ class ThumbnailUploader < CarrierWave::Uploader::Base
 
     version :small do
       def full_filename (for_file = model.thumbnail.file)
-        "small.jpg"
+        "small.#{FORMAT}"
       end
-      process :convert => 'jpg'
+      process :convert => FORMAT
       process :resize_to_fill => [Settings.thumbnail.small.width, Settings.thumbnail.small.height]
     end
 
     version :medium do
       def full_filename (for_file = model.thumbnail.file)
-        "medium.jpg"
+        "medium.#{FORMAT}"
       end
-      process :convert => 'jpg'
+      process :convert => FORMAT
       process :resize_to_fill => [Settings.thumbnail.medium.width, Settings.thumbnail.medium.height]
     end
   end
@@ -60,17 +62,17 @@ class ThumbnailUploader < CarrierWave::Uploader::Base
 
     version :small do
       def full_filename (for_file = model.thumbnail.file)
-        "small.jpg"
+        "small.#{FORMAT}"
       end
-      process :convert => 'jpg'
+      process :convert => FORMAT
       process :resize_to_fill => [Settings.thumbnail.small.width*2, Settings.thumbnail.small.height*2]
     end
 
     version :medium do
       def full_filename (for_file = model.thumbnail.file)
-        "medium.jpg"
+        "medium.#{FORMAT}"
       end
-      process :convert => 'jpg'
+      process :convert => FORMAT
       process :resize_to_fill => [Settings.thumbnail.medium.width*2, Settings.thumbnail.medium.height*2]
     end
   end
