@@ -52,7 +52,7 @@ defaults: &defaults
     minimal_amount_of_videos: 2
 
   carrierwave:
-    base_url: '/base/path/'
+    base_path: '/base/path/'
 
   thumbnail:
     quality: 90

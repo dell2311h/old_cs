@@ -6,7 +6,7 @@ class ClipUploader < CarrierWave::Uploader::Base
   self.remove_previously_stored_files_after_update = false
 
   def store_dir
-    "#{Settings.carrierwave.base_url}uploads/#{model.class.to_s.underscore.pluralize}/#{model.id}/#{mounted_as}/"
+    "#{Settings.carrierwave.base_path}uploads/#{model.class.to_s.underscore.pluralize}/#{model.id}/#{mounted_as}/"
   end
 
   # Add a white list of extensions which are allowed to be uploaded.
