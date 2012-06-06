@@ -47,6 +47,7 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/config/unicorn.conf.rb #{latest_release}/config/unicorn.conf.rb"
     run "ln -nfs #{shared_path}/config/initializers/carrierwave.rb #{latest_release}/config/initializers/carrierwave.rb"
     run "ln -nfs #{shared_path}/uploads #{latest_release}/tmp/uploads"
+    run "ln -nfs #{shared_path}/videos #{latest_release}/public/videos"
     run "ln -nfs #{shared_path}/sockets #{latest_release}/tmp/sockets"
     run "ln -nfs #{shared_path}/sessions #{latest_release}/tmp/sessions"
   end
@@ -84,6 +85,7 @@ after "deploy:update_code", "deploy:symlink_configs"
 after "deploy:symlink_configs", "deploy:migrate"
 after "deploy:migrate", "deploy:assets:precompile"
 after "deploy:assets:precompile", "deploy:run_resque"
+after "deploy:run_resque", "deploy:cleanup"
 
 
 # View logs helper
@@ -95,4 +97,3 @@ def watch_log(command)
     break if stream == :err
   end
 end
-
