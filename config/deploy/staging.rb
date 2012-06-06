@@ -84,6 +84,7 @@ after "deploy:update_code", "deploy:symlink_configs"
 after "deploy:symlink_configs", "deploy:migrate"
 after "deploy:migrate", "deploy:assets:precompile"
 after "deploy:assets:precompile", "deploy:run_resque"
+after "deploy:run_resque", "deploy:cleanup"
 
 
 # View logs helper
