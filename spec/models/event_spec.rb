@@ -116,5 +116,31 @@ describe Event do
     end
   end
 
+  def create_videos count, event
+    count.times do
+      video = Factory.create(:video, :event => event)
+    end
+  end
+
+  describe '#get_random_N_top_events'
+    before :all do
+      Event.destroy_all
+      @events_ids = []
+
+      10.times do |i|
+        event = Factory.create :event
+        @events_ids[9-i] = event.id
+        create_videos i, event
+      end
+
+    end
+    
+    it "should find random event from N top events" do
+      10.times do |i|
+        ids = @events_ids.first(i+1)
+        event = Event.top_random_for(i+1)
+        ids.should include event.id
+      end
+    end
 end
 
