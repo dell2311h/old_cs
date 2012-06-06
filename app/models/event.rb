@@ -33,6 +33,12 @@ class Event < ActiveRecord::Base
 
   scope :around_date, lambda { |search_date| where(:date => (search_date - 1.day)..(search_date)) }
 
+  def self.top_random_for count
+    events = Event.order_by_video_count.limit count
+
+    events.sample
+  end
+
   #TODO: WAT? FIXME!!!!
   def current_master_track
     MasterTrack.where("version = ?", master_track_version).first
