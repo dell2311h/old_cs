@@ -4,7 +4,7 @@ class EncodingHandler::MasterTrack
 
     media = get_media params
     master_track = find_master_track_by params
-    master_track.update_attributes! :source => full_location_of(media), :is_ready => true
+    master_track.update_attributes! :source => media["location"], :is_ready => true
     event = master_track.event
     event.update_attribute :master_track_version, master_track.version
 
@@ -20,9 +20,4 @@ class EncodingHandler::MasterTrack
       ::MasterTrack.find_by_encoder_id! params[:encoder_id]
     end
 
-    def full_location_of(media)
-      "#{Settings.aws_s3.host}/#{Settings.aws_s3.bucket}/#{media["location"]}"
-    end
-
 end
-
