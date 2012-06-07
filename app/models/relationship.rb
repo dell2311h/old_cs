@@ -8,6 +8,7 @@ class Relationship < ActiveRecord::Base
 
   validates :follower_id, :followable_id, :followable_type, :presence => true
   validates :follower_id, :uniqueness => {:scope => [:followable_id, :followable_type]}
+  validates :followable_type, :inclusion => ["User", "Event", "Place", "Performer"]
 
   validate :no_self_following
 
