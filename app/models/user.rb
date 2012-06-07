@@ -68,7 +68,7 @@ class User < ActiveRecord::Base
   # Get all users counts by one query
   scope :with_calculated_counters, select('users.*').select("(#{Video.select("COUNT(videos.user_id)").where("users.id = videos.user_id").to_sql}) AS uploaded_videos_count, (#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count,  (#{Relationship.select("COUNT(relationships.followed_id)").where("users.id = relationships.followed_id").to_sql}) AS followers_count, (#{Like.select("COUNT(likes.user_id)").where("users.id = likes.user_id").to_sql}) AS liked_videos_count")
 
-  scope :with_flag_followed_by, lambda { |user| select('users.*').select("(#{Relationship.select('COUNT(follower_id)').where('relationships.followed_id = users.id AND relationships.follower_id = ?', user.id).to_sql}) AS followed") }
+  scope :with_flag_followed_by, lambda { |user| select('users.*').select("(#{Relationship.select('COUNT(follower_id)').where("relationships.followable_type = 'User' AND relationships.followable_id = users.id AND relationships.follower_id = ?", user.id).to_sql}) AS followed") }
 
   scope :without_user, lambda { |user| where("id <> ?", user.id) }
 
@@ -183,6 +183,11 @@ class User < ActiveRecord::Base
     invitee = invitation_params[:invitee]
     invitation = self.invitations.create! :mode => mode, :invitee => invitee
     invitation.send_invitation!
+  end
+
+  def followed_with_type(type)
+    type = 'users' unless type
+    instance_eval("followed_#{type}")
   end
 
   private

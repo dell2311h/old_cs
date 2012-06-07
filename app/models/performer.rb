@@ -1,13 +1,12 @@
 class Performer < ActiveRecord::Base
 
+  include Modules::Followings
+
   validates :name , :presence => true
 
   mount_uploader :picture, ThumbnailUploader
 
   has_and_belongs_to_many :events
-
-  has_many :relationships, :as => :followable, :class_name => "Relationship", :dependent => :destroy
-  has_many :followers, :through => :relationships, :source => :follower
 
   self.per_page = Settings.paggination.per_page
 

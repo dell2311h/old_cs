@@ -1,15 +1,14 @@
 class Place < ActiveRecord::Base
+
+  include Modules::Followings
+
   has_many :events
   belongs_to :user
   has_many :comments, :as => :commentable, :class_name => "Comment", :dependent => :destroy
 
-
   has_many :taggings, as: :taggable, class_name: "Tagging", dependent: :destroy
   has_many :tags, through: :taggings
   has_many :place_providers, dependent: :destroy
-
-  has_many :relationships, :as => :followable, :class_name => "Relationship", :dependent => :destroy
-  has_many :followers, :through => :relationships, :source => :follower
 
   validates :name, :user_id, :latitude, :longitude, :presence => true
 
