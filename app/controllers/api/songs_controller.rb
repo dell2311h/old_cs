@@ -15,13 +15,10 @@ class Api::SongsController < Api::BaseController
   end
 
   def create
-    @video = Video.find params[:video_id]
-    params[:songs].map{|k,v| v}.each do |song_params|
-      @song = song_params[:id] ? Song.find(song_params[:id]) : Song.create!(song_params)
-      @video.songs << @song if !@video.songs.find_by_id(@song)
-    end
-    @songs = @video.songs
-    respond_with @songs, status: :created, location: nil
+    @video = Video.unscoped.find params[:video_id]
+    @songs = @video.add_songs_by_user(current_user, params[:songs])
+    raise "You can't add songs for this video" unless @songs
+    render :status => :ok, :action => "added_songs"
   end
 
 end

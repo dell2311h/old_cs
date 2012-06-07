@@ -16,10 +16,8 @@ class Event < ActiveRecord::Base
   after_create :create_pluraleyes_project
 
   scope :order_by_video_count, lambda {
-    videos = Video.arel_table
-    events = Event.arel_table
-    query_str = videos.project(videos[:event_id].count).where(events[:id].eq(videos[:event_id])).to_sql
-    select("*, (#{query_str}) AS videos_count").order('videos_count DESC')
+    select("*, (#{Video.select("COUNT(videos.event_id)")
+                       .where("videos.status = #{Video::STATUS_PROCESSING_DONE} AND events.id = videos.event_id").to_sql}) AS videos_count").order('videos_count DESC')
   }
 
   # coordinates = [latitude, longitude]
@@ -32,6 +30,12 @@ class Event < ActiveRecord::Base
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
 
   scope :around_date, lambda { |search_date| where(:date => (search_date - 1.day)..(search_date)) }
+
+  def self.top_random_for count
+    events = Event.order_by_video_count.limit count
+
+    events.sample
+  end
 
   #TODO: WAT? FIXME!!!!
   def current_master_track

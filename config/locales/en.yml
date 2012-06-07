@@ -6,3 +6,4 @@ en:
   errors:
     parameters:
       empty_videos: "Not defined parameter 'videos' for search recommended events"
+      empty_count:  "Count parameter not defined"
