@@ -41,9 +41,13 @@ class User < ActiveRecord::Base
 
   # Following associations
   has_many :relationships, foreign_key: "follower_id", dependent: :destroy
-  has_many :followings, through: :relationships, source: :followed
   has_many :reverse_relationships, :class_name => "Relationship", foreign_key: "followable_id", conditions: "followable_type = 'User'", dependent: :destroy
   has_many :followers, through: :reverse_relationships, :source => :follower
+
+  has_many :followed_users, through: :relationships, source: :followable, source_type: "User"
+  has_many :followed_events, through: :relationships, source: :followable, source_type: "Event"
+  has_many :followed_places, through: :relationships, source: :followable, source_type: "Place"
+  has_many :followed_performers, through: :relationships, source: :followable, source_type: "Performer"
 
   # Invitations
   has_many :invitations

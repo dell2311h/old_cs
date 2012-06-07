@@ -6,8 +6,6 @@ class Relationship < ActiveRecord::Base
 
   belongs_to :followable, :polymorphic => true
 
-  belongs_to :followed, :class_name => "User", foreign_key: "followable_id", :conditions => "followable_type = 'User'"
-
   validates :follower_id, :followable_id, :followable_type, :presence => true
   validates :follower_id, :uniqueness => {:scope => [:followable_id, :followable_type]}
 
