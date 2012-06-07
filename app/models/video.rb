@@ -140,6 +140,18 @@ class Video < ActiveRecord::Base
     self.review_flags.find_or_create_by_user_id(user.id)
   end
 
+  def add_songs_by_user(user, songs_params)
+    self.add_songs_by(songs_params) if self.ready? || (!self.ready? && self.owned_by?(user))
+  end
+
+  def ready?
+    self.status == STATUS_PROCESSING_DONE
+  end
+
+  def owned_by?(user)
+    self.user_id == user.id
+  end
+
   #----- Chunked uploading ---------------
 
   after_create do |video|

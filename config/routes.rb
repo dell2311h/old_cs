@@ -25,6 +25,7 @@ Crowdsync::Application.routes.draw do
     get 'events/recommended' => 'events#recommended'
 
     get 'events/:event_id/playlist' => 'events#playlist'
+    get 'events/random_playlist' => 'events#random_playlist'
 
     resources :events, :only => [:index, :create, :show]
 

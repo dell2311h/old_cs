@@ -7,6 +7,8 @@ set :rvm_type, :system
 set :default_stage, "staging"
 set :stages, %w(staging)
 
+set :keep_releases, 1
+
 require "rvm/capistrano"
 require 'capistrano/ext/multistage'
 require "bundler/capistrano"

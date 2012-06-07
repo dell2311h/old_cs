@@ -1,6 +1,7 @@
+
 class Api::EventsController < Api::BaseController
 
-  skip_before_filter :auth_check, :only => [:index, :remote, :show, :recommended, :playlist]
+  skip_before_filter :auth_check, :only => [:index, :remote, :show, :recommended, :playlist, :random_playlist]
 
   def remote
     @events = EventfulEvent.search params
@@ -78,6 +79,14 @@ class Api::EventsController < Api::BaseController
     @event = Event.with_videos_comments_count.find params[:event_id]
     @master_track = @event.current_master_track
     @timelines = @event.playlist
+  end
+
+  def random_playlist
+    raise I18n.t 'errors.parameters.empty_count' if params[:count].nil?
+    @event = Event.top_random_for params[:count]
+    @master_track = @event.current_master_track
+    @timelines = @event.playlist
+    render status: :ok, :template => "api/events/playlist"
   end
 end
 

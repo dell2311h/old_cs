@@ -16,10 +16,8 @@ class Event < ActiveRecord::Base
   after_create :create_pluraleyes_project
 
   scope :order_by_video_count, lambda {
-    videos = Video.arel_table
-    events = Event.arel_table
-    query_str = videos.project(videos[:event_id].count).where(events[:id].eq(videos[:event_id])).to_sql
-    select("*, (#{query_str}) AS videos_count").order('videos_count DESC')
+    select("*, (#{Video.select("COUNT(videos.event_id)")
+                       .where("videos.status = #{Video::STATUS_PROCESSING_DONE} AND events.id = videos.event_id").to_sql}) AS videos_count").order('videos_count DESC')
   }
 
   # coordinates = [latitude, longitude]
@@ -27,11 +25,17 @@ class Event < ActiveRecord::Base
     Event.joins(:place).merge(Place.near coordinates, radius, :order => :distance, :select => "places.*, places.name AS place_name, events.*")
   }
 
-  scope :with_videos_comments_count, select("events.*").select("SUM((#{Comment.select("COUNT(comments.commentable_id)").where("videos.id = comments.commentable_id AND comments.commentable_type = 'Video'").to_sql})) as comments_count").joins(:videos).group("events.id")
+  scope :with_videos_comments_count, select("events.*").select("SUM((#{Comment.select("COUNT(comments.commentable_id)").where("videos.id = comments.commentable_id AND comments.commentable_type = 'Video'").to_sql})) as comments_count").joins("LEFT OUTER JOIN `videos` ON `videos`.`event_id` = `events`.`id`").group("events.id")
 
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
 
   scope :around_date, lambda { |search_date| where(:date => (search_date - 1.day)..(search_date)) }
+
+  def self.top_random_for count
+    events = Event.order_by_video_count.limit count
+
+    events.sample
+  end
 
   #TODO: WAT? FIXME!!!!
   def current_master_track
