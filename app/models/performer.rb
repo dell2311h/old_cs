@@ -6,6 +6,9 @@ class Performer < ActiveRecord::Base
 
   has_and_belongs_to_many :events
 
+  has_many :relationships, :as => :followable, :class_name => "Relationship", :dependent => :destroy
+  has_many :followers, :through => :relationships, :source => :follower
+
   self.per_page = Settings.paggination.per_page
 
   def self.search params
@@ -18,3 +21,4 @@ class Performer < ActiveRecord::Base
   end
 
 end
+

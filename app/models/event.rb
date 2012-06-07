@@ -8,6 +8,9 @@ class Event < ActiveRecord::Base
   has_and_belongs_to_many :performers
   has_many :master_tracks, dependent: :destroy
 
+  has_many :relationships, :as => :followable, :class_name => "Relationship", :dependent => :destroy
+  has_many :followers, :through => :relationships, :source => :follower
+
   validates :name, :date, presence: true
   validates :user_id, :place_id, presence: true
 
