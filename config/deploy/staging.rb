@@ -48,6 +48,7 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/config/initializers/carrierwave.rb #{latest_release}/config/initializers/carrierwave.rb"
     run "ln -nfs #{shared_path}/chunk_uploads #{latest_release}/tmp/uploads"
     run "ln -nfs #{shared_path}/videos #{latest_release}/public/videos"
+    run "ln -nfs #{shared_path}/encoded #{latest_release}/public/encoded"
     run "ln -nfs #{shared_path}/sockets #{latest_release}/tmp/sockets"
     run "ln -nfs #{shared_path}/sessions #{latest_release}/tmp/sessions"
   end
