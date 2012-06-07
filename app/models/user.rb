@@ -74,10 +74,8 @@ class User < ActiveRecord::Base
 
   self.per_page = Settings.paggination.per_page
 
-  def self.find_followed_by user
-    followed_users = Relationship.where({:follower_id => user.id})
-
-    followed_users.map(&:followed_id)
+  def self.find_followed_by(user)
+    user.followed_users.pluck("users.id")
   end
 
   def remote_friends_on_crowdsync_for provider
