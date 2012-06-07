@@ -5,7 +5,7 @@ class Api::ProfilesController < Api::BaseController
   def index
     raise I18n.t 'errors.parameters.empty_name' if params[:name].nil?
     @performer = Performer.search({ :performer_name => params[:name] }).first
-    @user = User.with_name_like(params[:name]).first
+    @user = User.find_by_username(params[:name])
 
     render :status => :not_found, json: {} if @user.nil? && @performer.nil?
   end
