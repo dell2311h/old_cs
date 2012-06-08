@@ -35,6 +35,8 @@ class Event < ActiveRecord::Base
 
   scope :around_date, lambda { |search_date| where(:date => (search_date - 1.day)..(search_date)) }
 
+  scope :with_calculated_counters, with_followers_count.with_videos_comments_count
+
   def self.top_random_for count
     events = Event.order_by_video_count.limit count
 

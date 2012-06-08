@@ -20,5 +20,7 @@ class Performer < ActiveRecord::Base
     performers
   end
 
+  scope :with_calculated_counters, with_followers_count
+
 end
 
