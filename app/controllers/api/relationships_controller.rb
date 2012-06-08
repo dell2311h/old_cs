@@ -37,13 +37,14 @@ class Api::RelationshipsController < Api::BaseController
     end
 
     def find_followable
-      class_name = case params[:followable]
+      @followable = case params[:followable]
         when /performers|places|events|users/
-          params[:followable][0..-2]
+          class_name = params[:followable][0..-2]
+          model_class = class_name.capitalize.constantize
+          model_class.find params[:id]
+        else
+          current_user
       end
-
-      model_class = class_name.capitalize.constantize
-      @followable = model_class.find params[:id]
     end
 
     def set_entities_type
