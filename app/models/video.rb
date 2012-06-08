@@ -55,6 +55,7 @@ class Video < ActiveRecord::Base
                           videos = videos.where("videos.user_id = ?", params[:user_id]) if params[:user_id]
                           videos = videos.where("videos.event_id = ?", params[:event_id]) if params[:event_id]
                           videos = videos.joins(:songs).where("songs.id = ?", params[:song_id]) if params[:song_id]
+                          videos = videos.joins(:comments).where("comments.text like ?", ("%#" + params[:comment] + "%")) if params[:comment]
                           videos
                         }
 
