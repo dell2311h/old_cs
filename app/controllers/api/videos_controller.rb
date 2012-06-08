@@ -29,8 +29,10 @@ class Api::VideosController < Api::BaseController
 
   def update
     @video = Video.unscoped.for_user(current_user).find params[:id]
+    event_id = @video.event_id
+    params[:video].delete(:event_id) unless event_id.nil?
     @video.update_attributes!(params[:video])
-    @video.create_encoding_media
+    @video.create_encoding_media if event_id.nil? && @video.event_id
     render status: :accepted, action: :show
   end
 
@@ -52,7 +54,7 @@ class Api::VideosController < Api::BaseController
 
     if (@videos.count) < 1
       render :status => :not_found, json: {}
-      
+
     end
       render status: :ok, :template => "api/videos/index"
   end
