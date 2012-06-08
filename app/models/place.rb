@@ -19,10 +19,7 @@ class Place < ActiveRecord::Base
 
   self.per_page = Settings.paggination.per_page
 
-  def eventful_id
-
-  nil
-  end
+  scope :with_calculated_counters, with_followers_count
 
 end
 
