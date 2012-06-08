@@ -109,6 +109,8 @@ Crowdsync::Application.routes.draw do
     # ReviewFlags
     put 'videos/:video_id/review_flags' => "review_flags#create"
 
+   #profiles
+   resources :profiles, :only => [:index]
   end
 
   resources :videos, :only => [:index, :new, :create, :destroy]
