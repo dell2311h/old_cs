@@ -1,6 +1,7 @@
 class Event < ActiveRecord::Base
 
-  include Modules::Followings
+  include Follow::Relations
+  include Follow::FlagsAndCounters
 
   belongs_to :user
   belongs_to :place

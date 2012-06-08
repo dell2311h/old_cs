@@ -1,5 +1,7 @@
 class User < ActiveRecord::Base
 
+  include Follow::FlagsAndCounters
+
   attr_protected :points
 
   # Include default devise modules. Others available are:
@@ -62,15 +64,15 @@ class User < ActiveRecord::Base
   scope :by_remote_provider_ids, lambda{|provider, uids| where("authentications.provider = ? AND authentications.uid IN (?)", provider, uids).
                                                          joins(:authentications)
                                        }
-
   scope :with_name_like, lambda { |name| where("UPPER(CONCAT(users.first_name, ' ', users.last_name, ' ', users.username)) LIKE ?", "%#{name.to_s.upcase}%") }
 
-  # Get all users counts by one query
-  scope :with_calculated_counters, select('users.*').select("(#{Video.select("COUNT(videos.user_id)").where("users.id = videos.user_id").to_sql}) AS uploaded_videos_count, (#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count,  (#{Relationship.select("COUNT(relationships.followed_id)").where("users.id = relationships.followed_id").to_sql}) AS followers_count, (#{Like.select("COUNT(likes.user_id)").where("users.id = likes.user_id").to_sql}) AS liked_videos_count")
+  scope :with_follings_count, select('users.*').select("(#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count")
 
-  scope :with_flag_followed_by, lambda { |user| select('users.*').select("(#{Relationship.select('COUNT(follower_id)').where("relationships.followable_type = 'User' AND relationships.followable_id = users.id AND relationships.follower_id = ?", user.id).to_sql}) AS followed") }
+  # Get all users counts by one query
+  scope :with_calculated_counters, select('users.*').select("(#{Video.select("COUNT(videos.user_id)").where("users.id = videos.user_id").to_sql}) AS uploaded_videos_count, (#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count, (#{Like.select("COUNT(likes.user_id)").where("users.id = likes.user_id").to_sql}) AS liked_videos_count").with_followers_count.with_follings_count
 
   scope :without_user, lambda { |user| where("id <> ?", user.id) }
+
 
   self.per_page = Settings.paggination.per_page
 

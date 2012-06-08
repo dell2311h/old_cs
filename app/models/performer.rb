@@ -1,6 +1,7 @@
 class Performer < ActiveRecord::Base
 
-  include Modules::Followings
+  include Follow::Relations
+  include Follow::FlagsAndCounters
 
   validates :name , :presence => true
 
