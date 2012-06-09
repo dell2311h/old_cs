@@ -40,7 +40,7 @@ class Api::CommentsController < Api::BaseController
 
   private
     def find_video
-      @video = Comment.find_video_by(current_user, params)
+      @video = Video.find_by(current_user, params[:id])
     end
 
 end
