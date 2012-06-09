@@ -1,11 +1,11 @@
 class Api::CommentsController < Api::BaseController
 
-  before_filter :find_commentable, :only => [:index, :create]
+  before_filter :find_video, :only => [:index, :create]
 
   skip_before_filter :auth_check, :only => [:index, :event_videos_comments_list]
 
   def index
-    @comments = @commentable.comments.order("created_at DESC")
+    @comments = @video.comments.order("created_at DESC")
 
     @comments = @comments.paginate(:page => params[:page], :per_page => params[:per_page])
 
@@ -24,7 +24,7 @@ class Api::CommentsController < Api::BaseController
   end
 
   def create
-    @comment = @commentable.comments.build params[:comment]
+    @comment = @video.comments.build params[:comment]
     @comment.user = current_user
     @comment.save!
     render status: :ok, action: :show
@@ -38,8 +38,8 @@ class Api::CommentsController < Api::BaseController
 
 
   private
-    def find_commentable
-      @commentable = Comment.find_commentable_by(current_user, params)
+    def find_video
+      @video = Comment.find_video_by(current_user, params)
     end
 
 end

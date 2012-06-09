@@ -18,7 +18,7 @@ class Video < ActiveRecord::Base
   validates :event_id, :numericality => { :only_integer => true, :allow_nil => true }
   belongs_to :event
   belongs_to :user
-  has_many :comments, :as => :commentable, :class_name => "Comment", :dependent => :destroy
+  has_many :comments, :dependent => :destroy
 
   has_many :taggings, as: :taggable, class_name: "Tagging", dependent: :destroy
   has_many :tags, through: :taggings
@@ -63,7 +63,7 @@ class Video < ActiveRecord::Base
 
   scope :with_likes_count, select('videos.*').select("(#{Like.select("COUNT(likes.video_id)").where("videos.id = likes.video_id").to_sql}) AS likes_count")
 
-  scope :with_comments_count, select('videos.*').select("(#{Comment.select("COUNT(comments.commentable_id)").where("videos.id = comments.commentable_id AND comments.commentable_type = 'Video'").to_sql}) AS comments_count")
+  scope :with_comments_count, select('videos.*').select("(#{Comment.select("COUNT(comments.video_id)").where("videos.id = comments.video_id").to_sql}) AS comments_count")
 
   scope :with_calculated_counters, with_likes_count.with_comments_count
 

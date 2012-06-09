@@ -72,6 +72,8 @@ describe Video do
       before :all do
         @valid_video = Factory.create :video
         @invalid_video = Factory.create :video
+        Factory.create :comment
+        comment = Factory.create :comment, :video => @valid_video
         comment = @valid_video.comments.first
         @tag = 'TagTest'
         comment.text = comment.text + " #" + @tag
