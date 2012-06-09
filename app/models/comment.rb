@@ -16,14 +16,5 @@ class Comment < ActiveRecord::Base
     self.destroy if self.destroyable_by?(user)
   end
 
-  def self.find_video_by(user = nil, params)
-
-    if user and (unscoped_video = Video.unscoped.find(params[:id])).user_id == user.id
-      unscoped_video
-    else
-      Video.find(params[:id])
-    end
-  end
-
 end
 

@@ -75,6 +75,15 @@ class Video < ActiveRecord::Base
 
   self.per_page = Settings.paggination.per_page
 
+  def self.find_by(user = nil, id)
+
+    if user and (unscoped_video = Video.unscoped.find(id)).user_id == user.id
+      unscoped_video
+    else
+      Video.find(id)
+    end
+  end
+
   def self.first_popular count
     Video.most_popular.limit count
   end
