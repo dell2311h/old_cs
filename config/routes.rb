@@ -1,6 +1,7 @@
 Crowdsync::Application.routes.draw do
 
-  devise_for :user, :path => '', :skip => [:registration] do
+  devise_for :user, :path => '', :skip => [:registration]
+  devise_scope :user do
     scope :controller => 'devise/registrations' do
       get :cancel, :path => 'users/cancel', :as => :cancel_user_registration
       post :create,  :path => 'sign_up', :as => :user_registration
@@ -120,4 +121,3 @@ Crowdsync::Application.routes.draw do
   root :to => "videos#index"
 
 end
-
