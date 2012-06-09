@@ -6,10 +6,11 @@ class Api::CommentsController < Api::BaseController
 
   def index
     @comments = @video.comments.order("created_at DESC")
-
-    @comments = @comments.paginate(:page => params[:page], :per_page => params[:per_page])
-
-    render :status => :not_found, json: {} if @comments.count == 0
+    if @comments.count > 0
+      @comments = @comments.paginate(:page => params[:page], :per_page => params[:per_page])
+    else
+      render :status => :not_found, json: {}
+    end
   end
 
   def event_videos_comments_list
