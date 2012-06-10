@@ -17,7 +17,7 @@ class Authentication < ActiveRecord::Base
 
   def correct_token?(token)
     # TODO: Need add verification of token
-    true
+    !token.empty?
   end
 
 end
