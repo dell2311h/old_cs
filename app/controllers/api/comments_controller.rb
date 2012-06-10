@@ -15,9 +15,10 @@ class Api::CommentsController < Api::BaseController
 
   def event_videos_comments_list
     @event = Event.find params[:event_id]
-    @comments = @event.videos_comments.paginate(:page => params[:page], :per_page => params[:per_page])
+    @comments = @event.videos_comments
 
     if @comments.count > 0
+      @comments.paginate(:page => params[:page], :per_page => params[:per_page])
       render status: :ok, action: :index
     else
       render status: :not_found, json: {}
