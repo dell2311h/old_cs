@@ -4,33 +4,27 @@ describe Api::UsersController do
 
   describe "#create" do
 
-    it "should responds with JSON" do
-      user = stub_model(User,:save=>true)
-      User.stub(:new).with({'these' => 'params'}) { user }
-      post :create, :user => {'these' => 'params'}, :format => :json
-      response.body.should eq user.to_json
-    end
-
     context 'with correct request params' do
       before :all do
-        @json = {:name => "User", :email => "user@gmail.com", :password => "password", :username => "user111", :age => 33}
+        @json = {:username => "User", :email => "user@gmail.com", :password => "password"}
+        @user = Factory.create :user
       end
+
       it "should return object of the newly created user" do
-        User.delete_all
         post :create, :format => :json, :user => @json
         response.code.should == '201'
         result = JSON.parse(response.body)
         result['id'].should_not be_nil
-        result['name'].should eq 'User'
+        result['username'].should eq 'User'
       end
 
         context 'with information about user from social network' do
           before :all do
-            @json = {:name => "User", :email => "user@gmail.com", :password => "password", :username => "user111", :age => 33,
-                     :authentications_attributes => [{:provider => "facebook", :uid => "33232", :token => "567GFHJJHGghGJG76876VBVJHG"}]}
+            @json = {:username => "User", :email => "user@gmail.com", :password => "password",
+                     :authentications_attributes => [{:provider => "facebook", :uid => "33232",
+                                                       :token => "567GFHJJHGghGJG76876VBVJHG"}]}
           end
           it "should create authentication for newly created user" do
-            User.delete_all
             post :create, :format => :json, :user => @json
             response.code.should == '201'
             result = JSON.parse(response.body)
@@ -42,7 +36,7 @@ describe Api::UsersController do
 
     context 'with incorrect request params' do
       before :all do
-        @json = {:name => "Us", :email => "usergmail.com", :password => "****", :login => "us", :age => 99}
+        @json = {:username => "Us", :email => "usergmail.com", :password => "****", :login => "us"}
       end
       it "should return hash with error message" do
         post :create, :format => :json, :user => @json
@@ -55,27 +49,22 @@ describe Api::UsersController do
   end
 
   describe "#show" do
-
-    it "should responds with JSON" do
-      user = stub_model(User)
-      User.stub(:find).with('1') { user }
-      get :show, :id => '1', :format => :json
-      response.body.should eq user.to_json
+    before :all do
+      @user = Factory.create :user
     end
 
     context 'with correct request params' do
       it "should return user" do
-        user = stub_model(User)
-        User.stub(:find).with('1') { user }
-        get :show, :id => '1', :format => :json
-        response.body.should eq user.to_json
+        get :show, :id => @user.id, :authentication_token => @user.authentication_token, :format => :json
+        response.code.should == '200'
+        response.should render_template("show")
+        response.body.should match @user.username
       end
     end
 
     context 'with incorrect request params' do
-      it "should return an hash with error message" do
-        User.delete_all
-        get :show, :format => :json, :id => '1'
+      it "should return an json with error message" do
+        get :show, :format => :json, :authentication_token => @user.authentication_token, :id => '0'
         response.code.should == '404'
         result = JSON.parse(response.body)
         result['error'].should_not be_nil
@@ -84,35 +73,23 @@ describe Api::UsersController do
   end
 
   describe "#update" do
-
-    it "should responds with JSON" do
-      user = stub_model(User)
-      User.stub(:find).with('1') { user }
-      User.stub(:update_attributes).with({'name' => 'NewName'}) { user }
-      post :update, :id => '1', :user => {'name' => 'NewName'}, :format => :json
-      response.body.should eq user.to_json
+    before :all do
+      @user = Factory.create(:user)
+      @json = {:username => "UserUpdated"}
     end
 
     context 'with correct request params' do
-      before :all do
-        @user = Factory.create(:user)
-        @json = {:name => "UserUpdated"}
-      end
       it "should return object with updated attributes" do
-        put :update, :format => :json, :id => @user.id, :user => @json
-        response.code.should == '200'
+        put :update, :format => :json, :id => @user.id, :user => @json, :authentication_token => @user.authentication_token
+        response.code.should == '202'
         result = JSON.parse(response.body)
-        result['name'].should eq 'UserUpdated'
+        result['username'].should eq 'UserUpdated'
       end
     end
 
     context 'with incorrect request params' do
-      before :all do
-        User.delete_all
-        @json = {:user => {:login => "UserUpdated"}}
-      end
       it "should return hash with error message" do
-        post :create, :format => :json, :id => 1, :user => @json
+        post :create, :format => :json, :id => 1, :user => {:name => "WrongName"}, :authentication_token => @user.authentication_token
         response.code.should == '400'
         result = JSON.parse(response.body)
         result['error'].should_not be_nil

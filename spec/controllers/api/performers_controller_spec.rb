@@ -43,14 +43,13 @@ describe Api::PerformersController do
 
   describe 'GET show' do
     before :each do
-      @result = mock(Performer)
+      @result = stub_model Performer
       @performer.stub!(:find).and_return(@result)
     end
      context "when performer is available" do
         it 'show find performer' do
           @performer.should_receive(:find).and_return(@result)
           get :show, :id => "1", :format => :json
-
           response.should be_ok
         end
      end
