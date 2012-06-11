@@ -102,14 +102,14 @@ class User < ActiveRecord::Base
 
   # Followings methods
   def following?(followable)
-    self.relationships.find_by_followable_id_and_followable_type(followable.id, followable.class.to_s)
+    self.relationships.find_by_followable_id_and_followable_type(followable.id, followable.class.to_s) ? true : false
   end
 
-  def follow!(followable)
+  def follow(followable)
     self.relationships.create!(:followable => followable)
   end
 
-  def unfollow!(followable)
+  def unfollow(followable)
     self.relationships.find_by_followable_id_and_followable_type(followable.id, followable.class.to_s).destroy
   end
 

@@ -16,12 +16,12 @@ class Api::RelationshipsController < Api::BaseController
 
 
   def create
-    current_user.follow!(@followable)
+    current_user.follow(@followable)
     render status: :ok, json: {}
   end
 
   def destroy
-    current_user.unfollow!(@followable)
+    current_user.unfollow(@followable)
     render status: :ok, json: {}
   end
 
