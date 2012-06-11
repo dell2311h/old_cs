@@ -35,7 +35,5 @@ describe Comment do
 
   end
 
-
-
 end
 
