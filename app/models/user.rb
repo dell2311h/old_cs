@@ -101,8 +101,8 @@ class User < ActiveRecord::Base
   end
 
   # Followings methods
-  def following?(followed)
-    self.relationships.find_by_followed_id(followed.id)
+  def following?(followable)
+    self.relationships.find_by_followable_id_and_followable_type(followable.id, followable.class.to_s)
   end
 
   def follow!(followable)
