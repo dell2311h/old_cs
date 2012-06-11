@@ -43,9 +43,8 @@ class Event < ActiveRecord::Base
     events.sample
   end
 
-  #TODO: WAT? FIXME!!!!
   def current_master_track
-    MasterTrack.where("version = ?", master_track_version).first
+    master_tracks.where("version = ?", master_track_version).first
   end
 
   def videos_comments
@@ -201,4 +200,3 @@ class Event < ActiveRecord::Base
     end
 
 end
-

@@ -7,3 +7,4 @@ en:
     parameters:
       empty_videos: "Not defined parameter 'videos' for search recommended events"
       empty_count:  "Count parameter not defined"
+      empty_name:   "Name parameter not defined"

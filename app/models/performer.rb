@@ -4,6 +4,7 @@ class Performer < ActiveRecord::Base
   include Follow::FlagsAndCounters
 
   validates :name , :presence => true
+  validates :name,  :uniqueness => true
 
   mount_uploader :picture, ThumbnailUploader
 

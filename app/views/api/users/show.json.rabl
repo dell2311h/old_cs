@@ -3,7 +3,7 @@ attributes :id, :first_name, :last_name, :email, :username, :phone, :dob, :websi
 node(:avatar_url) { |user| user.avatar.thumb.url if user.avatar? }
 node(:token) { @token } if @token
 
-if @user and @user.id == current_user.id
+if @user and current_user and @user.id == current_user.id
   child :authentications => :authentications do
     attributes :provider, :uid, :token
   end

@@ -1,6 +1,7 @@
 Crowdsync::Application.routes.draw do
 
-  devise_for :user, :path => '', :skip => [:registration] do
+  devise_for :user, :path => '', :skip => [:registration]
+  devise_scope :user do
     scope :controller => 'devise/registrations' do
       get :cancel, :path => 'users/cancel', :as => :cancel_user_registration
       post :create,  :path => 'sign_up', :as => :user_registration
@@ -110,6 +111,9 @@ Crowdsync::Application.routes.draw do
     constraints :followable => /users|places|events|performers/ do
       get "/:followable/:id/followers" => "relationships#followers", :as => :followers_list
     end
+
+   #profiles
+   resources :profiles, :only => [:index]
 
   end
 
