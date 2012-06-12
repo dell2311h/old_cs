@@ -1,11 +1,10 @@
 class Api::TagsController < Api::BaseController
 
-  before_filter :find_taggable
-
   skip_before_filter :auth_check, :only => [:index]
 
   def index
-    @tags = @taggable.tags
+    @video = Video.find_by(current_user, params[:id])
+    @tags = @video.tags
 
     if @tags.count > 0
       render status: :ok, json: @tags.map(&:name)
@@ -13,16 +12,6 @@ class Api::TagsController < Api::BaseController
       render :status => :not_found, json: []
     end
   end
-
-  def create
-    @tags = Tag.add_for(@taggable, params[:tags])
-    respond_with @tags, :status => :created, :location => nil
-  end
-
-  private
-    def find_taggable
-      @taggable = Video.find_by(current_user, params[:id])
-    end
 
 end
 
