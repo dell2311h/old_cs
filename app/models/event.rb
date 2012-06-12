@@ -15,8 +15,6 @@ class Event < ActiveRecord::Base
   validates :name, :date, presence: true
   validates :user_id, :place_id, presence: true
 
-  before_create :add_eventful_event
-
   after_create :create_pluraleyes_project
 
   scope :order_by_video_count, lambda {
