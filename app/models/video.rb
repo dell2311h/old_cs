@@ -241,7 +241,7 @@ class Video < ActiveRecord::Base
 #---------Encoding---------
     def create_encoding_media
       if self.encoding_id.nil? && self.status == STATUS_NEW && self.event_id
-        params = {:media => {:location =>  self.clip.path } }
+        params = {:media => {:location =>  self.clip.url } }
         response = Pandrino::Api.deliver Settings.encoding.url.actions.medias, params
         raise 'Unable to create media' unless response
         encoding_id = response["media"]["id"]
@@ -270,4 +270,3 @@ class Video < ActiveRecord::Base
       self.update_attribute :last_chunk_id, chunk_id
     end
 end
-
