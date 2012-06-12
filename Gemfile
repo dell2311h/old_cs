@@ -52,13 +52,10 @@ gem 'capistrano'
 gem 'capistrano-ext' # Multistage deployments
 gem 'rvm-capistrano' # RVM support
 
-# To use debugger
-# gem 'ruby-debug19', :require => 'ruby-debug'
-
 group :test, :development do
   gem "rspec-rails", "~> 2.6"
   gem 'shoulda'
   gem "factory_girl_rails", "~> 1.2"
   gem "ffaker"
+  gem 'ruby-debug19', :require => 'ruby-debug'
 end
-

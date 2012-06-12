@@ -10,20 +10,23 @@ module CarrierWave
   end
 end
 
-CarrierWave.configure do |config|
-  # for development
-  config.storage = :file
-
-  # for production
-  #config.fog_credentials = {
-  #  :provider               => 'AWS',
-  #  :aws_access_key_id      => 'xxx',
-  #  :aws_secret_access_key  => 'yyy',
-  #  :region                 => 'us-east-1'
-  #}
-  #config.fog_directory  = 'name_of_bucket'
-  #config.fog_host       = 'https://assets.example.com'
-  #config.fog_public     = true
-  #config.fog_attributes = {'Cache-Control' => 'max-age=315576000'}
-  #config.storage = :fog
+if Rails.env.test?
+  CarrierWave.configure do |config|
+    config.storage = :file
+    config.enable_processing = false
+  end
+else
+  CarrierWave.configure do |config|
+    config.fog_credentials = {
+      :provider               => 'AWS',
+      :aws_access_key_id      => 'xxx',
+      :aws_secret_access_key  => 'yyy',
+      :region                 => 'us-east-1'
+    }
+    config.fog_directory  = 'name_of_bucket'
+    config.fog_host       = 'https://assets.example.com'
+    config.fog_public     = true
+    config.fog_attributes = {'Cache-Control' => 'max-age=315576000'}
+    config.storage = :fog
+  end
 end

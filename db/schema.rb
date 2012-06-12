@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120604160103) do
+ActiveRecord::Schema.define(:version => 20120609152101) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -36,11 +36,10 @@ ActiveRecord::Schema.define(:version => 20120604160103) do
 
   create_table "comments", :force => true do |t|
     t.integer  "user_id"
-    t.integer  "commentable_id"
-    t.string   "commentable_type"
     t.text     "text"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.integer  "video_id"
   end
 
   create_table "encoding_profiles", :force => true do |t|
@@ -135,9 +134,10 @@ ActiveRecord::Schema.define(:version => 20120604160103) do
 
   create_table "relationships", :force => true do |t|
     t.integer  "follower_id"
-    t.integer  "followed_id"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.integer  "followable_id"
+    t.string   "followable_type"
   end
 
   create_table "review_flags", :force => true do |t|

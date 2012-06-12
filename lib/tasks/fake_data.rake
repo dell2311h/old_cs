@@ -28,13 +28,10 @@ namespace :cs do
     desc "Populate DB by fake comments (Amount can be specified by NUM_RECORDS env variable. Default is #{DEFAULT_COUNT})"
     task :comments => :environment do
       records_number = ENV['NUM_RECORDS'] ? ENV['NUM_RECORDS'].to_i : DEFAULT_COUNT
-      count = COUNT * records_number
-      Event.limit(COUNT).each do |event|      
         records_number.times do
-          Factory.create :comment, :commentable => event
+          Factory.create :comment
           print '.'
         end
-      end  
       puts "\n#{count} comments were added to DB"
     end
 

@@ -1,8 +1,12 @@
 class Event < ActiveRecord::Base
+
+  include Follow::Relations
+  include Follow::FlagsAndCounters
+
   belongs_to :user
   belongs_to :place
   has_many :videos
-  has_many :comments, :as => :commentable, :class_name => "Comment", :dependent => :destroy
+
   has_many :taggings, as: :taggable, class_name: "Tagging", dependent: :destroy
   has_many :tags, through: :taggings
   has_and_belongs_to_many :performers
@@ -25,11 +29,13 @@ class Event < ActiveRecord::Base
     Event.joins(:place).merge(Place.near coordinates, radius, :order => :distance, :select => "places.*, places.name AS place_name, events.*")
   }
 
-  scope :with_videos_comments_count, select("events.*").select("SUM((#{Comment.select("COUNT(comments.commentable_id)").where("videos.id = comments.commentable_id AND comments.commentable_type = 'Video'").to_sql})) as comments_count").joins("LEFT OUTER JOIN `videos` ON `videos`.`event_id` = `events`.`id`").group("events.id")
+  scope :with_videos_comments_count, select("events.*").select("SUM((#{Comment.select("COUNT(comments.video_id)").where("videos.id = comments.video_id ").to_sql})) as comments_count").joins("LEFT OUTER JOIN `videos` ON `videos`.`event_id` = `events`.`id`").group("events.id")
 
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
 
   scope :around_date, lambda { |search_date| where(:date => (search_date - 1.day)..(search_date)) }
+
+  scope :with_calculated_counters, with_followers_count.with_videos_comments_count
 
   def self.top_random_for count
     events = Event.order_by_video_count.limit count
