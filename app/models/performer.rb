@@ -1,5 +1,8 @@
 class Performer < ActiveRecord::Base
 
+  include Follow::Relations
+  include Follow::FlagsAndCounters
+
   validates :name , :presence => true
   validates :name,  :uniqueness => true
 
@@ -18,4 +21,7 @@ class Performer < ActiveRecord::Base
     performers
   end
 
+  scope :with_calculated_counters, with_followers_count
+
 end
+

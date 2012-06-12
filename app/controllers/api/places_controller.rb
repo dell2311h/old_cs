@@ -24,7 +24,7 @@ class Api::PlacesController < Api::BaseController
     end
 
     if @places.count > 0
-      @places = @places.paginate(:page => params[:page], :per_page => params[:per_page])
+      @places = @places.paginate(:page => params[:page], :per_page => params[:per_page]).with_flag_followed_by(current_user).with_calculated_counters
     else
       render :status => :not_found, json: {}
     end
@@ -32,7 +32,7 @@ class Api::PlacesController < Api::BaseController
   end
 
   def show
-    @place = Place.find params[:id]
+    @place = Place.with_flag_followed_by(current_user).with_calculated_counters.find(params[:id])
   end
 
   def create

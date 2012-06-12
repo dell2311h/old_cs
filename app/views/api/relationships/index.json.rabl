@@ -1,3 +1,3 @@
-collection @users
-extends "api/users/show"
+collection @entities
+extends "api/#{@entities_type}/show"
 
