@@ -1,4 +1,8 @@
 class Event < ActiveRecord::Base
+
+  include Follow::Relations
+  include Follow::FlagsAndCounters
+
   belongs_to :user
   belongs_to :place
   has_many :videos
@@ -28,6 +32,8 @@ class Event < ActiveRecord::Base
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
 
   scope :around_date, lambda { |search_date| where(:date => (search_date - 1.day)..(search_date)) }
+
+  scope :with_calculated_counters, with_followers_count.with_videos_comments_count
 
   def self.top_random_for count
     events = Event.order_by_video_count.limit count

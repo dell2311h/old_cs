@@ -68,7 +68,6 @@ Crowdsync::Application.routes.draw do
     get "/events/:event_id/songs" => "songs#index", :as => :event_songs_list
 
     get "users/:user_id/followings" => "relationships#followings"
-    get "users/:user_id/followers" => "relationships#followers"
 
     # Likes
     get "users/:user_id/likes" => "likes#index"
@@ -80,7 +79,7 @@ Crowdsync::Application.routes.draw do
     get "me/followings" => "relationships#followings"
     get "me/followers" => "relationships#followers"
     post "me/followings" => "relationships#create"
-    delete "me/followings/:user_id" => "relationships#destroy"
+    post "me/followings/destroy" => "relationships#destroy"
     get "me/likes" => "likes#index"
     post "me/likes" => "likes#create"
     delete "me/likes/:video_id" => "likes#destroy"
@@ -106,12 +105,16 @@ Crowdsync::Application.routes.draw do
     get 'performers/remote' => 'performers#remote'
     resources :performers, :only => [:index, :show, :create]
 
-
     # ReviewFlags
     put 'videos/:video_id/review_flags' => "review_flags#create"
 
+    constraints :followable => /users|places|events|performers/ do
+      get "/:followable/:id/followers" => "relationships#followers", :as => :followers_list
+    end
+
    #profiles
    resources :profiles, :only => [:index]
+
   end
 
   resources :videos, :only => [:index, :new, :create, :destroy]
@@ -121,3 +124,4 @@ Crowdsync::Application.routes.draw do
   root :to => "videos#index"
 
 end
+

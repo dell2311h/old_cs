@@ -1,5 +1,7 @@
 class User < ActiveRecord::Base
 
+  include Follow::FlagsAndCounters
+
   attr_protected :points
 
   # Include default devise modules. Others available are:
@@ -41,9 +43,13 @@ class User < ActiveRecord::Base
 
   # Following associations
   has_many :relationships, foreign_key: "follower_id", dependent: :destroy
-  has_many :followings, through: :relationships, source: :followed
-  has_many :reverse_relationships, :class_name => "Relationship", foreign_key: "followed_id", dependent: :destroy
+  has_many :reverse_relationships, :class_name => "Relationship", foreign_key: "followable_id", conditions: "followable_type = 'User'", dependent: :destroy
   has_many :followers, through: :reverse_relationships, :source => :follower
+
+  has_many :followed_users, through: :relationships, source: :followable, source_type: "User"
+  has_many :followed_events, through: :relationships, source: :followable, source_type: "Event"
+  has_many :followed_places, through: :relationships, source: :followable, source_type: "Place"
+  has_many :followed_performers, through: :relationships, source: :followable, source_type: "Performer"
 
   # Invitations
   has_many :invitations
@@ -58,22 +64,20 @@ class User < ActiveRecord::Base
   scope :by_remote_provider_ids, lambda{|provider, uids| where("authentications.provider = ? AND authentications.uid IN (?)", provider, uids).
                                                          joins(:authentications)
                                        }
-
   scope :with_name_like, lambda { |name| where("UPPER(CONCAT(users.first_name, ' ', users.last_name, ' ', users.username)) LIKE ?", "%#{name.to_s.upcase}%") }
 
-  # Get all users counts by one query
-  scope :with_calculated_counters, select('users.*').select("(#{Video.select("COUNT(videos.user_id)").where("users.id = videos.user_id").to_sql}) AS uploaded_videos_count, (#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count,  (#{Relationship.select("COUNT(relationships.followed_id)").where("users.id = relationships.followed_id").to_sql}) AS followers_count, (#{Like.select("COUNT(likes.user_id)").where("users.id = likes.user_id").to_sql}) AS liked_videos_count")
+  scope :with_follings_count, select('users.*').select("(#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count")
 
-  scope :with_flag_followed_by, lambda { |user| select('users.*').select("(#{Relationship.select('COUNT(follower_id)').where('relationships.followed_id = users.id AND relationships.follower_id = ?', user.id).to_sql}) AS followed") }
+  # Get all users counts by one query
+  scope :with_calculated_counters, select('users.*').select("(#{Video.select("COUNT(videos.user_id)").where("users.id = videos.user_id").to_sql}) AS uploaded_videos_count, (#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count, (#{Like.select("COUNT(likes.user_id)").where("users.id = likes.user_id").to_sql}) AS liked_videos_count").with_followers_count.with_follings_count
 
   scope :without_user, lambda { |user| where("id <> ?", user.id) }
 
+
   self.per_page = Settings.paggination.per_page
 
-  def self.find_followed_by user
-    followed_users = Relationship.where({:follower_id => user.id})
-
-    followed_users.map(&:followed_id)
+  def self.find_followed_by(user)
+    user.followed_users.pluck("users.id")
   end
 
   def remote_friends_on_crowdsync_for provider
@@ -97,16 +101,16 @@ class User < ActiveRecord::Base
   end
 
   # Followings methods
-  def following?(followed)
-    self.relationships.find_by_followed_id(followed.id)
+  def following?(followable)
+    self.relationships.find_by_followable_id_and_followable_type(followable.id, followable.class.to_s) ? true : false
   end
 
-  def follow!(followed)
-    self.relationships.create!(:followed_id => followed.id)
+  def follow(followable)
+    self.relationships.create!(:followable => followable)
   end
 
-  def unfollow!(followed)
-    self.relationships.find_by_followed_id(followed.id).destroy
+  def unfollow(followable)
+    self.relationships.find_by_followable_id_and_followable_type(followable.id, followable.class.to_s).destroy
   end
 
   # Like methods
@@ -181,6 +185,11 @@ class User < ActiveRecord::Base
     invitee = invitation_params[:invitee]
     invitation = self.invitations.create! :mode => mode, :invitee => invitee
     invitation.send_invitation!
+  end
+
+  def followed_with_type(type)
+    type = 'users' unless type
+    instance_eval("followed_#{type}")
   end
 
   private

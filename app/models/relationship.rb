@@ -1,18 +1,21 @@
 class Relationship < ActiveRecord::Base
-  attr_accessible :followed_id
+
+  attr_accessible :followable
 
   belongs_to :follower, :class_name => "User"
-  belongs_to :followed, :class_name => "User"
 
-  validates :follower_id, :followed_id, presence: true
-  validates :follower_id, :uniqueness => {:scope => :followed_id}
+  belongs_to :followable, :polymorphic => true
+
+  validates :follower_id, :followable_id, :followable_type, :presence => true
+  validates :follower_id, :uniqueness => {:scope => [:followable_id, :followable_type]}
+  validates :followable_type, :inclusion => ["User", "Event", "Place", "Performer"]
 
   validate :no_self_following
 
   private
 
     def no_self_following
-      errors.add(:followed_id, "can't be the current user!") if self.follower_id == self.followed_id
+      errors.add(:base, "can't be the current user!") if (self.follower_id == self.followable_id) && (self.followable_type == "User")
     end
 
 end

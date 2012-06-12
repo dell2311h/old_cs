@@ -14,3 +14,5 @@ node(:comments_count) { |event| event.comments_count.to_i if event.respond_to?(:
 
 node(:most_popular_video_id) { |event| event.most_popular_video.id if event.most_popular_video }
 
+extends 'api/shared/followable'
+
