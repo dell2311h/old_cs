@@ -1,5 +1,5 @@
 set :application, "crowdsync" # Name of application
-set :repository,  "git@github.com:111minutes/cs-server.git"
+set :repository,  "git@git.111min.com:cs_server.git"
 
 set :rvm_ruby_string, "1.9.2-p290@#{application}"
 set :rvm_type, :system
