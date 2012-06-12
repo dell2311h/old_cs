@@ -21,7 +21,7 @@ class Api::TagsController < Api::BaseController
 
   private
     def find_taggable
-      @taggable = Tag.find_taggable_by(current_user, params)
+      @taggable = Video.find_by(current_user, params[:id])
     end
 
 end

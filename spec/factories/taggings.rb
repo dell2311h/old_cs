@@ -4,5 +4,6 @@ FactoryGirl.define do
   factory :tagging do |f|
     f.association :user
     f.association :tag
+    f.association :video
   end
 end
