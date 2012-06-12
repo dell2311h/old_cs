@@ -2,6 +2,7 @@ class Tag < ActiveRecord::Base
   has_many :taggings, dependent: :destroy
 
   has_many :videos, through: :taggings
+  has_many :comments, through: :taggings
 
   validates :name, presence: true
 

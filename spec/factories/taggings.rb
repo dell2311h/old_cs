@@ -5,5 +5,6 @@ FactoryGirl.define do
     f.association :user
     f.association :tag
     f.association :video
+    f.association :comment
   end
 end
