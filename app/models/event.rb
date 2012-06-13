@@ -179,7 +179,6 @@ class Event < ActiveRecord::Base
 
     def self.create_eventful_event event
       params = {:title => event.name, :start_time => event.date}
-      params[:venue_id] = event.place.eventful_id unless event.place.eventful_id.nil?
       output = EventfulEvent.create_event params
 
       return output.id unless output[:id].nil?
