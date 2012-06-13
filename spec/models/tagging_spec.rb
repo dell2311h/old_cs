@@ -1,5 +1,12 @@
 require 'spec_helper'
 
 describe Tagging do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should validate_presence_of(:tag_id) }
+  it { should validate_presence_of(:video_id) }
+  it { should validate_presence_of(:comment_id) }
+
+  it { should belong_to(:tag) }
+  it { should belong_to(:user) }
+  it { should belong_to(:video) }
+  it { should belong_to(:comment) }
 end

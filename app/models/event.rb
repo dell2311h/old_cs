@@ -7,8 +7,6 @@ class Event < ActiveRecord::Base
   belongs_to :place
   has_many :videos
 
-  has_many :taggings, as: :taggable, class_name: "Tagging", dependent: :destroy
-  has_many :tags, through: :taggings
   has_and_belongs_to_many :performers
   has_many :master_tracks, dependent: :destroy
 

@@ -7,7 +7,9 @@ describe Video do
   it { should belong_to(:user) }
   it { should belong_to(:event) }
   it { should have_many(:timings) }
-  
+  it { should have_many(:tags).through(:taggings) }
+  it { should have_many(:taggings).dependent(:destroy) }
+
   context "chunked uploads" do
     subject { Video.new }
     it { should respond_to(:directory_fullpath) }

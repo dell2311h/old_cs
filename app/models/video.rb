@@ -20,7 +20,7 @@ class Video < ActiveRecord::Base
   belongs_to :user
   has_many :comments, :dependent => :destroy
 
-  has_many :taggings, as: :taggable, class_name: "Tagging", dependent: :destroy
+  has_many :taggings, dependent: :destroy
   has_many :tags, through: :taggings
 
   has_many :video_songs, dependent: :destroy
