@@ -43,7 +43,7 @@ namespace :cs do
           Factory.create :comment
           print '.'
         end
-      puts "\n#{count} comments were added to DB"
+      puts "\n#{records_number} comments were added to DB"
     end
 
     desc "Populate DB by fake videos (Amount can be specified by NUM_RECORDS env variable. Default is #{DEFAULT_COUNT})"
