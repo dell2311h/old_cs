@@ -39,6 +39,8 @@ class Video < ActiveRecord::Base
 
   has_many :review_flags, dependent: :destroy
 
+  has_many :feed_itemables, :as => :itemable, :class_name => "FeedItem", :dependent => :destroy
+
   # default scope to hide videos that are not ready.
   default_scope where(:status => STATUS_PROCESSING_DONE)
 

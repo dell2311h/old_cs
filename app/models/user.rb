@@ -55,7 +55,11 @@ class User < ActiveRecord::Base
   has_many :invitations
 
   # Review Flags
-  has_many :review_flags, dependent: :destroy
+  has_many :review_flags, :dependent => :destroy
+
+  # FeedItems
+  has_many :feed_items, :dependent => :destroy
+  has_many :feed_itemables, :as => :itemable, :class_name => "FeedItem", :dependent => :destroy
 
   accepts_nested_attributes_for :authentications
 
