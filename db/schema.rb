@@ -157,10 +157,10 @@ ActiveRecord::Schema.define(:version => 20120613142035) do
   create_table "taggings", :force => true do |t|
     t.integer  "user_id"
     t.integer  "tag_id"
-    t.integer  "taggable_id"
-    t.string   "taggable_type"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.integer  "video_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.integer  "comment_id"
   end
 
   create_table "tags", :force => true do |t|

@@ -7,8 +7,6 @@ class Event < ActiveRecord::Base
   belongs_to :place
   has_many :videos
 
-  has_many :taggings, as: :taggable, class_name: "Tagging", dependent: :destroy
-  has_many :tags, through: :taggings
   has_and_belongs_to_many :performers
   has_many :master_tracks, dependent: :destroy
 
@@ -185,7 +183,6 @@ class Event < ActiveRecord::Base
 
     def self.create_eventful_event event
       params = {:title => event.name, :start_time => event.date}
-      params[:venur_id] = event.place.eventful_id unless event.place.eventful_id.nil?
       output = EventfulEvent.create_event params
 
       return output.id unless output[:id].nil?

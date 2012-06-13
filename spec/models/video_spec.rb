@@ -7,7 +7,9 @@ describe Video do
   it { should belong_to(:user) }
   it { should belong_to(:event) }
   it { should have_many(:timings) }
-  
+  it { should have_many(:tags).through(:taggings) }
+  it { should have_many(:taggings).dependent(:destroy) }
+
   context "chunked uploads" do
     subject { Video.new }
     it { should respond_to(:directory_fullpath) }
@@ -109,14 +111,11 @@ describe Video do
     context 'search by comment tag' do
   
       before :all do
-        @valid_video = Factory.create :video
-        @invalid_video = Factory.create :video
-        Factory.create :comment
-        comment = Factory.create :comment, :video => @valid_video
-        comment = @valid_video.comments.first
-        @tag = 'TagTest'
-        comment.text = comment.text + " #" + @tag
-        comment.save
+        tagging = Factory.create :tagging
+        @tag = tagging.tag.name
+        @valid_video = tagging.video
+        tagging = Factory.create :tagging
+        @invalid_video = tagging.video
       end
   
       it 'should find propper videos by tag comment' do

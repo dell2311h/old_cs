@@ -20,7 +20,7 @@ class Video < ActiveRecord::Base
   belongs_to :user
   has_many :comments, :dependent => :destroy
 
-  has_many :taggings, as: :taggable, class_name: "Tagging", dependent: :destroy
+  has_many :taggings, dependent: :destroy
   has_many :tags, through: :taggings
 
   has_many :video_songs, dependent: :destroy
@@ -55,7 +55,7 @@ class Video < ActiveRecord::Base
                           videos = videos.where("videos.user_id = ?", params[:user_id]) if params[:user_id]
                           videos = videos.where("videos.event_id = ?", params[:event_id]) if params[:event_id]
                           videos = videos.joins(:songs).where("songs.id = ?", params[:song_id]) if params[:song_id]
-                          videos = videos.joins(:comments).where("comments.text like ?", ("%#" + params[:comment_tag] + "%")) if params[:comment_tag]
+                          videos = videos.joins(:tags).where("tags.name =?", params[:comment_tag]) if params[:comment_tag]
                           videos
                         }
 
