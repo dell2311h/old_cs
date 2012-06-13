@@ -16,9 +16,9 @@ describe Tag do
       result.should include("tag3")
     end
     it "should find only unique tags" do
-      comment_text = "#tag1, #tag1, dffdg #tag2, sdf s#tag3, #tag2"
+      comment_text = "#tag1 , #tag1 , dffdg #tag2 , sdf s#tag3 , #tag2"
       result = Tag.find_tags_in comment_text
-      p result.count("tag1")
+
       result.count("tag1").should be_eql(1)
       result.count("tag2").should be_eql(1)
       result.count("tag3").should be_eql(1)
@@ -34,9 +34,13 @@ describe Tag do
 
   describe "create_by_comment" do
     it "should create tags for tagged comment " do
-      #comment = Factory.create :comment, :text => "CDSSDF, #tag222, #tag333, #tag44432"
-      #comment.tags
-
+      Tag.destroy_all
+      comment = Factory.create :comment, :text => "CDSSDF, #tag222"
+      tags = comment.tags
+      tag1 = Tag.find_by_name "tag222"
+      tag1.should_not be_nil
+      tag1.videos[0].id.should be_eql(comment.video_id)
+      tag1.comments[0].id.should be_eql(comment.id)
     end
     
   end
