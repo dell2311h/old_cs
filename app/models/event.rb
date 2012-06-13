@@ -75,7 +75,10 @@ class Event < ActiveRecord::Base
   end
 
   def sync_with_pluraleyes?
-    Video.unscoped.where(:event_id => self.id).joins(:clips).where("clips.clip_type = ?", Clip::TYPE_DEMUX_AUDIO).count >= Settings.sync_with_pluraleyes.minimal_amount_of_videos
+    Video.unscoped.where(:event_id => self.id).joins(:clips)
+                  .where("clips.clip_type = ?", Clip::TYPE_DEMUX_AUDIO)
+                  .where("clips.synced = ?", false)
+                  .count >= 1
   end
 
   def sync_with_pluraleyes
@@ -134,6 +137,7 @@ class Event < ActiveRecord::Base
 
       pluraleyes_group.each do |synced_clip|
         clip = Clip.find_by_pluraleyes_id synced_clip[:media_id]
+        clip.update_attribute(:synced, true) # mark audio as allready included in mastertrack
 
         # Create timings for videos
         timing = Timing.create! :video_id => clip.video_id, :start_time => synced_clip[:start].to_i + group_time_offset, :end_time => synced_clip[:end].to_i + group_time_offset, :version => new_master_track.version

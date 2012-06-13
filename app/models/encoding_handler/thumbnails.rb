@@ -5,6 +5,7 @@ class EncodingHandler::Thumbnails < EncodingHandler::Base
     update_clips video.id, params[:medias]
     video.status = Video::STATUS_PROCESSING_DONE
     video.save
+    Resque.enqueue(Worker::TimingsInterpretator, video.event.id) if video.event.sync_with_pluraleyes?
   end
 
   private
