@@ -6,16 +6,12 @@ class Event < ActiveRecord::Base
   belongs_to :user
   belongs_to :place
   has_many :videos
-  has_many :comments, :as => :commentable, :class_name => "Comment", :dependent => :destroy
-  has_many :taggings, as: :taggable, class_name: "Tagging", dependent: :destroy
-  has_many :tags, through: :taggings
+
   has_and_belongs_to_many :performers
   has_many :master_tracks, dependent: :destroy
 
   validates :name, :date, presence: true
   validates :user_id, :place_id, presence: true
-
-  before_create :add_eventful_event
 
   after_create :create_pluraleyes_project
 
@@ -29,7 +25,7 @@ class Event < ActiveRecord::Base
     Event.joins(:place).merge(Place.near coordinates, radius, :order => :distance, :select => "places.*, places.name AS place_name, events.*")
   }
 
-  scope :with_videos_comments_count, select("events.*").select("SUM((#{Comment.select("COUNT(comments.commentable_id)").where("videos.id = comments.commentable_id AND comments.commentable_type = 'Video'").to_sql})) as comments_count").joins("LEFT OUTER JOIN `videos` ON `videos`.`event_id` = `events`.`id`").group("events.id")
+  scope :with_videos_comments_count, select("events.*").select("SUM((#{Comment.select("COUNT(comments.video_id)").where("videos.id = comments.video_id ").to_sql})) as comments_count").joins("LEFT OUTER JOIN `videos` ON `videos`.`event_id` = `events`.`id`").group("events.id")
 
   scope :with_name_like, lambda {|name| where("UPPER(name) LIKE ?", "%#{name.to_s.upcase}%") }
 
@@ -77,7 +73,10 @@ class Event < ActiveRecord::Base
   end
 
   def sync_with_pluraleyes?
-    Video.unscoped.where(:event_id => self.id).joins(:clips).where("clips.clip_type = ?", Clip::TYPE_DEMUX_AUDIO).count >= Settings.sync_with_pluraleyes.minimal_amount_of_videos
+    Video.unscoped.where(:event_id => self.id).joins(:clips)
+                  .where("clips.clip_type = ?", Clip::TYPE_DEMUX_AUDIO)
+                  .where("clips.synced = ?", false)
+                  .count >= 1
   end
 
   def sync_with_pluraleyes
@@ -136,6 +135,7 @@ class Event < ActiveRecord::Base
 
       pluraleyes_group.each do |synced_clip|
         clip = Clip.find_by_pluraleyes_id synced_clip[:media_id]
+        clip.update_attribute(:synced, true) # mark audio as allready included in mastertrack
 
         # Create timings for videos
         timing = Timing.create! :video_id => clip.video_id, :start_time => synced_clip[:start].to_i + group_time_offset, :end_time => synced_clip[:end].to_i + group_time_offset, :version => new_master_track.version
@@ -183,7 +183,6 @@ class Event < ActiveRecord::Base
 
     def self.create_eventful_event event
       params = {:title => event.name, :start_time => event.date}
-      params[:venur_id] = event.place.eventful_id unless event.place.eventful_id.nil?
       output = EventfulEvent.create_event params
 
       return output.id unless output[:id].nil?

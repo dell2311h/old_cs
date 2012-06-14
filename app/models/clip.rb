@@ -26,7 +26,6 @@ class Clip < ActiveRecord::Base
         pe_media = hydra.create_media("clip ID #{self.id}", self.location, pluraleyes_project_id)
         self.update_attribute :pluraleyes_id, pe_media[:id]
         Rails.logger.info "PluralEyes media created. Media ID #{self.pluraleyes_id}"
-        Resque.enqueue(Worker::TimingsInterpretator, event.id) if event.sync_with_pluraleyes?
       end
     end
 end

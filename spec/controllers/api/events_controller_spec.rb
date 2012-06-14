@@ -14,7 +14,7 @@ describe Api::EventsController do
       before :each do
         @events.stub!(:order_by_video_count).and_return(@events)
         @events.stub!(:nearby).and_return(@events)
-        @events.stub_chain(:paginate, :with_videos_comments_count).and_return(@result_array)
+        @events.stub_chain(:paginate, :with_calculated_counters).and_return(@result_array)
         @events.stub!(:count => 2)
       end
 
@@ -25,7 +25,7 @@ describe Api::EventsController do
         @events.should_not_receive(:nearby)
         @events.should_receive(:count).and_return(2)
         @events.should_receive(:paginate).and_return(@events)
-        @events.should_receive(:with_videos_comments_count).and_return(@result_array)
+        @events.should_receive(:with_calculated_counters).and_return(@result_array)
         get :index, :format => :json
         response.should be_ok
       end
@@ -36,7 +36,7 @@ describe Api::EventsController do
         @events.should_not_receive(:nearby)
         @events.should_receive(:count).and_return(2)
         @events.should_receive(:paginate).and_return(@events)
-        @events.should_receive(:with_videos_comments_count).and_return(@result_array)
+        @events.should_receive(:with_calculated_counters).and_return(@result_array)
 
         get :index, top: "true", :format => :json
         response.should be_ok
@@ -52,7 +52,7 @@ describe Api::EventsController do
             @events.should_receive(:nearby).with([params[:latitude].to_s, params[:longitude].to_s], Settings.search.radius).and_return(@events)
             @events.should_receive(:count).and_return(2)
             @events.should_receive(:paginate).and_return(@events)
-            @events.should_receive(:with_videos_comments_count).and_return(@result_array)
+            @events.should_receive(:with_calculated_counters).and_return(@result_array)
 
             get :index, nearby: true, latitude: lat, longitude: lng, :format => :json
             response.should be_ok
