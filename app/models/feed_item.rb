@@ -20,28 +20,29 @@ class FeedItem < ActiveRecord::Base
     I18n.t "feed.#{feed_type}.#{self.action}"
   end
 
-  def item_name
-    case self.itemable_type
+  def name_for(entity)
+    case entity.class.to_s
       when "User"
-        self.itemable.username
+        entity.username
       when /Place|Performer|Event|Song/
-        self.itemable.name
+        entity.name
       else
         ""
     end
   end
 
   def actor
-    { :type => 'User', :id => self.user_id }
+    { :type => 'User', :id => self.user_id, :text => self.user.username }
   end
 
   def item
-    { :type => self.itemable_type, :id => self.itemable_id }
+    { :type => self.itemable_type, :id => self.itemable_id, :text => name_for(self.itemable) }
   end
 
   def context
-    { :type => self.contextable_type, :id => self.contextable_id }
+    { :type => self.contextable_type, :id => self.contextable_id, :text => name_for(self.contextable) }
   end
+
 
 end
 
