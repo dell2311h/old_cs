@@ -2,7 +2,7 @@ class FeedItem < ActiveRecord::Base
 
   ALLOWED_ITEMABLES = ["User", "Video", "Song", "Comment", "Event", "Place", "Performer"]
   ALLOWED_CONTEXTABLES = ["Video", "Event", "Comment", "Authentication"]
-  ALLOWED_ACTIONS = ["video_upload", "comment_video", "follow", "mention", "like_video", "join_crowdsync", "add_song"]
+  ALLOWED_ACTIONS = ["video_upload", "comment_video", "follow", "mention", "like_video", "join_crowdsync", "add_song", "tagging"]
 
   belongs_to :user
 
