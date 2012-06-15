@@ -30,7 +30,7 @@ class FeedItem < ActiveRecord::Base
     I18n.t "feed.#{feed_type}.#{self.action}"
   end
 
-  def name_for(object)
+  def self.name_for(object)
     case object.class.to_s
       when "User"
         object.username
@@ -41,13 +41,7 @@ class FeedItem < ActiveRecord::Base
     end
   end
 
-  def entity_name
-    name_for(self.entity)
-  end
 
-  def context_name
-    name_for(self.context)
-  end
 
 end
 
