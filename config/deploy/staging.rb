@@ -38,7 +38,8 @@ namespace :deploy do
 
   desc "Restart application"
   task :restart, :roles => :app, :except => { :no_release => true } do
-    run "cd #{current_path} && kill -QUIT `cat tmp/pids/unicorn.pid` && bundle exec unicorn -E #{rails_env} -c config/unicorn.conf.rb -D"
+    stop
+    start
   end
 
   desc "Create additional symlinks"
