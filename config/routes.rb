@@ -112,6 +112,10 @@ Crowdsync::Application.routes.draw do
       get "/:followable/:id/followers" => "relationships#followers", :as => :followers_list
     end
 
+    constraints :feedable => /users|places|events|performers/ do
+      get "/:feedable/:id/feed_items" => "feed_items#index", :as => :feed_items_list
+    end
+
    #profiles
    resources :profiles, :only => [:index]
 

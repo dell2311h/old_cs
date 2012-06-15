@@ -11,7 +11,10 @@ en:
 
   feed:
     user:
-      follow: '$actor$ started following $item$'
+      follow: '$actor$ started following $entity$'
     news:
     notification:
+    place:
+    event:
+    performer
 

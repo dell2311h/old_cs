@@ -15,8 +15,20 @@ class FeedItem < ActiveRecord::Base
   validates :action, :inclusion => ALLOWED_ACTIONS
   validates :contextable_type, :inclusion => ALLOWED_CONTEXTABLES, :if => lambda { |f| f.contextable_type }
 
+  scope :for_user, lambda { |user, params| where("user_id = ? OR (itemable_type = 'User' AND itemable_id = ?) OR (contextable_type = 'User' AND contextable_id = ?)", user.id, user.id, user.id)
+
+  }
+
+  scope :search_by, lambda { |entity, params|
+    search = case entity.class.to_s
+      when 'User'
+        for_user(entity, params)
+    end
+    search.includes [:user, :itemable, :contextable]
+  }
+
   def message_for_feed(feed_type)
-    raise "Not allowed feed type" unless [:user, :news, :notification].include?(feed_type)
+    raise "Not allowed feed type" unless [:user, :news, :notification, :place, :event, :performer].include?(feed_type)
     I18n.t "feed.#{feed_type}.#{self.action}"
   end
 
@@ -31,18 +43,13 @@ class FeedItem < ActiveRecord::Base
     end
   end
 
-  def actor
-    { :type => 'User', :id => self.user_id, :text => self.user.username }
+  def itemable_name
+    name_for(self.itemable)
   end
 
-  def item
-    { :type => self.itemable_type, :id => self.itemable_id, :text => name_for(self.itemable) }
+  def contextable_name
+    name_for(self.contextable)
   end
-
-  def context
-    { :type => self.contextable_type, :id => self.contextable_id, :text => name_for(self.contextable) }
-  end
-
 
 end
 
