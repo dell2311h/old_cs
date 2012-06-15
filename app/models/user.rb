@@ -174,7 +174,7 @@ class User < ActiveRecord::Base
       video.event = event if event
       video.thumbnail = params[thumbnail_key_name]
       video.save!
-      video.add_songs_by(songs_params) if songs_params
+      video.add_songs_by(songs_params, self) if songs_params
       new_videos << video
     end
     new_videos
@@ -201,4 +201,3 @@ class User < ActiveRecord::Base
       user.friends
     end
 end
-

@@ -134,10 +134,10 @@ class Video < ActiveRecord::Base
     self.tags.map(&:name)
   end
 
-  def add_songs_by songs_params
+  def add_songs_by songs_params, user
     songs_params.each do |song_params|
       song = song_params[:id] ? Song.find(song_params[:id]) : Song.create!(song_params)
-      self.songs << song if !self.songs.find_by_id(song)
+      self.video_songs.create(:user_id => user.id, :song_id => song.id) if !self.songs.find_by_id(song)
     end
     self.songs
   end
@@ -151,7 +151,7 @@ class Video < ActiveRecord::Base
   end
 
   def add_songs_by_user(user, songs_params)
-    self.add_songs_by(songs_params) if self.ready? || (!self.ready? && self.owned_by?(user))
+    self.add_songs_by(songs_params, user) if self.ready? || (!self.ready? && self.owned_by?(user))
   end
 
   def ready?
