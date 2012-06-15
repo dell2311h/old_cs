@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120613155410) do
+ActiveRecord::Schema.define(:version => 20120615145034) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -70,12 +70,12 @@ ActiveRecord::Schema.define(:version => 20120613155410) do
   create_table "feed_items", :force => true do |t|
     t.string   "action"
     t.integer  "user_id"
-    t.string   "itemable_type"
-    t.integer  "itemable_id"
-    t.integer  "contextable_id"
-    t.string   "contextable_type"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
+    t.string   "entity_type"
+    t.integer  "entity_id"
+    t.integer  "context_id"
+    t.string   "context_type"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "invitations", :force => true do |t|
