@@ -2,7 +2,8 @@ class Comment < ActiveRecord::Base
   belongs_to :user
   belongs_to :commentable, :polymorphic => true
 
-  has_many :feed_itemables, :as => :itemable, :class_name => "FeedItem", :dependent => :destroy
+  has_many :feed_entities, :as => :entity, :class_name => "FeedItem", :dependent => :destroy
+  has_many :feed_contexts, :as => :context, :class_name => "FeedItem", :dependent => :destroy
 
   validates :text, :user_id, :commentable_id, :commentable_type, :presence => true
 

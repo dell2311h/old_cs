@@ -59,7 +59,8 @@ class User < ActiveRecord::Base
 
   # FeedItems
   has_many :feed_items, :dependent => :destroy
-  has_many :feed_itemables, :as => :itemable, :class_name => "FeedItem", :dependent => :destroy
+  has_many :feed_entities, :as => :entity, :class_name => "FeedItem", :dependent => :destroy
+  has_many :feed_contexts, :as => :context, :class_name => "FeedItem", :dependent => :destroy
 
   accepts_nested_attributes_for :authentications
 
