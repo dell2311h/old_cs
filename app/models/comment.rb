@@ -23,6 +23,10 @@ class Comment < ActiveRecord::Base
     self.destroy if self.destroyable_by?(user)
   end
 
+  def mentions
+    self.text.scan(/@(\S*)(?:\z|\s)/).uniq.flatten.map! {|x| x.gsub("_"," ") }
+  end
+
   private
   
   def create_tags
