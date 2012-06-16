@@ -107,13 +107,36 @@ describe Event do
 
     end
 
-    it "should create not ready MasterTrack record" do
-      event.should_receive(:create_not_ready_master_track)
-      @result = event.create_timings_by_pluraleyes_sync_results(@pe_results)
-      @result[:media_ids].should =~ ["A", "B", "C"]
-      @result[:cutting_timings].should == [{:start_time=>0, :end_time=>60000}, {:start_time=>0, :end_time=>120000}, {:start_time=>60000, :end_time=>240000}]
-      @result[:master_track].should == master_track
+    context "results" do
+
+      let(:results) { event.create_timings_by_pluraleyes_sync_results(@pe_results) }
+
+      context ":media_ids" do
+        it "should not include clip_id that is bridged by another clip" do
+          results[:media_ids].should_not include("D")
+        end
+
+        it "should consist of properly ordered clip ids list" do
+          results[:media_ids].should == ["A", "B", "C"]
+        end
+      end
+
+      context ":cutting_timings" do
+        it "should be a properly organized list of timings" do
+          results[:cutting_timings].should == [{:start_time=>0, :end_time=>60000}, {:start_time=>0, :end_time=>120000}, {:start_time=>60000, :end_time=>240000}]
+        end
+      end
+
+      context ":master_track" do
+        it "should be a proper MasterTrack record" do
+          results[:master_track].should == master_track
+        end
+      end
+
     end
+
+
+
   end
 
   describe "#make_new_master_track" do
