@@ -81,20 +81,38 @@ describe Event do
 
   end
 
-
   describe "#create_timings_by_pluraleyes_sync_results" do
-    before :all do
-      @event = Factory.create :event
-      @master_track = Factory.create :master_track, :event => @event, :is_ready => false, :source => nil, :encoder_id => nil
-    end
+
+    let(:event) { Factory.create(:event) }
+    let(:master_track) { Factory.create(:master_track, :event => event, :is_ready => false, :source => nil, :encoder_id => nil) }
 
     before :each do
-      @event.stub!(:create_not_ready_master_track).and_return(@master_track)
+      Clip.any_instance.stub(:add_to_pluraleyes)
+      event.stub!(:create_not_ready_master_track).and_return(master_track)
+    end
+
+    before :all do
+      clips_data = [{:recorded_at => Time.now, :pe_id => SecureRandom.uuid, :enc_id => "A" },
+{ :recorded_at => Time.now + 2.minutes, :pe_id => SecureRandom.uuid, :enc_id => "B" },
+{ :recorded_at => Time.now + 3.minutes, :pe_id => SecureRandom.uuid, :enc_id => "C" },
+{ :recorded_at => Time.now + 4.minutes, :pe_id => SecureRandom.uuid, :enc_id => "D" }]
+
+      clips_data.each do |data|
+        video = Factory.create(:video, :event => event, :status => Video::STATUS_NEW, :clip => nil)
+        Factory.create(:clip, :clip_type => Clip::TYPE_DEMUX_AUDIO, :pluraleyes_id => data[:pe_id], :encoding_id => data[:enc_id], :video => video )
+        video.create_meta_info :recorded_at => data[:recorded_at]
+      end
+
+      @pe_results = [[{:end=>"60000", :media_id=> clips_data[0][:pe_id], :slope=>"0", :start=>"0"}],  [{:end=>"240000", :media_id=> clips_data[1][:pe_id], :slope=>"0", :start=>"120000"}, {:end=>"420000", :media_id=> clips_data[2][:pe_id], :slope=>"0", :start=>"180000"}, {:end=>"300000", :media_id=> clips_data[3][:pe_id], :slope=>"0", :start=>"240000"}]]
+
     end
 
     it "should create not ready MasterTrack record" do
-      @event.should_receive(:create_not_ready_master_track)
-      @event.create_timings_by_pluraleyes_sync_results
+      event.should_receive(:create_not_ready_master_track)
+      @result = event.create_timings_by_pluraleyes_sync_results(@pe_results)
+      @result[:media_ids].should =~ ["A", "B", "C"]
+      @result[:cutting_timings].should == [{:start_time=>0, :end_time=>60000}, {:start_time=>0, :end_time=>120000}, {:start_time=>60000, :end_time=>240000}]
+      @result[:master_track].should == master_track
     end
   end
 
@@ -117,13 +135,7 @@ describe Event do
     end
   end
 
-  def create_videos count, event
-    count.times do
-      video = Factory.create(:video, :event => event)
-    end
-  end
-
-  describe '#get_random_N_top_events'
+  describe '#get_random_N_top_events' do
     before :all do
       Event.destroy_all
       @events_ids = []
@@ -143,4 +155,14 @@ describe Event do
         ids.should include event.id
       end
     end
+  end
+
+  private
+
+    def create_videos count, event
+      count.times do
+        video = Factory.create(:video, :event => event)
+      end
+    end
 end
+
