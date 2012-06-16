@@ -84,40 +84,45 @@ describe Event do
   describe "#create_timings_by_pluraleyes_sync_results" do
 
     let(:event) { Factory.create(:event) }
-    let(:master_track) { Factory.create(:master_track, :event => event, :is_ready => false, :source => nil, :encoder_id => nil) }
 
     before :each do
       Clip.any_instance.stub(:add_to_pluraleyes)
-      event.stub!(:create_not_ready_master_track).and_return(master_track)
     end
 
     before :all do
-      clips_data = [{:recorded_at => Time.now, :pe_id => SecureRandom.uuid, :enc_id => "A" },
-{ :recorded_at => Time.now + 2.minutes, :pe_id => SecureRandom.uuid, :enc_id => "B" },
-{ :recorded_at => Time.now + 3.minutes, :pe_id => SecureRandom.uuid, :enc_id => "C" },
-{ :recorded_at => Time.now + 4.minutes, :pe_id => SecureRandom.uuid, :enc_id => "D" }]
+      @clips_data = [{:recorded_at => Time.now, :pe_id => SecureRandom.uuid, :encoding_id => SecureRandom.uuid },
+{ :recorded_at => Time.now + 2.minutes, :pe_id => SecureRandom.uuid, :encoding_id => SecureRandom.uuid },
+{ :recorded_at => Time.now + 3.minutes, :pe_id => SecureRandom.uuid, :encoding_id => SecureRandom.uuid },
+{ :recorded_at => Time.now + 4.minutes, :pe_id => SecureRandom.uuid, :encoding_id => SecureRandom.uuid }]
 
-      clips_data.each do |data|
+      @clips_data.each do |data|
         video = Factory.create(:video, :event => event, :status => Video::STATUS_NEW, :clip => nil)
-        Factory.create(:clip, :clip_type => Clip::TYPE_DEMUX_AUDIO, :pluraleyes_id => data[:pe_id], :encoding_id => data[:enc_id], :video => video )
+        Factory.create(:clip, :clip_type => Clip::TYPE_DEMUX_AUDIO, :pluraleyes_id => data[:pe_id], :encoding_id => data[:encoding_id], :video => video, :synced => false )
         video.create_meta_info :recorded_at => data[:recorded_at]
       end
 
-      @pe_results = [[{:end=>"60000", :media_id=> clips_data[0][:pe_id], :slope=>"0", :start=>"0"}],  [{:end=>"240000", :media_id=> clips_data[1][:pe_id], :slope=>"0", :start=>"120000"}, {:end=>"420000", :media_id=> clips_data[2][:pe_id], :slope=>"0", :start=>"180000"}, {:end=>"300000", :media_id=> clips_data[3][:pe_id], :slope=>"0", :start=>"240000"}]]
+      @pe_results = [[{:end=>"60000", :media_id=> @clips_data[0][:pe_id], :slope=>"0", :start=>"0"}],  [{:end=>"240000", :media_id=> @clips_data[1][:pe_id], :slope=>"0", :start=>"120000"}, {:end=>"420000", :media_id=> @clips_data[2][:pe_id], :slope=>"0", :start=>"180000"}, {:end=>"300000", :media_id=> @clips_data[3][:pe_id], :slope=>"0", :start=>"240000"}]]
+
+      @results = event.create_timings_by_pluraleyes_sync_results(@pe_results)
 
     end
 
+    let(:results) { @results }
+
+    let(:media_ids) { @clips_data.map { |data| data[:encoding_id]} }
+    let(:pluraleyes_ids) { @clips_data.map { |data| data[:pe_id]} }
+
     context "results" do
 
-      let(:results) { event.create_timings_by_pluraleyes_sync_results(@pe_results) }
-
       context ":media_ids" do
+
+
         it "should not include clip_id that is bridged by another clip" do
-          results[:media_ids].should_not include("D")
+          results[:media_ids].should_not include(media_ids[3])
         end
 
         it "should consist of properly ordered clip ids list" do
-          results[:media_ids].should == ["A", "B", "C"]
+          results[:media_ids].should == [media_ids[0], media_ids[1], media_ids[2]]
         end
       end
 
@@ -129,13 +134,18 @@ describe Event do
 
       context ":master_track" do
         it "should be a proper MasterTrack record" do
-          results[:master_track].should == master_track
+          results[:master_track].should be_an_instance_of(MasterTrack)
         end
       end
 
     end
 
-
+    context "internal results" do
+      it "should mark clips as synced" do
+        sync_flags = Clip.where(:pluraleyes_id => pluraleyes_ids).pluck("synced")
+        sync_flags.each { |sf| sf.should be_true }
+      end
+    end
 
   end
 
