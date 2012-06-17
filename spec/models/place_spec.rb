@@ -15,10 +15,8 @@ describe Place do
   
   it { should have_many(:events) }
   it { should belong_to(:user) }
-  it { should have_many(:comments).dependent(:destroy) }
-  it { should have_many(:taggings).dependent(:destroy) }
   it { should have_many(:place_providers).dependent(:destroy) }
-      
+
   describe "#with_name_like" do
     before :all do
       2.times { Factory.create :place }

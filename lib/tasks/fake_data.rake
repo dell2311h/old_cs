@@ -2,7 +2,18 @@ namespace :cs do
   desc "Populate DB by fake data"
   namespace :fake_data do
     DEFAULT_COUNT = 25
-    
+
+    desc "Populate all instances"
+    task :all => :environment do
+      Rake::Task['cs:fake_data:places'].execute
+      Rake::Task['cs:fake_data:events'].execute
+      Rake::Task['cs:fake_data:comments'].execute
+      Rake::Task['cs:fake_data:videos'].execute
+      Rake::Task['cs:fake_data:songs'].execute
+      Rake::Task['cs:fake_data:performers'].execute
+
+    end
+
     desc "Populate DB by fake places (Amount can be specified by NUM_RECORDS env variable. Default is #{DEFAULT_COUNT})"
     task :places => :environment do
       records_number = ENV['NUM_RECORDS'] ? ENV['NUM_RECORDS'].to_i : DEFAULT_COUNT
@@ -28,14 +39,11 @@ namespace :cs do
     desc "Populate DB by fake comments (Amount can be specified by NUM_RECORDS env variable. Default is #{DEFAULT_COUNT})"
     task :comments => :environment do
       records_number = ENV['NUM_RECORDS'] ? ENV['NUM_RECORDS'].to_i : DEFAULT_COUNT
-      count = COUNT * records_number
-      Event.limit(COUNT).each do |event|      
         records_number.times do
-          Factory.create :comment, :commentable => event
+          Factory.create :comment
           print '.'
         end
-      end  
-      puts "\n#{count} comments were added to DB"
+      puts "\n#{records_number} comments were added to DB"
     end
 
     desc "Populate DB by fake videos (Amount can be specified by NUM_RECORDS env variable. Default is #{DEFAULT_COUNT})"

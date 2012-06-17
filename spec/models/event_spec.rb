@@ -81,21 +81,91 @@ describe Event do
 
   end
 
-
   describe "#create_timings_by_pluraleyes_sync_results" do
-    before :all do
-      @event = Factory.create :event
-      @master_track = Factory.create :master_track, :event => @event, :is_ready => false, :source => nil, :encoder_id => nil
-    end
+
+    let(:event) { Factory.create(:event) }
 
     before :each do
-      @event.stub!(:create_not_ready_master_track).and_return(@master_track)
+      Clip.any_instance.stub(:add_to_pluraleyes)
     end
 
-    it "should create not ready MasterTrack record" do
-      @event.should_receive(:create_not_ready_master_track)
-      @event.create_timings_by_pluraleyes_sync_results
+    before :all do
+      @clips_data = [{:recorded_at => Time.now, :pe_id => SecureRandom.uuid, :encoding_id => SecureRandom.uuid },
+{ :recorded_at => Time.now + 2.minutes, :pe_id => SecureRandom.uuid, :encoding_id => SecureRandom.uuid },
+{ :recorded_at => Time.now + 3.minutes, :pe_id => SecureRandom.uuid, :encoding_id => SecureRandom.uuid },
+{ :recorded_at => Time.now + 4.minutes, :pe_id => SecureRandom.uuid, :encoding_id => SecureRandom.uuid }]
+
+      @videos_ids = []
+
+      @clips_data.each do |data|
+        video = Factory.create(:video, :event => event, :status => Video::STATUS_NEW, :clip => nil)
+        @videos_ids << video.id
+        Factory.create(:clip, :clip_type => Clip::TYPE_DEMUX_AUDIO, :pluraleyes_id => data[:pe_id], :encoding_id => data[:encoding_id], :video => video, :synced => false )
+        video.create_meta_info :recorded_at => data[:recorded_at]
+      end
+
+      @pe_results = [[{:end=>"60000", :media_id=> @clips_data[0][:pe_id], :slope=>"0", :start=>"0"}],  [{:end=>"240000", :media_id=> @clips_data[1][:pe_id], :slope=>"0", :start=>"120000"}, {:end=>"420000", :media_id=> @clips_data[2][:pe_id], :slope=>"0", :start=>"180000"}, {:end=>"300000", :media_id=> @clips_data[3][:pe_id], :slope=>"0", :start=>"240000"}]]
+
+      @results = event.create_timings_by_pluraleyes_sync_results(@pe_results)
+
+      @absolute_timings_etalon = [
+        {:start_time => 0, :end_time =>	60000},
+        {:start_time => 180000, :end_time =>	300000},
+        {:start_time => 240000, :end_time =>	480000},
+        {:start_time => 300000, :end_time =>	360000}
+      ]
+
     end
+
+    let(:results) { @results }
+
+    let(:media_ids) { @clips_data.map { |data| data[:encoding_id]} }
+    let(:pluraleyes_ids) { @clips_data.map { |data| data[:pe_id]} }
+
+    context "results" do
+
+      context ":media_ids" do
+
+
+        it "should not include clip_id that is bridged by another clip" do
+          results[:media_ids].should_not include(media_ids[3])
+        end
+
+        it "should consist of properly ordered clip ids list" do
+          results[:media_ids].should == [media_ids[0], media_ids[1], media_ids[2]]
+        end
+      end
+
+      context ":cutting_timings" do
+        it "should be a properly organized list of timings" do
+          results[:cutting_timings].should == [{:start_time=>0, :end_time=>60000}, {:start_time=>0, :end_time=>120000}, {:start_time=>60000, :end_time=>240000}]
+        end
+      end
+
+      context ":master_track" do
+        it "should be a proper MasterTrack record" do
+          results[:master_track].should be_an_instance_of(MasterTrack)
+        end
+      end
+
+    end
+
+    context "internal results" do
+      it "should mark clips as synced" do
+        sync_flags = Clip.where(:pluraleyes_id => pluraleyes_ids).pluck("synced")
+        sync_flags.each { |sf| sf.should be_true }
+      end
+
+      it "should create new absolute timings for videos playlist" do
+        timings = Timing.where(:video_id => @videos_ids)
+        timings.each_with_index do |timing, index|
+          timing.version.should == results[:master_track].version
+          timing.start_time.should == @absolute_timings_etalon[index][:start_time]
+          timing.end_time.should == @absolute_timings_etalon[index][:end_time]
+        end
+      end
+    end
+
   end
 
   describe "#make_new_master_track" do
@@ -117,13 +187,7 @@ describe Event do
     end
   end
 
-  def create_videos count, event
-    count.times do
-      video = Factory.create(:video, :event => event)
-    end
-  end
-
-  describe '#get_random_N_top_events'
+  describe '#get_random_N_top_events' do
     before :all do
       Event.destroy_all
       @events_ids = []
@@ -143,4 +207,14 @@ describe Event do
         ids.should include event.id
       end
     end
+  end
+
+  private
+
+    def create_videos count, event
+      count.times do
+        video = Factory.create(:video, :event => event)
+      end
+    end
 end
+

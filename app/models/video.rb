@@ -18,9 +18,9 @@ class Video < ActiveRecord::Base
   validates :event_id, :numericality => { :only_integer => true, :allow_nil => true }
   belongs_to :event
   belongs_to :user
-  has_many :comments, :as => :commentable, :class_name => "Comment", :dependent => :destroy
+  has_many :comments, :dependent => :destroy
 
-  has_many :taggings, as: :taggable, class_name: "Tagging", dependent: :destroy
+  has_many :taggings, dependent: :destroy
   has_many :tags, through: :taggings
 
   has_many :video_songs, dependent: :destroy
@@ -58,7 +58,7 @@ class Video < ActiveRecord::Base
                           videos = videos.where("videos.user_id = ?", params[:user_id]) if params[:user_id]
                           videos = videos.where("videos.event_id = ?", params[:event_id]) if params[:event_id]
                           videos = videos.joins(:songs).where("songs.id = ?", params[:song_id]) if params[:song_id]
-                          videos = videos.joins(:comments).where("comments.text like ?", ("%#" + params[:comment_tag] + "%")) if params[:comment_tag]
+                          videos = videos.joins(:tags).where("tags.name =?", params[:comment_tag]) if params[:comment_tag]
                           videos
                         }
 
@@ -66,7 +66,7 @@ class Video < ActiveRecord::Base
 
   scope :with_likes_count, select('videos.*').select("(#{Like.select("COUNT(likes.video_id)").where("videos.id = likes.video_id").to_sql}) AS likes_count")
 
-  scope :with_comments_count, select('videos.*').select("(#{Comment.select("COUNT(comments.commentable_id)").where("videos.id = comments.commentable_id AND comments.commentable_type = 'Video'").to_sql}) AS comments_count")
+  scope :with_comments_count, select('videos.*').select("(#{Comment.select("COUNT(comments.video_id)").where("videos.id = comments.video_id").to_sql}) AS comments_count")
 
   scope :with_calculated_counters, with_likes_count.with_comments_count
 
@@ -77,6 +77,15 @@ class Video < ActiveRecord::Base
                                       }
 
   self.per_page = Settings.paggination.per_page
+
+  def self.find_by(user = nil, id)
+
+    if user and (unscoped_video = Video.unscoped.find(id)).user_id == user.id
+      unscoped_video
+    else
+      Video.find(id)
+    end
+  end
 
   def self.first_popular count
     Video.most_popular.limit count
@@ -128,10 +137,10 @@ class Video < ActiveRecord::Base
     self.tags.map(&:name)
   end
 
-  def add_songs_by songs_params
+  def add_songs_by songs_params, user
     songs_params.each do |song_params|
       song = song_params[:id] ? Song.find(song_params[:id]) : Song.create!(song_params)
-      self.songs << song if !self.songs.find_by_id(song)
+      self.video_songs.create(:user_id => user.id, :song_id => song.id) if !self.songs.find_by_id(song)
     end
     self.songs
   end
@@ -145,7 +154,7 @@ class Video < ActiveRecord::Base
   end
 
   def add_songs_by_user(user, songs_params)
-    self.add_songs_by(songs_params) if self.ready? || (!self.ready? && self.owned_by?(user))
+    self.add_songs_by(songs_params, user) if self.ready? || (!self.ready? && self.owned_by?(user))
   end
 
   def ready?
@@ -235,7 +244,7 @@ class Video < ActiveRecord::Base
 #---------Encoding---------
     def create_encoding_media
       if self.encoding_id.nil? && self.status == STATUS_NEW && self.event_id
-        params = {:media => {:location =>  self.clip.path } }
+        params = {:media => {:location =>  self.clip.url } }
         response = Pandrino::Api.deliver Settings.encoding.url.actions.medias, params
         raise 'Unable to create media' unless response
         encoding_id = response["media"]["id"]
@@ -264,4 +273,3 @@ class Video < ActiveRecord::Base
       self.update_attribute :last_chunk_id, chunk_id
     end
 end
-

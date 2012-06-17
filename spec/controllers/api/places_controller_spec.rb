@@ -14,8 +14,10 @@ describe Api::PlacesController do
       before :each do
         @places.stub!(:near).and_return(@places)
         @places.stub!(:with_name_like).and_return(@places)
-        @places.stub!(:paginate).and_return(@result_array)
+        @places.stub!(:paginate).and_return(@result_array)   
         @places.stub!(:count => 2)
+        @result_array.stub!(:with_flag_followed_by).and_return(@result_array)
+        @result_array.stub!(:with_calculated_counters).and_return(@result_array)
       end
 
       it 'should get list of ALL places' do
