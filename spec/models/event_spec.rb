@@ -95,8 +95,11 @@ describe Event do
 { :recorded_at => Time.now + 3.minutes, :pe_id => SecureRandom.uuid, :encoding_id => SecureRandom.uuid },
 { :recorded_at => Time.now + 4.minutes, :pe_id => SecureRandom.uuid, :encoding_id => SecureRandom.uuid }]
 
+      @videos_ids = []
+
       @clips_data.each do |data|
         video = Factory.create(:video, :event => event, :status => Video::STATUS_NEW, :clip => nil)
+        @videos_ids << video.id
         Factory.create(:clip, :clip_type => Clip::TYPE_DEMUX_AUDIO, :pluraleyes_id => data[:pe_id], :encoding_id => data[:encoding_id], :video => video, :synced => false )
         video.create_meta_info :recorded_at => data[:recorded_at]
       end
@@ -104,6 +107,13 @@ describe Event do
       @pe_results = [[{:end=>"60000", :media_id=> @clips_data[0][:pe_id], :slope=>"0", :start=>"0"}],  [{:end=>"240000", :media_id=> @clips_data[1][:pe_id], :slope=>"0", :start=>"120000"}, {:end=>"420000", :media_id=> @clips_data[2][:pe_id], :slope=>"0", :start=>"180000"}, {:end=>"300000", :media_id=> @clips_data[3][:pe_id], :slope=>"0", :start=>"240000"}]]
 
       @results = event.create_timings_by_pluraleyes_sync_results(@pe_results)
+
+      @absolute_timings_etalon = [
+        {:start_time => 0, :end_time =>	60000},
+        {:start_time => 180000, :end_time =>	300000},
+        {:start_time => 240000, :end_time =>	480000},
+        {:start_time => 300000, :end_time =>	360000}
+      ]
 
     end
 
@@ -144,6 +154,15 @@ describe Event do
       it "should mark clips as synced" do
         sync_flags = Clip.where(:pluraleyes_id => pluraleyes_ids).pluck("synced")
         sync_flags.each { |sf| sf.should be_true }
+      end
+
+      it "should create new absolute timings for videos playlist" do
+        timings = Timing.where(:video_id => @videos_ids)
+        timings.each_with_index do |timing, index|
+          timing.version.should == results[:master_track].version
+          timing.start_time.should == @absolute_timings_etalon[index][:start_time]
+          timing.end_time.should == @absolute_timings_etalon[index][:end_time]
+        end
       end
     end
 
