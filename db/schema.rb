@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120613142035) do
+ActiveRecord::Schema.define(:version => 20120617113253) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -237,6 +237,7 @@ ActiveRecord::Schema.define(:version => 20120613142035) do
     t.string   "uuid"
     t.string   "thumbnail"
     t.string   "clip"
+    t.integer  "view_count",    :default => 0
   end
 
   add_index "videos", ["event_id"], :name => "index_videos_on_event_id"

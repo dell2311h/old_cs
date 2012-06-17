@@ -73,6 +73,12 @@ class Api::VideosController < Api::BaseController
     render status: :ok, action: :show
   end
 
+  def view
+    @video = Video.unscoped.find params[:id]
+    @video.update_attribute(:view_count, @video.view_count.to_i + 1)
+    render status: :ok, action: :show
+  end
+
   private
     def auth_check_for_me
       auth_check if me?
