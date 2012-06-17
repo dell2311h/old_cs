@@ -13,11 +13,12 @@ class VideosController < ApplicationController
   end
 
   def create
+    file = params[:video].delete(:clip)
     @video = Video.new(params[:video])
     @video.user = current_user
     @video.uuid = "uuid"
     @video.status = Video::STATUS_NEW
-    if @video.save
+    if @video.attach_clip(file)
       @video.create_encoding_media
       respond_to do |format|
         format.html {
@@ -45,4 +46,3 @@ class VideosController < ApplicationController
   end
 
 end
-

@@ -234,8 +234,7 @@ class Video < ActiveRecord::Base
     File.rename(self.tmpfile_fullpath, self.renamed_file_fullpath_by(filename))
     self.status = STATUS_NEW # File upload finished
     File.open(self.renamed_file_fullpath_by(filename)) do |file|
-      self.clip = file              #Attach uploaded file to 'clip' attribute
-      self.save!
+      self.attach_clip(file) #Attach uploaded file to 'clip' attribute
     end
     self.remove_attached_data! # Remove uploaded data
     create_encoding_media
@@ -260,6 +259,16 @@ class Video < ActiveRecord::Base
         self.encoding_id = encoding_id
         self.status = STATUS_IN_PROCESSING
         self.save
+      end
+    end
+
+    def attach_clip(file)
+      self.clip = file
+      if self.save!
+        notify_observers(:after_upload)
+        true
+      else
+        false
       end
     end
 
