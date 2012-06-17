@@ -35,5 +35,26 @@ describe Comment do
 
   end
 
+  describe "#mentions" do
+    before :all do
+      comment = Factory.create :comment, :text => "SDFDSF @men1 sdfsdf rrtgfd @men2 @men1 dsa @men3 sd @men_4"
+      @mentions = comment.mentions
+    end
+    it "should return array of mentions" do
+      @mentions.should include("men1")
+      @mentions.should include("men2")
+      @mentions.should include("men3")
+    end
+
+    it "should return only uniq mentions" do
+      @mentions.count("men1").should be_eql(1)
+    end
+
+    it "should replace '_' with ' ' in result mentions" do
+      @mentions.should include("men 4")
+      @mentions.should_not include("men_4")
+    end
+  end
+
 end
 
