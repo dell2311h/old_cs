@@ -40,6 +40,7 @@ class User < ActiveRecord::Base
   has_many :authentications, :dependent => :destroy
   has_many :likes
   has_many :liked_videos, :through => :likes, :source => :video
+  has_many :achievement_points, :dependent => :destroy
 
   # Following associations
   has_many :relationships, foreign_key: "follower_id", dependent: :destroy

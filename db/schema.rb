@@ -11,7 +11,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120617113253) do
+ActiveRecord::Schema.define(:version => 20120617132748) do
+
+  create_table "achievement_points", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "points"
+    t.integer  "reason_code"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -213,6 +221,7 @@ ActiveRecord::Schema.define(:version => 20120617113253) do
     t.string   "first_name"
     t.string   "last_name"
     t.integer  "points",                    :default => 0
+    t.integer  "achievement_points_sum",    :default => 0
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
