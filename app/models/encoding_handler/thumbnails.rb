@@ -3,8 +3,7 @@ class EncodingHandler::Thumbnails < EncodingHandler::Base
   def perform params
     video = find_video params
     update_clips video.id, params[:medias]
-    video.status = Video::STATUS_PROCESSING_DONE
-    video.save
+    video.set_status_done
     Resque.enqueue(Worker::TimingsInterpretator, video.event.id) if video.event.sync_with_pluraleyes?
   end
 

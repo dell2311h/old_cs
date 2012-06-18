@@ -263,6 +263,12 @@ class Video < ActiveRecord::Base
       end
     end
 
+    def set_status_done
+      self.status = Video::STATUS_PROCESSING_DONE
+      self.save
+      notify_observers :after_set_status_done
+    end
+
   private
 
     @@users = nil

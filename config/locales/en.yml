@@ -13,7 +13,8 @@ en:
     user:
       follow: '$actor$ started following $entity$'
       tagging: '$actor tagged $entity$ in $context$'
-      comment_video: "$actory commented video $entity$"
+      comment_video: "$actor commented video $entity$"
+      video_upload: "$actor uploaded $entity$"
     news:
     notification:
     place:
