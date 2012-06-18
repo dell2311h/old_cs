@@ -37,12 +37,20 @@ class FeedItem < ActiveRecord::Base
         object.username
       when /Place|Performer|Event|Song/
         object.name
+      when 'Video'
+        'video'
       else
         ""
     end
   end
 
+  def self.create_for_like(like)
+    FeedItem.create!(:action => 'like_video', :user => like.user, :entity => like.video, :context => like.video.event)
+  end
 
+  def self.create_for_follow(relationship)
+    FeedItem.create!(:action => 'follow', :user => relationship.follower, :entity => relationship.followable)
+  end
 
 end
 
