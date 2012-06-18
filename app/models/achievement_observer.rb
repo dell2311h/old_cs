@@ -1,5 +1,5 @@
 class AchievementObserver < ActiveRecord::Observer
-  observe :video, :song
+  observe :video, :song, :video_song
 
   def after_upload(video)
     AchievementPoint.for_uploading video
@@ -11,5 +11,9 @@ class AchievementObserver < ActiveRecord::Observer
 
   def after_definition(song)
     AchievementPoint.for_definition song
+  end
+
+  def after_add_to_video(video_song)
+    AchievementPoint.for_add_to_video video_song
   end
 end

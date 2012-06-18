@@ -45,6 +45,12 @@ class AchievementPoint < ActiveRecord::Base
                             :points => Settings.achievements.points.define_song)
   end
 
+  def self.for_add_to_video(video_song)
+    AchievementPoint.create(:user_id => video_song.user_id,
+                            :reason_code => AchievementPoint::REASONS[:add_song],
+                            :points => Settings.achievements.points.add_song)
+  end
+
   private
     def update_user_points_sum
       user.update_attribute(:achievement_points_sum, self.user.achievement_points_sum.to_i + self.points.to_i)
