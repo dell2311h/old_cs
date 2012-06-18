@@ -1,7 +1,7 @@
 object false
 
 if @feed_items
-  node(:count) { @feed_items.count }
+  node(:count) { @feed_items_count }
 end
 
 child @feed_items => :feed_items do

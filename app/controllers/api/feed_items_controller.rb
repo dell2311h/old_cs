@@ -5,6 +5,12 @@ class Api::FeedItemsController < Api::BaseController
   def index
     @feed_items = FeedItem.search_by(@feedable, params)
 
+    if (@feed_items_count = @feed_items.count) > 0
+      @feed_items = @feed_items.paginate(:page => params[:page], :per_page => params[:per_page])
+    else
+      render :status => :not_found, json: {}
+    end
+
     render :status => :ok, :action => :index
   end
 
