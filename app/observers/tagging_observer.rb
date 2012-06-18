@@ -8,15 +8,17 @@ class TaggingObserver < ActiveRecord::Observer
     if place
       FeedItem.create(:action      => "tagging",
                       :user_id     => tagging.user_id,
-                      :itemable    => place,
-                      :contextable => tagging.comment);
+                      :entity    => place,
+                      :context_type => "Video",
+                      :context_id => tagging.comment.video_id);
     end
 
     if event
       FeedItem.create(:action      => "tagging",
                       :user_id     => tagging.user_id,
-                      :itemable    => event,
-                      :contextable => tagging.comment)
+                      :entity    => event,
+                      :context_type => "Video",
+                      :context_id => tagging.comment.video_id);
     end
 
   end
