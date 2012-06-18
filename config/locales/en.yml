@@ -12,6 +12,7 @@ en:
   feed:
     user:
       follow: '$actor$ started following $entity$'
+      like_video: '$actor$ liked $entity$ from the $context$ event'
     news:
     notification:
     place:
