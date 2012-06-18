@@ -21,9 +21,9 @@ class CommentObserver < ActiveRecord::Observer
     feeded_items.each do |feeded_item|
       FeedItem.create(:action           => "mention",
                       :user_id          => comment.user_id,
-                      :itemable         => feeded_item,
-                      :contextable_type => "Video",
-                      :contextable_id   => comment.video_id)
+                      :entity         => feeded_item,
+                      :context_type => "Video",
+                      :context_id   => comment.video_id)
     end
   end
 
