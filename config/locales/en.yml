@@ -14,11 +14,15 @@ en:
       follow: '$actor$ started following $entity$'
       like_video: '$actor$ liked $entity$ from the $context$ event'
       tagging: '$actor tagged $entity$ in $context$'
+      comment_video: "$actor commented $entity$"
+      video_upload: "$actor uploaded $entity$"
+      mention: "$actor$ mentioned $entity$ in $context$"
     news:
     notification:
     place:
-      tagging: 'Place $entity$ was tagged by $actory$ in $context$ comment'
+      tagging: '$entity$ was tagged by $actory$ in $context$'
     event:
-      tagging: 'Event $entity$ was tagged by $actory$ in $context$ comment'
+      tagging: '$entity$ was tagged by $actory$ in $context$'
     performer:
+      mention: "$actor$ mentioned $entity$ in $context$"
 
