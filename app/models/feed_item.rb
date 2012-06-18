@@ -16,7 +16,9 @@ class FeedItem < ActiveRecord::Base
   validates :action, :inclusion => ALLOWED_ACTIONS
   validates :context_type, :inclusion => ALLOWED_CONTEXTS, :if => lambda { |f| f.context_type }
 
-  scope :for_user, lambda { |user, params| where("user_id = ? OR (entity_type = 'User' AND entity_id = ?) OR (context_type = 'User' AND context_id = ?)", user.id, user.id, user.id) }
+  scope :for_user, lambda { |user, params|
+     user_video_ids = user.videos.pluck(:id)
+     where("user_id = ? OR (entity_type = 'User' AND entity_id = ?) OR (context_type = 'User' AND context_id = ?) OR (entity_type = 'Video' AND entity_id IN (?))", user.id, user.id, user.id, user_video_ids) }
 
   scope :search_by, lambda { |entity, params|
     search = case entity.class.to_s
