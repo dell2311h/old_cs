@@ -13,13 +13,13 @@ en:
     user:
       follow: '$actor$ started following $entity$'
       tagging: '$actor tagged $entity$ in $context$'
-      comment_video: "$actor commented video $entity$"
+      comment_video: "$actor commented $entity$"
       video_upload: "$actor uploaded $entity$"
     news:
     notification:
     place:
-      tagging: 'Place $entity$ was tagged by $actory$ in $context$ comment'
+      tagging: '$entity$ was tagged by $actory$ in $context$'
     event:
-      tagging: 'Event $entity$ was tagged by $actory$ in $context$ comment'
+      tagging: '$entity$ was tagged by $actory$ in $context$'
     performer:
 
