@@ -22,6 +22,23 @@ class AchievementPoint < ActiveRecord::Base
     AchievementPoint::REASONS.invert[self.reason_code].to_s
   end
 
+  def self.for_uploading(video)
+    AchievementPoint.create(:user_id => video.user_id,
+                            :reason_code => AchievementPoint::REASONS[:upload_video],
+                            :points => Settings.achievements.points.upload_video)
+  end
+
+  def self.for_uploading_to_event_first(video)
+    unless video.event_id.nil? && video.clip.nil?
+      # this video must be first in event
+      if Video.unscoped.where(:event_id => video.event_id).where("clip IS NOT NULL").count == 1
+        AchievementPoint.create(:user_id => video.user_id,
+                                :reason_code => AchievementPoint::REASONS[:first_upload_to_event],
+                                :points => Settings.achievements.points.first_upload_to_event)
+      end
+    end
+  end
+
   private
     def update_user_points_sum
       user.update_attribute(:achievement_points_sum, self.user.achievement_points_sum.to_i + self.points.to_i)

@@ -32,7 +32,9 @@ class Api::VideosController < Api::BaseController
     event_id = @video.event_id
     params[:video].delete(:event_id) unless event_id.nil?
     @video.update_attributes!(params[:video])
-    @video.create_encoding_media if event_id.nil? && @video.event_id
+    if event_id.nil? && @video.event_id
+      @video.after_attach_to_event
+    end
     render status: :accepted, action: :show
   end
 

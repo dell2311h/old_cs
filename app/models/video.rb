@@ -266,11 +266,18 @@ class Video < ActiveRecord::Base
       self.clip = file
       if self.save!
         notify_observers(:after_upload)
+        notify_observers(:after_first_upload_to_event) unless self.event_id.nil?
         true
       else
         false
       end
     end
+
+    def after_attach_to_event
+      self.create_encoding_media
+      notify_observers(:after_first_upload_to_event)
+    end
+
 
   private
 
