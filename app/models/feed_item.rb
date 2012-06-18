@@ -52,5 +52,10 @@ class FeedItem < ActiveRecord::Base
     FeedItem.create!(:action => 'follow', :user => relationship.follower, :entity => relationship.followable)
   end
 
+  def self.create_for_song_definition(video_song)
+    FeedItem.create!(:action => 'add_song', :user => video_song.user, :entity => video_song.song, :context => video_song.video)
+  end
+
+
 end
 
