@@ -113,6 +113,8 @@ Crowdsync::Application.routes.draw do
       get "/:feedable/:id/feed_items" => "feed_items#index", :as => :feed_items_list
     end
 
+    get 'me/feed_items' => "feed_items#index", :as => :me_feed_items
+
    #profiles
    resources :profiles, :only => [:index]
 
