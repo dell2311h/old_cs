@@ -16,7 +16,7 @@ class AchievementPoint < ActiveRecord::Base
 
   belongs_to :user
 
-  after_save :update_user_points_sum
+  after_create :update_user_points_sum
 
   def reason
     AchievementPoint::REASONS.invert[self.reason_code].to_s
@@ -37,6 +37,12 @@ class AchievementPoint < ActiveRecord::Base
                                 :points => Settings.achievements.points.first_upload_to_event)
       end
     end
+  end
+
+  def self.for_definition(song)
+    AchievementPoint.create(:user_id => song.user_id,
+                            :reason_code => AchievementPoint::REASONS[:define_song],
+                            :points => Settings.achievements.points.define_song)
   end
 
   private

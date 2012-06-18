@@ -139,6 +139,7 @@ class Video < ActiveRecord::Base
 
   def add_songs_by songs_params, user
     songs_params.each do |song_params|
+      song_params.merge!({:user_id => user.id})
       song = song_params[:id] ? Song.find(song_params[:id]) : Song.create!(song_params)
       self.video_songs.create(:user_id => user.id, :song_id => song.id) if !self.songs.find_by_id(song)
     end
