@@ -10,8 +10,6 @@ class Api::FeedItemsController < Api::BaseController
     else
       render :status => :not_found, json: {}
     end
-
-    render :status => :ok, :action => :index
   end
 
   private
