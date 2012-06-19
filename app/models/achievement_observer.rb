@@ -1,5 +1,5 @@
 class AchievementObserver < ActiveRecord::Observer
-  observe :video, :song, :video_song, :like
+  observe :video, :song, :video_song, :like, :comment
 
   def after_upload(video)
     AchievementPoint.for_uploading video
@@ -19,5 +19,9 @@ class AchievementObserver < ActiveRecord::Observer
 
   def after_exceeding_likes_count(like)
     AchievementPoint.for_exceeding_likes_count like
+  end
+
+  def after_exceeding_comments_count_for_video(comment)
+    AchievementPoint.for_exceeding_comments_count_for_video comment
   end
 end
