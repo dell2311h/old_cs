@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120615145034) do
+ActiveRecord::Schema.define(:version => 20120619121629) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -190,6 +190,12 @@ ActiveRecord::Schema.define(:version => 20120615145034) do
   end
 
   add_index "timings", ["video_id"], :name => "index_timings_on_video_id"
+
+  create_table "user_notifiations", :force => true do |t|
+    t.integer "user_id"
+    t.integer "feed_item_id"
+    t.date    "creation_date"
+  end
 
   create_table "users", :force => true do |t|
     t.string   "email"
