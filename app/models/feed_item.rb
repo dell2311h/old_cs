@@ -46,7 +46,7 @@ class FeedItem < ActiveRecord::Base
     search.includes [:user, :entity, :context]
   }
 
-  def for_user(user, params)
+  def self.for_user(user, params)
     feed_type = params[:feed_type] || 'user'
     case feed_type
       when 'user'
