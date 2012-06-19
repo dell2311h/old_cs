@@ -14,8 +14,8 @@ en:
       follow: '$actor$ started following $entity$'
       like_video: '$actor$ liked $entity$ from the $context$ event'
       tagging: '$actor$ tagged $entity$ in $context$'
-      comment_video: "$actor$ commented $entity$"
-      video_upload: "$actor$ uploaded $entity$"
+      comment_video: "$actor$ commented $entity$ from the $context$ event"
+      video_upload: "$actor$ uploaded $entity$ to $context$ event"
       mention: "$actor$ mentioned $entity$ in $context$"
       add_song: "$actor$ added song $entity$ to $context$"
     news:
