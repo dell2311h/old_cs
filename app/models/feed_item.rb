@@ -37,11 +37,18 @@ class FeedItem < ActiveRecord::Base
     where("(entity_type = 'User' AND entity_id = ?) OR (context_type = 'User' AND context_id = ?) OR (entity_type = 'Video' AND entity_id IN (?))", user.id, user.id, user_video_ids)
   }
 
+  scope :for_place, lambda { |place| where("(entity_type = 'Place' AND entity_id = ?) AND (action = 'tagging')", place.id) }
+
+  scope :for_event, lambda { |event| where("((entity_type = 'Event' AND entity_id = ?) OR (context_type = 'Event' AND context_id = ?)) AND (action IN ('tagging', 'video_upload', 'comment_video'))", event.id, event.id) }
 
   scope :search_by, lambda { |entity, params|
     search = case entity.class.to_s
       when 'User'
         for_user(entity, params)
+      when 'Place'
+        for_place(entity)
+      when 'Event'
+        for_event(entity)
     end
     search.includes [:user, :entity, :context]
   }
