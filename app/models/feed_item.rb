@@ -32,6 +32,12 @@ class FeedItem < ActiveRecord::Base
     where("user_id IN (?) OR #{entity_context_sql_part_for('User')} OR #{entity_context_sql_part_for('Event')} OR #{entity_context_sql_part_for('Place')} OR #{entity_context_sql_part_for('Perfromer')}", followed_user_ids, followed_user_ids, followed_user_ids,  followed_event_ids,  followed_event_ids, followed_place_ids, followed_place_ids,  followed_performer_ids, followed_performer_ids)
   }
 
+  scope :notification_feed, lambda { |user|
+    user_video_ids = user.videos.pluck(:id)
+    where("(entity_type = 'User' AND entity_id = ?) OR (context_type = 'User' AND context_id = ?) OR (entity_type = 'Video' AND entity_id IN (?))", user.id, user.id, user_video_ids)
+  }
+
+
   scope :search_by, lambda { |entity, params|
     search = case entity.class.to_s
       when 'User'
