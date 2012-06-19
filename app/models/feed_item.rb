@@ -41,6 +41,8 @@ class FeedItem < ActiveRecord::Base
 
   scope :for_event, lambda { |event| where("((entity_type = 'Event' AND entity_id = ?) OR (context_type = 'Event' AND context_id = ?)) AND (action IN ('tagging', 'video_upload', 'comment_video'))", event.id, event.id) }
 
+  scope :for_performer, lambda { |performer| where("((entity_type = 'Performer' AND entity_id = ?) OR (context_type = 'Performer' AND context_id = ?)) AND (action IN ('mention', 'like_video', 'comment_video'))", performer.id, performer.id) }
+
   scope :search_by, lambda { |entity, params|
     search = case entity.class.to_s
       when 'User'
@@ -49,6 +51,8 @@ class FeedItem < ActiveRecord::Base
         for_place(entity)
       when 'Event'
         for_event(entity)
+      when 'Performer'
+        for_performer(entity)
     end
     search.includes [:user, :entity, :context]
   }
