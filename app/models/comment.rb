@@ -35,5 +35,10 @@ class Comment < ActiveRecord::Base
                                 :reason_code => AchievementPoint::REASONS[:exceeding_comments_count_for_video]).count == 0
         notify_observers(:after_exceeding_comments_count_for_video)
       end
+      if Comment.where(:user_id => self.user_id).count >= Settings.achievements.limits.exceeding_comments_count_for_user &&
+         AchievementPoint.where(:user_id => self.user_id,
+                                :reason_code => AchievementPoint::REASONS[:exceeding_comments_count_for_user]).count == 0
+        notify_observers(:after_exceeding_comments_count_for_user)
+      end
     end
 end
