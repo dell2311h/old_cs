@@ -77,7 +77,7 @@ class Api::VideosController < Api::BaseController
 
   def view
     @video = Video.unscoped.find params[:id]
-    @video.update_attribute(:view_count, @video.view_count.to_i + 1)
+    @video.increment_views
     render status: :ok, action: :show
   end
 

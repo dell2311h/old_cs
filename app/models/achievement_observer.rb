@@ -28,4 +28,8 @@ class AchievementObserver < ActiveRecord::Observer
   def after_exceeding_comments_count_for_user(comment)
     AchievementPoint.for_exceeding_comments_count_for_user comment
   end
+
+  def after_exceeding_views_count(video)
+    AchievementPoint.for_exceeding_views_count video
+  end
 end

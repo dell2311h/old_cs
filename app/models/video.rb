@@ -279,6 +279,14 @@ class Video < ActiveRecord::Base
       notify_observers(:after_first_upload_to_event)
     end
 
+    def increment_views
+      self.update_attribute(:view_count, self.view_count.to_i + 1)
+      if self.view_count >= Settings.achievements.limits.exceeding_views_count &&
+         AchievementPoint.where(:user_id => self.user_id,
+                                :reason_code => AchievementPoint::REASONS[:exceeding_views_count]).count == 0
+        notify_observers(:after_exceeding_views_count)
+      end
+    end
 
   private
 

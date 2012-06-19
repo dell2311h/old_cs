@@ -69,6 +69,12 @@ class AchievementPoint < ActiveRecord::Base
                             :points => Settings.achievements.points.exceeding_comments_count_for_user)
   end
 
+  def self.for_exceeding_views_count(video)
+    AchievementPoint.create(:user_id => video.user_id,
+                            :reason_code => AchievementPoint::REASONS[:exceeding_views_count],
+                            :points => Settings.achievements.points.exceeding_views_count)
+  end
+
   private
     def update_user_points_sum
       user.update_attribute(:achievement_points_sum, self.user.achievement_points_sum.to_i + self.points.to_i)
