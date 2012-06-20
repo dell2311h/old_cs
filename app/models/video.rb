@@ -42,6 +42,9 @@ class Video < ActiveRecord::Base
   has_many :feed_entities, :as => :entity, :class_name => "FeedItem", :dependent => :destroy
   has_many :feed_contexts, :as => :context, :class_name => "FeedItem", :dependent => :destroy
 
+  has_many :video_performers, :dependent => :destroy
+  has_many :performers, :through => :video_performers
+
   # default scope to hide videos that are not ready.
   default_scope where(:status => STATUS_PROCESSING_DONE)
 
@@ -143,6 +146,10 @@ class Video < ActiveRecord::Base
       self.video_songs.create(:user_id => user.id, :song_id => song.id) if !self.songs.find_by_id(song)
     end
     self.songs
+  end
+
+  def add_performer(performer)
+    !!(self.performers << performer unless self.performers.include?(performer))
   end
 
   def self.unscoped_find video_id
@@ -279,3 +286,4 @@ class Video < ActiveRecord::Base
       self.update_attribute :last_chunk_id, chunk_id
     end
 end
+

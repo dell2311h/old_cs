@@ -8,7 +8,8 @@ class Performer < ActiveRecord::Base
 
   mount_uploader :picture, ThumbnailUploader
 
-  has_and_belongs_to_many :events
+  has_many :video_performers, :dependent => :destroy
+  has_many :videos, :through => :video_performers
 
   self.per_page = Settings.paggination.per_page
 

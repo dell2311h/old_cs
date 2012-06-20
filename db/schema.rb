@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120615145034) do
+ActiveRecord::Schema.define(:version => 20120620084545) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -60,11 +60,6 @@ ActiveRecord::Schema.define(:version => 20120615145034) do
     t.string   "eventful_id"
     t.string   "pluraleyes_id"
     t.integer  "master_track_version"
-  end
-
-  create_table "events_performers", :id => false, :force => true do |t|
-    t.integer "performer_id", :null => false
-    t.integer "event_id",     :null => false
   end
 
   create_table "feed_items", :force => true do |t|
@@ -217,6 +212,13 @@ ActiveRecord::Schema.define(:version => 20120615145034) do
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
+
+  create_table "video_performers", :force => true do |t|
+    t.integer  "video_id"
+    t.integer  "performer_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
 
   create_table "video_songs", :force => true do |t|
     t.integer  "user_id"
