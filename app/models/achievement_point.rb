@@ -87,6 +87,12 @@ class AchievementPoint < ActiveRecord::Base
                             :points => Settings.achievements.points.exceeding_followers_count)
   end
 
+  def self.for_upload_longest_video_to_event(meta_info)
+    AchievementPoint.create(:user_id => meta_info.video.user_id,
+                            :reason_code => AchievementPoint::REASONS[:upload_longest_video_to_event],
+                            :points => Settings.achievements.points.upload_longest_video_to_event)
+  end
+
   private
     def update_user_points_sum
       user.update_attribute(:achievement_points_sum, self.user.achievement_points_sum.to_i + self.points.to_i)

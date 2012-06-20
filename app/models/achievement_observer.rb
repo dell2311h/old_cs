@@ -1,5 +1,5 @@
 class AchievementObserver < ActiveRecord::Observer
-  observe :video, :song, :video_song, :like, :comment, :relationship
+  observe :video, :song, :video_song, :like, :comment, :relationship, :meta_info
 
   def after_upload(video)
     AchievementPoint.for_uploading video
@@ -39,5 +39,9 @@ class AchievementObserver < ActiveRecord::Observer
 
   def after_exceeding_followers_count(relationship)
     AchievementPoint.for_exceeding_followers_count relationship
+  end
+
+  def after_upload_longest_video_to_event(meta_info)
+    AchievementPoint.for_upload_longest_video_to_event meta_info
   end
 end
