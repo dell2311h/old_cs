@@ -107,14 +107,80 @@ class FeedItem < ActiveRecord::Base
     FeedItem.create!(:action => 'add_song', :user => video_song.user, :entity => video_song.song, :context => video_song.video)
   end
 
+  def self.create_for_comment(comment)
+    video = comment.video
+    if video
+      create_mention_feeds_for(comment)
+      create_video_comment_feeds_for(comment)
+      create_performers_video_comment_feeds_for(comment)
+    end
+  end
+
   private
-    def self.entity_context_sql_part_for(klass_name)
-      "(entity_type = '#{klass_name}' AND entity_id IN (?)) OR (context_type = '#{klass_name}' AND context_id IN (?))"
+
+    class << self
+
+      def entity_context_sql_part_for(klass_name)
+        "(entity_type = '#{klass_name}' AND entity_id IN (?)) OR (context_type = '#{klass_name}' AND context_id IN (?))"
+      end
+
+      def except_sql_str
+        "action NOT IN ('like_perfomers_video')"
+      end
+
+      def create_performers_video_comment_feeds_for(comment)
+        video = comment.video
+        video.performers.each do |performer|
+          FeedItem.create!(:action => 'comment_perfomers_video', :user => comment.user, :entity => video, :context => performer)
+        end
+      end
+
+      def create_video_comment_feeds_for comment
+        FeedItem.create(:action       => "comment_video",
+                      :user_id      => comment.user_id,
+                      :entity_type  => "Video",
+                      :entity_id    => comment.video_id,
+                      :context => comment.video.event
+                      )
+      end
+
+      def create_mention_feeds_for comment
+        mentions = comment.mentions
+        if mentions
+          FeedItem.transaction do
+            begin
+              mentions.each do |mention|
+                feed_users  mention, comment
+                feed_performers mention, comment
+              end
+            rescue ActiveRecord::StatementInvalid
+            end
+          end
+        end
+      end
+
+      def create_mention_feeds comment, feeded_items
+        feeded_items.each do |feeded_item|
+          FeedItem.create(:action       => "mention",
+                          :user_id      => comment.user_id,
+                          :entity       => feeded_item,
+                          :context_type => "Video",
+                          :context_id   => comment.video_id)
+        end
+      end
+
+      def feed_users mention, comment
+        users = User.where("UPPER(username) = ?", mention.upcase)
+        create_mention_feeds comment, users
+      end
+
+      def feed_performers mention, comment
+        performers = Performer.where("UPPER(name) = ?", mention.upcase)
+        create_mention_feeds comment, performers
+      end
+
     end
 
-    def self.except_sql_str
-      "action NOT IN ('like_perfomers_video')"
-    end
 
 end
 
