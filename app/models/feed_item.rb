@@ -1,9 +1,9 @@
 class FeedItem < ActiveRecord::Base
 
   ALLOWED_ENTITIES = ["User", "Video", "Song", "Comment", "Event", "Place", "Performer"]
-  ALLOWED_CONTEXTS = ["Video", "Event", "Comment", "Authentication"]
+  ALLOWED_CONTEXTS = ["Video", "Event", "Comment", "Authentication", "Performer"]
   ALLOWED_ACTIONS = ["video_upload", "comment_video", "follow", "mention",
-                     "like_video", "join_crowdsync", "add_song", "tagging", "mention"]
+                     "like_video", "join_crowdsync", "add_song", "tagging", "mention", "like_perfomers_video"]
 
   belongs_to :user
 
@@ -20,7 +20,7 @@ class FeedItem < ActiveRecord::Base
 
   scope :user_feed, lambda { |user|
      user_video_ids = user.videos.pluck(:id)
-     where("user_id = ? OR (entity_type = 'User' AND entity_id = ?) OR (context_type = 'User' AND context_id = ?) OR (entity_type = 'Video' AND entity_id IN (?))", user.id, user.id, user.id, user_video_ids) }
+     where("#{except_sql_str} AND user_id = ? OR (entity_type = 'User' AND entity_id = ?) OR (context_type = 'User' AND context_id = ?) OR (entity_type = 'Video' AND entity_id IN (?))", user.id, user.id, user.id, user_video_ids) }
 
   scope :news_feed, lambda { |user|
     followings = Relationship.select("followable_type, followable_id").where(:follower_id => user.id)
@@ -29,19 +29,19 @@ class FeedItem < ActiveRecord::Base
     followed_place_ids = user.relationships.where(:followable_type => 'Place').pluck(:followable_id)
     followed_performer_ids = user.relationships.where(:followable_type => 'Performer').pluck(:followable_id)
 
-    where("user_id IN (?) OR #{entity_context_sql_part_for('User')} OR #{entity_context_sql_part_for('Event')} OR #{entity_context_sql_part_for('Place')} OR #{entity_context_sql_part_for('Perfromer')}", followed_user_ids, followed_user_ids, followed_user_ids,  followed_event_ids,  followed_event_ids, followed_place_ids, followed_place_ids,  followed_performer_ids, followed_performer_ids)
+    where("#{except_sql_str} AND user_id IN (?) OR #{entity_context_sql_part_for('User')} OR #{entity_context_sql_part_for('Event')} OR #{entity_context_sql_part_for('Place')} OR #{entity_context_sql_part_for('Perfromer')}", followed_user_ids, followed_user_ids, followed_user_ids,  followed_event_ids,  followed_event_ids, followed_place_ids, followed_place_ids,  followed_performer_ids, followed_performer_ids)
   }
 
   scope :notification_feed, lambda { |user|
     user_video_ids = user.videos.pluck(:id)
-    where("(entity_type = 'User' AND entity_id = ?) OR (context_type = 'User' AND context_id = ?) OR (entity_type = 'Video' AND entity_id IN (?))", user.id, user.id, user_video_ids)
+    where("#{except_sql_str} AND (entity_type = 'User' AND entity_id = ?) OR (context_type = 'User' AND context_id = ?) OR (entity_type = 'Video' AND entity_id IN (?))", user.id, user.id, user_video_ids)
   }
 
   scope :for_place, lambda { |place| where("(entity_type = 'Place' AND entity_id = ?) AND (action = 'tagging')", place.id) }
 
   scope :for_event, lambda { |event| where("((entity_type = 'Event' AND entity_id = ?) OR (context_type = 'Event' AND context_id = ?)) AND (action IN ('tagging', 'video_upload', 'comment_video'))", event.id, event.id) }
 
-  scope :for_performer, lambda { |performer| where("((entity_type = 'Performer' AND entity_id = ?) OR (context_type = 'Performer' AND context_id = ?)) AND (action IN ('mention', 'like_video', 'comment_video'))", performer.id, performer.id) }
+  scope :for_performer, lambda { |performer| where("((entity_type = 'Performer' AND entity_id = ?) OR (context_type = 'Performer' AND context_id = ?)) AND (action IN ('mention', 'like_video', 'comment_video', 'like_perfomers_video'))", performer.id, performer.id) }
 
   scope :search_by, lambda { |entity, params|
     search = case entity.class.to_s
@@ -90,7 +90,13 @@ class FeedItem < ActiveRecord::Base
   end
 
   def self.create_for_like(like)
-    FeedItem.create!(:action => 'like_video', :user => like.user, :entity => like.video, :context => like.video.event)
+    video = like.video
+    if video
+      FeedItem.create!(:action => 'like_video', :user => like.user, :entity => video, :context => video.event)
+      video.performers.each do |performer|
+        FeedItem.create!(:action => 'like_perfomers_video', :user => like.user, :entity => video, :context => performer)
+      end
+    end
   end
 
   def self.create_for_follow(relationship)
@@ -104,6 +110,10 @@ class FeedItem < ActiveRecord::Base
   private
     def self.entity_context_sql_part_for(klass_name)
       "(entity_type = '#{klass_name}' AND entity_id IN (?)) OR (context_type = '#{klass_name}' AND context_id IN (?))"
+    end
+
+    def self.except_sql_str
+      "action NOT IN ('like_perfomers_video')"
     end
 
 end
