@@ -111,7 +111,7 @@ class FeedItem < ActiveRecord::Base
 
   def send_email_notification
     text = format_notification_text
-    receiver = user.email
+    NotificationMailer.send_single_notification(self.user.email, text).deliver
   end
 
   private
@@ -144,7 +144,7 @@ class FeedItem < ActiveRecord::Base
     when "comment_video", "like_video"
       t message
     when "follow", "mention"
-      t message
+      t message, :user => user_id
     when "add_song"
       t message
     end
