@@ -104,50 +104,16 @@ class FeedItem < ActiveRecord::Base
   end
 
   def send_notification
-    if should_be_send?
-      process_email_notification
+    if should_send_notification?
+      UserNotification.process_email_notification self
     end
-  end
-
-  def send_email_notification
-    text = format_notification_text
-    NotificationMailer.send_single_notification(self.user.email, text).deliver
   end
 
   private
 
-  def should_be_send?
+  def should_send_notification?
     NOTIFICATIBLE_ACTIONS.include?(self.action) &&
     (self.action != "mention" || self.entity_type == "User")
-  end
-
-  def process_email_notification
-    reciver_user = self.user
-    select
-    case self.email_notification_status
-    when "day", "week"
-      store_notification
-    when "immediate"
-      send_email_notification
-    end
-    
-  end
-
-  def store_notification
-    self.user_notification.build(:user_id => self.user_id, :creation_date => Time.now)
-  end
-
-  def format_notification_text
-    message = "notification.email.self.#{self.action}"
-
-    case self.action
-    when "comment_video", "like_video"
-      t message
-    when "follow", "mention"
-      t message, :user => user_id
-    when "add_song"
-      t message
-    end
   end
 
     def self.entity_context_sql_part_for(klass_name)
