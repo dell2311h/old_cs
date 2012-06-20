@@ -13,14 +13,13 @@ class Performer < ActiveRecord::Base
 
   self.per_page = Settings.paggination.per_page
 
-  def self.search params
-    performers = self
-    unless params[:performer_name].nil?
-      performers = performers.where("UPPER(name) LIKE ?", "%#{params[:performer_name].to_s.upcase}%")
-    end
-
+  scope :search, lambda { |params|
+    performers = scoped
+    performers = performers.joins(:video_performers).where("video_performers.video_id = ?", params[:video_id]) if params[:video_id]
+    performers = performers.where("UPPER(name) LIKE ?", "%#{params[:performer_name].to_s.upcase}%") if params[:performer_name]
     performers
-  end
+
+  }
 
   scope :with_calculated_counters, with_followers_count
 
