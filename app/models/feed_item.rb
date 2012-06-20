@@ -3,7 +3,7 @@ class FeedItem < ActiveRecord::Base
   ALLOWED_ENTITIES = ["User", "Video", "Song", "Comment", "Event", "Place", "Performer"]
   ALLOWED_CONTEXTS = ["Video", "Event", "Comment", "Authentication", "Performer"]
   ALLOWED_ACTIONS = ["video_upload", "comment_video", "follow", "mention",
-                     "like_video", "join_crowdsync", "add_song", "tagging", "mention", "like_perfomers_video"]
+                     "like_video", "join_crowdsync", "add_song", "tagging", "mention", "like_performers_video", "comment_performers_video"]
 
   belongs_to :user
 
@@ -41,7 +41,7 @@ class FeedItem < ActiveRecord::Base
 
   scope :for_event, lambda { |event| where("((entity_type = 'Event' AND entity_id = ?) OR (context_type = 'Event' AND context_id = ?)) AND (action IN ('tagging', 'video_upload', 'comment_video'))", event.id, event.id) }
 
-  scope :for_performer, lambda { |performer| where("((entity_type = 'Performer' AND entity_id = ?) OR (context_type = 'Performer' AND context_id = ?)) AND (action IN ('mention', 'like_video', 'comment_video', 'like_perfomers_video'))", performer.id, performer.id) }
+  scope :for_performer, lambda { |performer| where("((entity_type = 'Performer' AND entity_id = ?) OR (context_type = 'Performer' AND context_id = ?)) AND (action IN ('mention', 'like_video', 'comment_video', 'like_performers_video', 'comment_performers_video'))", performer.id, performer.id) }
 
   scope :search_by, lambda { |entity, params|
     search = case entity.class.to_s
@@ -116,6 +116,31 @@ class FeedItem < ActiveRecord::Base
     end
   end
 
+  def self.create_for_tagging(tagging)
+    video = tagging.comment.video
+    if video
+      tag = tagging.tag.name
+      place = Place.find_by_name tag
+      event = Event.find_by_name tag
+
+      if place
+        FeedItem.create(:action      => "tagging",
+                        :user_id     => tagging.user_id,
+                        :entity    => place,
+                        :context_type => "Video",
+                        :context_id => tagging.comment.video_id);
+      end
+
+      if event
+        FeedItem.create(:action      => "tagging",
+                        :user_id     => tagging.user_id,
+                        :entity    => event,
+                        :context_type => "Video",
+                        :context_id => tagging.comment.video_id);
+      end
+    end
+  end
+
   private
 
     class << self
@@ -125,13 +150,13 @@ class FeedItem < ActiveRecord::Base
       end
 
       def except_sql_str
-        "action NOT IN ('like_perfomers_video')"
+        "action NOT IN ('like_performers_video', 'comment_performers_video')"
       end
 
       def create_performers_video_comment_feeds_for(comment)
         video = comment.video
         video.performers.each do |performer|
-          FeedItem.create!(:action => 'comment_perfomers_video', :user => comment.user, :entity => video, :context => performer)
+          FeedItem.create!(:action => 'comment_performers_video', :user => comment.user, :entity => video, :context => performer)
         end
       end
 

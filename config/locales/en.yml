@@ -36,5 +36,6 @@ en:
       tagging: '$entity$ was tagged by $actor$ in $context$'
     performer:
       mention: "$actor$ mentioned $entity$ in $context$"
-      like_perfomers_video: "$context$'s $entity$ was liked by $actor$"
+      like_performers_video: "$context$'s $entity$ was liked by $actor$"
+      comment_performers_video: "$context$'s $entity$ was commented by $actor$"
 
