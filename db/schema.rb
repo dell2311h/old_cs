@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120619121629) do
+ActiveRecord::Schema.define(:version => 20120620184204) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -191,7 +191,7 @@ ActiveRecord::Schema.define(:version => 20120619121629) do
 
   add_index "timings", ["video_id"], :name => "index_timings_on_video_id"
 
-  create_table "user_notifiations", :force => true do |t|
+  create_table "user_notifications", :force => true do |t|
     t.integer "user_id"
     t.integer "feed_item_id"
     t.date    "creation_date"
@@ -201,9 +201,9 @@ ActiveRecord::Schema.define(:version => 20120619121629) do
     t.string   "email"
     t.string   "username"
     t.string   "phone"
-    t.datetime "created_at",                                    :null => false
-    t.datetime "updated_at",                                    :null => false
-    t.string   "encrypted_password",        :default => "",     :null => false
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
+    t.string   "encrypted_password",        :default => "", :null => false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.string   "password_salt"
@@ -214,7 +214,7 @@ ActiveRecord::Schema.define(:version => 20120619121629) do
     t.float    "latitude"
     t.float    "longitude"
     t.string   "avatar"
-    t.string   "email_notification_status", :default => "week"
+    t.integer  "email_notification_status", :default => 7
     t.string   "sex"
     t.string   "first_name"
     t.string   "last_name"

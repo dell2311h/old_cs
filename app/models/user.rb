@@ -79,6 +79,27 @@ class User < ActiveRecord::Base
 
   scope :without_user, lambda { |user| where("id <> ?", user.id) }
 
+  def email_notification_status=(status)
+    days = case status
+           when 'day';       1
+           when 'week';      7
+           when 'immediate'; 0
+           else              nil
+           end
+
+    write_attribute(:email_notification_status, days)
+  end
+
+  def email_notification_status
+    days = read_attribute(:email_notification_status)
+
+    case days
+    when 1; 'day'
+    when 7; 'week'
+    when 0; 'immediate'
+    else    'none'
+    end
+  end
 
   self.per_page = Settings.paggination.per_page
 
