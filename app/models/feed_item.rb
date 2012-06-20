@@ -113,7 +113,8 @@ class FeedItem < ActiveRecord::Base
 
   def should_send_notification?
     NOTIFICATIBLE_ACTIONS.include?(self.action) &&
-    (self.action != "mention" || self.entity_type == "User")
+    (self.action != "mention" || self.entity_type == "User") &&
+    (self.action != "follow"  || self.entity_type == "User")
   end
 
     def self.entity_context_sql_part_for(klass_name)

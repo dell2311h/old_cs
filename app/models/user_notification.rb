@@ -1,6 +1,7 @@
 class UserNotification < ActiveRecord::Base
 
-  belongs_to :user, :feed_item
+  belongs_to :user
+  belongs_to :feed_item
 
   validate :user_id, :feed_item_id, :numericality => { :only_integer => true }
   validates :creation_date, :presence => true
@@ -13,7 +14,7 @@ class UserNotification < ActiveRecord::Base
 
   def self.process_email_notification(feed_item)
 
-    case feed_item.email_notification_status
+    case feed_item.user.email_notification_status
     when "day", "week"
       notification = creat_by(feed_item)
       notification.save
@@ -27,7 +28,7 @@ class UserNotification < ActiveRecord::Base
   private
 
   def self.creat_by(feed_item)
-    user_notification.new(:user_id => feed_item.user_id, :feed_item_id => feed_item.id, :creation_date => Time.now)
+    UserNotification.new(:user_id => feed_item.user_id, :feed_item_id => feed_item.id, :creation_date => Time.now)
   end
 
   def format_notification_text
@@ -35,11 +36,11 @@ class UserNotification < ActiveRecord::Base
 
     case self.feed_item.action
     when "comment_video", "like_video"
-      t message_template
+      I18n.t message_template
     when "follow", "mention"
-      t message_template, :user => self.feed_item.user_id
+      I18n.t message_template, :user => self.feed_item.user_id
     when "add_song"
-      t message_template
+      I18n.t message_template
     end
   end
 

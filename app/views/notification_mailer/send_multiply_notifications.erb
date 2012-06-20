@@ -1,2 +1,8 @@
-You got new notifications:
-@notifications
+<h2> Hello! You got <%= @count %> new notifications since: <%= @date %> </h2>
+
+
+<ul>
+  <% @notifications.each do |notification| %>
+    <li><%= notification %></li>
+  <% end %>
+</ul>
