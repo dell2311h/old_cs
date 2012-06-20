@@ -12,7 +12,9 @@ class CommentObserver < ActiveRecord::Observer
     FeedItem.create(:action       => "comment_video",
                     :user_id      => comment.user_id,
                     :entity_type  => "Video",
-                    :entity_id    => comment.video_id)
+                    :entity_id    => comment.video_id,
+                    :context => comment.video.event
+                    )
   end
 
   def create_mention_feeds_for comment
@@ -51,3 +53,4 @@ class CommentObserver < ActiveRecord::Observer
   end
 
 end
+

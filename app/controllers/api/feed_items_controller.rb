@@ -26,7 +26,7 @@ class Api::FeedItemsController < Api::BaseController
     end
 
     def get_feed_type
-      @feed_type = @feedable.instance_of?(User) ? (params[:feed_type] || :user) : @feedable.class.to_s.downcase.to_sym
+      @feed_type = (@feedable.instance_of?(User) ? (params[:feed_type] || 'user') : @feedable.class.to_s.downcase).to_sym
     end
 
 end

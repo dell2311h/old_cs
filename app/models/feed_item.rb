@@ -20,17 +20,58 @@ class FeedItem < ActiveRecord::Base
 
   default_scope order("created_at DESC")
 
-  scope :for_user, lambda { |user, params|
+  scope :user_feed, lambda { |user|
      user_video_ids = user.videos.pluck(:id)
      where("user_id = ? OR (entity_type = 'User' AND entity_id = ?) OR (context_type = 'User' AND context_id = ?) OR (entity_type = 'Video' AND entity_id IN (?))", user.id, user.id, user.id, user_video_ids) }
+
+  scope :news_feed, lambda { |user|
+    followings = Relationship.select("followable_type, followable_id").where(:follower_id => user.id)
+    followed_user_ids = user.relationships.where(:followable_type => 'User').pluck(:followable_id)
+    followed_event_ids = user.relationships.where(:followable_type => 'Event').pluck(:followable_id)
+    followed_place_ids = user.relationships.where(:followable_type => 'Place').pluck(:followable_id)
+    followed_performer_ids = user.relationships.where(:followable_type => 'Performer').pluck(:followable_id)
+
+    where("user_id IN (?) OR #{entity_context_sql_part_for('User')} OR #{entity_context_sql_part_for('Event')} OR #{entity_context_sql_part_for('Place')} OR #{entity_context_sql_part_for('Perfromer')}", followed_user_ids, followed_user_ids, followed_user_ids,  followed_event_ids,  followed_event_ids, followed_place_ids, followed_place_ids,  followed_performer_ids, followed_performer_ids)
+  }
+
+  scope :notification_feed, lambda { |user|
+    user_video_ids = user.videos.pluck(:id)
+    where("(entity_type = 'User' AND entity_id = ?) OR (context_type = 'User' AND context_id = ?) OR (entity_type = 'Video' AND entity_id IN (?))", user.id, user.id, user_video_ids)
+  }
+
+  scope :for_place, lambda { |place| where("(entity_type = 'Place' AND entity_id = ?) AND (action = 'tagging')", place.id) }
+
+  scope :for_event, lambda { |event| where("((entity_type = 'Event' AND entity_id = ?) OR (context_type = 'Event' AND context_id = ?)) AND (action IN ('tagging', 'video_upload', 'comment_video'))", event.id, event.id) }
+
+  scope :for_performer, lambda { |performer| where("((entity_type = 'Performer' AND entity_id = ?) OR (context_type = 'Performer' AND context_id = ?)) AND (action IN ('mention', 'like_video', 'comment_video'))", performer.id, performer.id) }
 
   scope :search_by, lambda { |entity, params|
     search = case entity.class.to_s
       when 'User'
         for_user(entity, params)
+      when 'Place'
+        for_place(entity)
+      when 'Event'
+        for_event(entity)
+      when 'Performer'
+        for_performer(entity)
     end
     search.includes [:user, :entity, :context]
   }
+
+  def self.for_user(user, params)
+    feed_type = params[:feed_type] || 'user'
+    case feed_type
+      when 'user'
+        user_feed(user)
+      when 'news'
+        news_feed(user)
+      when 'notification'
+        notification_feed(user)
+    end
+  end
+
+
 
   def message_for_feed(feed_type)
     raise "Not allowed feed type" unless [:user, :news, :notification, :place, :event, :performer].include?(feed_type)
@@ -108,6 +149,10 @@ class FeedItem < ActiveRecord::Base
       t message
     end
   end
+
+    def self.entity_context_sql_part_for(klass_name)
+      "(entity_type = '#{klass_name}' AND entity_id IN (?)) OR (context_type = '#{klass_name}' AND context_id IN (?))"
+    end
 
 end
 
