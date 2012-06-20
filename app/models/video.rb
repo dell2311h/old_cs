@@ -6,7 +6,7 @@ class Video < ActiveRecord::Base
   STATUS_IN_PROCESSING = 2
   STATUS_PROCESSING_DONE = 4
 
-  attr_accessible :clip, :event_id, :user_id, :uuid, :tags, :songs, :thumbnail, :encoding_id, :status
+  attr_accessible :clip, :event_id, :user_id, :uuid, :tags, :songs, :thumbnail, :encoding_id, :status, :performer_ids
 
   mount_uploader :thumbnail, ThumbnailUploader
 #  validates_presence_of :thumbnail
@@ -152,6 +152,13 @@ class Video < ActiveRecord::Base
     !!(self.performers << performer unless self.performers.include?(performer))
   end
 
+  def add_performers_by_ids(performer_ids)
+    performer_ids.each do |performer_id|
+      performer = Performer.find(performer_id)
+      self.add_performer(performer)
+    end
+  end
+
   def self.unscoped_find video_id
     Video.unscoped.find video_id
   end
@@ -170,6 +177,14 @@ class Video < ActiveRecord::Base
 
   def owned_by?(user)
     self.user_id == user.id
+  end
+
+  def update_by(video_params)
+    event_assigned = self.event_id
+    video_params.delete(:event_id) if event_assigned
+    video_params[:performer_ids] ||= []
+    self.update_attributes!(video_params)
+    self.create_encoding_media if !event_assigned && self.event_id
   end
 
   #----- Chunked uploading ---------------
