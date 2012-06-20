@@ -27,3 +27,10 @@ en:
     performer:
       mention: "$actor$ mentioned $entity$ in $context$"
 
+  notification:
+    email:
+      comment_video: "Your video for event %{event} was commented by %{user}."
+      like_video:    "Your video for event %{event} was liked by %{user}."
+      follow:        "User %{user} followed you."
+      mention:       "User %{user} mentioned you."
+      add_song:      "New song was added for your video"

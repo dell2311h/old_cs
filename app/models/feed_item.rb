@@ -1,5 +1,6 @@
 class FeedItem < ActiveRecord::Base
 
+  NOTIFICATIBLE_ACTIONS = ["comment_video", "like_video", "follow", "mention", "add_song"]
   ALLOWED_ENTITIES = ["User", "Video", "Song", "Comment", "Event", "Place", "Performer"]
   ALLOWED_CONTEXTS = ["Video", "Event", "Comment", "Authentication"]
   ALLOWED_ACTIONS = ["video_upload", "comment_video", "follow", "mention",
@@ -9,6 +10,7 @@ class FeedItem < ActiveRecord::Base
 
   belongs_to :entity, :polymorphic => true
   belongs_to :context, :polymorphic => true
+  has_one    :user_notification
 
   validates :user_id, :entity_id, :entity_type, :action, :presence => true
   validates :context_id, :context_type, :presence => true, :if => lambda { |f| f.context_type or f.context_type }
@@ -60,6 +62,52 @@ class FeedItem < ActiveRecord::Base
     FeedItem.create!(:action => 'add_song', :user => video_song.user, :entity => video_song.song, :context => video_song.video)
   end
 
+  def send_notification
+    if should_be_send?
+      process_email_notification
+    end
+  end
+
+  def send_email_notification
+    text = format_notification_text
+    receiver = user.email
+  end
+
+  private
+
+  def should_be_send?
+    NOTIFICATIBLE_ACTIONS.include?(self.action) &&
+    (self.action != "mention" || self.entity_type == "User")
+  end
+
+  def process_email_notification
+    reciver_user = self.user
+    select
+    case self.email_notification_status
+    when "day", "week"
+      store_notification
+    when "immediate"
+      send_email_notification
+    end
+    
+  end
+
+  def store_notification
+    self.user_notification.build(:user_id => self.user_id, :creation_date => Time.now)
+  end
+
+  def format_notification_text
+    message = "notification.email.self.#{self.action}"
+
+    case self.action
+    when "comment_video", "like_video"
+      t message
+    when "follow", "mention"
+      t message
+    when "add_song"
+      t message
+    end
+  end
 
 end
 
