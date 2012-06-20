@@ -29,10 +29,7 @@ class Api::VideosController < Api::BaseController
 
   def update
     @video = Video.unscoped.for_user(current_user).find params[:id]
-    event_id = @video.event_id
-    params[:video].delete(:event_id) unless event_id.nil?
-    @video.update_attributes!(params[:video])
-    @video.create_encoding_media if event_id.nil? && @video.event_id
+    @video.update_by(params[:video])
     render status: :accepted, action: :show
   end
 
@@ -84,3 +81,4 @@ class Api::VideosController < Api::BaseController
       @videos = @videos.with_flag_liked_by_me(current_user) if current_user
     end
 end
+
