@@ -148,17 +148,6 @@ class Video < ActiveRecord::Base
     self.songs
   end
 
-  def add_performer(performer)
-    !!(self.performers << performer unless self.performers.include?(performer))
-  end
-
-  def add_performers_by_ids(performer_ids)
-    performer_ids.each do |performer_id|
-      performer = Performer.find(performer_id)
-      self.add_performer(performer)
-    end
-  end
-
   def self.unscoped_find video_id
     Video.unscoped.find video_id
   end
