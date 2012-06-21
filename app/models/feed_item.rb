@@ -91,12 +91,10 @@ class FeedItem < ActiveRecord::Base
     end
   end
 
-  def self.create_for_join_crowdsync_via_social_network(authenication)
-    remote_friends = authenication.user.remote_friends_not_on_crowdsync_for(authenication.provider.to_sym)
-    remote_uids = remote_friends.map { |remote_friend| remote_friend[:uid] }
-    friends = User.joins(:authentications).where("authentications.provider = ? AND authentications.uid IN (?)", authenication.provider, friend_ids)
+  def self.create_for_join_crowdsync_via_social_network(authentication)
+    friends = authentication.user.remote_friends_on_crowdsync_for(authentication.provider)
     friends.each do |friend|
-      FeedItem.create(:action => "join_crowdsync_via_social_network", :user_id => authenication.user_id, :entity => friend, :context => authenication)
+      FeedItem.create(:action => "join_crowdsync_via_social_network", :user_id => authentication.user_id, :entity => friend, :context => authentication)
     end
   end
 
