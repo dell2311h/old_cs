@@ -29,7 +29,9 @@ class FeedItem < ActiveRecord::Base
     followed_place_ids = user.relationships.where(:followable_type => 'Place').pluck(:followable_id)
     followed_performer_ids = user.relationships.where(:followable_type => 'Performer').pluck(:followable_id)
 
-    where("#{except_sql_str} AND user_id IN (?) OR #{entity_context_sql_part_for('User')} OR #{entity_context_sql_part_for('Event')} OR #{entity_context_sql_part_for('Place')} OR #{entity_context_sql_part_for('Perfromer')}", followed_user_ids, followed_user_ids, followed_user_ids,  followed_event_ids,  followed_event_ids, followed_place_ids, followed_place_ids,  followed_performer_ids, followed_performer_ids)
+    followings_video_ids = Video.joins(:user).where("users.id IN (?)", followed_user_ids).pluck("videos.id")
+
+    where("#{except_sql_str} AND user_id IN (?) OR #{entity_context_sql_part_for('User')} OR #{entity_context_sql_part_for('Event')} OR #{entity_context_sql_part_for('Place')} OR #{entity_context_sql_part_for('Perfromer')} OR #{entity_context_sql_part_for('Video')}", followed_user_ids, followed_user_ids, followed_user_ids,  followed_event_ids,  followed_event_ids, followed_place_ids, followed_place_ids,  followed_performer_ids, followed_performer_ids, followings_video_ids, followings_video_ids)
   }
 
   scope :notification_feed, lambda { |user|
