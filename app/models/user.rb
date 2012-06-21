@@ -71,13 +71,14 @@ class User < ActiveRecord::Base
                                        }
   scope :with_name_like, lambda { |name| where("UPPER(CONCAT(users.first_name, ' ', users.last_name, ' ', users.username)) LIKE ?", "%#{name.to_s.upcase}%") }
 
-  scope :with_follings_count, select('users.*').select("(#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count")
+  scope :with_followings_count, select('users.*').select("(#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count")
 
   # Get all users counts by one query
-  scope :with_calculated_counters, select('users.*').select("(#{Video.select("COUNT(videos.user_id)").where("users.id = videos.user_id").to_sql}) AS uploaded_videos_count, (#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count, (#{Like.select("COUNT(likes.user_id)").where("users.id = likes.user_id").to_sql}) AS liked_videos_count").with_followers_count.with_follings_count
+  scope :with_calculated_counters, select('users.*').select("(#{Video.select("COUNT(videos.user_id)").where("users.id = videos.user_id").to_sql}) AS uploaded_videos_count, (#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count, (#{Like.select("COUNT(likes.user_id)").where("users.id = likes.user_id").to_sql}) AS liked_videos_count").with_followers_count.with_followings_count
 
   scope :without_user, lambda { |user| where("id <> ?", user.id) }
 
+  scope :with_relationships_counters, with_followers_count.with_followings_count
 
   self.per_page = Settings.paggination.per_page
 
@@ -206,3 +207,4 @@ class User < ActiveRecord::Base
       user.friends
     end
 end
+
