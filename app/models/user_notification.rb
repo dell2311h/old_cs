@@ -10,7 +10,7 @@ class UserNotification < ActiveRecord::Base
     text = format_notification_text
     email = self.user.email
     NotificationMailer.send_single_notification(email, text).deliver
-    #self.destroy
+    self.destroy
   end
 
   def self.process_email_notification(feed_item)
@@ -51,7 +51,12 @@ class UserNotification < ActiveRecord::Base
     texts = []
     notifications.each { |notification| texts << notification.format_notification_text }
     email = notifications.first.user.email
-    NotificationMailer.send_multiply_notifications(email, texts).deliver
+    period = Time.now - notifications.first.user.read_attribute(:email_notification_status).days
+    begin
+      NotificationMailer.send_multiply_notifications(email, texts, period).deliver
+      notifications.each { |notification| notification.destroy}
+    rescue
+    end
   end
 
   def self.find_notification_to_deliver

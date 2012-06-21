@@ -6,8 +6,9 @@ class NotificationMailer < ActionMailer::Base
     mail(:to => receiver, :subject => "#{Settings.application.name} notification")
   end
 
-  def send_multiply_notifications(receiver, notifications)
+  def send_multiply_notifications(receiver, notifications, period)
     @notifications = notifications
+    @period = period
     mail(:to => receiver, :subject => "#{Settings.application.name} notifications")
   end
 
