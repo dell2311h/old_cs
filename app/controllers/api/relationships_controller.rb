@@ -5,12 +5,12 @@ class Api::RelationshipsController < Api::BaseController
   before_filter :set_entities_type, :only => [:followings, :followers]
 
   def followings
-    @entities = @source_user.followed_with_type(params[:type]).with_flag_followed_by(current_user)
+    @entities = @source_user.followed_with_type(params[:type]).with_flag_followed_by(current_user).with_relationships_counters
     render status: set_status_by(@entities), action: :index
   end
 
   def followers
-    @entities = @followable.followers.with_flag_followed_by(current_user)
+    @entities = @followable.followers.with_flag_followed_by(current_user).with_relationships_counters
     render status: set_status_by(@entities), action: :index
   end
 
