@@ -3,7 +3,7 @@ class FeedItem < ActiveRecord::Base
   ALLOWED_ENTITIES = ["User", "Video", "Song", "Comment", "Event", "Place", "Performer"]
   ALLOWED_CONTEXTS = ["Video", "Event", "Comment", "Authentication", "Performer"]
   ALLOWED_ACTIONS = ["video_upload", "comment_video", "follow", "mention",
-                     "like_video", "join_crowdsync", "add_song", "tagging", "mention", "like_performers_video", "comment_performers_video", "video_upload_to_performer"]
+                     "like_video", "join_crowdsync_via_social_network", "add_song", "tagging", "mention", "like_performers_video", "comment_performers_video", "video_upload_to_performer"]
 
   belongs_to :user
 
@@ -88,6 +88,15 @@ class FeedItem < ActiveRecord::Base
         'video'
       else
         ""
+    end
+  end
+
+  def self.create_for_join_crowdsync_via_social_network(authenication)
+    remote_friends = authenication.user.remote_friends_not_on_crowdsync_for(authenication.provider.to_sym)
+    remote_uids = remote_friends.map { |remote_friend| remote_friend[:uid] }
+    friends = User.joins(:authentications).where("authentications.provider = ? AND authentications.uid IN (?)", authenication.provider, friend_ids)
+    friends.each do |friend|
+      FeedItem.create(:action => "join_crowdsync_via_social_network", :user_id => authenication.user_id, :entity => friend, :context => authenication)
     end
   end
 
