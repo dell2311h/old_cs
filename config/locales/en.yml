@@ -32,6 +32,7 @@ en:
       mention: "$actor$ mentioned $entity$ in $context$"
       add_song: "$actor$ added song $entity$ to $context$"
     notification:
+      join_crowdsync_via_social_network: "Your $context$ friend $actor$ just joined Crowdsync"
     place:
       tagging: '$entity$ was tagged by $actor$ in $context$'
     event:
