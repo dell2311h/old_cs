@@ -141,10 +141,7 @@ class FeedItem < ActiveRecord::Base
   end
 
   def send_notification
-    if should_send_notification?
-      UserNotification.process_email_notification self
-
-    end
+    UserNotification.process_notifications self if should_send_notification?
   end
 
   private

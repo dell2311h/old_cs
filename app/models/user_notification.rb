@@ -13,17 +13,9 @@ class UserNotification < ActiveRecord::Base
     self.destroy
   end
 
-  def self.process_email_notification(feed_item)
-
-    case feed_item.user.email_notification_status
-    when "day", "week"
-      notification = creat_by(feed_item)
-      notification.save
-    when "immediate"
-      notification = creat_by(feed_item)
-      deliver_email_notification
-    end
-
+  def process_notifications(feed_item)
+    self.process_email_notification(feed_item)
+    self.process_apn_notification(feed_item)
   end
 
   def self.send_email_notifications
@@ -46,6 +38,45 @@ class UserNotification < ActiveRecord::Base
   end
 
   private
+
+  def find_device_by device_token
+   APN::Device.find_or_create(:token => device_token)
+  end
+
+  def send_apn_notification
+   device = find_device_by self.user.device_token
+   apn_params = format_apn_notification
+   APN::Notification.build({:badge   => apn_params[:badge],
+                            :alert  => apn_params[:text],
+                            :sound  => apn_params[:sound],
+                            :device => device})
+  end
+
+  def self.process_apn_notification(feed_item)
+    notification = creat_by(feed_item)
+    notification.send_apn_notification
+  end
+
+  def format_apn_notification
+    bage = 1
+    text = text = format_notification_text
+    sound = "apnsTune.caf"
+
+    {:badge => badge, :text => text, sound => sound}
+  end
+
+  def self.process_email_notification(feed_item)
+
+    case feed_item.user.email_notification_status
+    when "day", "week"
+      notification = creat_by(feed_item)
+      notification.save
+    when "immediate"
+      notification = creat_by(feed_item)
+      deliver_email_notification
+    end
+
+  end
 
   def self.deliver_email_notifications(notifications)
     texts = []
