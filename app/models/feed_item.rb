@@ -103,7 +103,7 @@ class FeedItem < ActiveRecord::Base
     if video
       FeedItem.create!(:action => 'like_video', :user => like.user, :entity => video, :context => video.event)
       video.performers.each do |performer|
-        FeedItem.create!(:action => 'like_perfomers_video', :user => like.user, :entity => video, :context => performer)
+        FeedItem.create!(:action => 'like_performers_video', :user => like.user, :entity => video, :context => performer)
       end
     end
   end
