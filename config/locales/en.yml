@@ -36,6 +36,8 @@ en:
       tagging: '$entity$ was tagged by $actor$ in $context$'
     event:
       tagging: '$entity$ was tagged by $actor$ in $context$'
+      video_upload: "$entity$ was uploaded by $actor$ to $context$"
+      comment_video: "$context$'s $entity$ was commented by $actor$"
     performer:
       mention: "$actor$ mentioned $entity$ in $context$"
       like_performers_video: "$context$'s $entity$ was liked by $actor$"

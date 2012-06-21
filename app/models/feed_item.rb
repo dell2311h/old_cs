@@ -31,7 +31,7 @@ class FeedItem < ActiveRecord::Base
 
     followings_video_ids = Video.joins(:user).where("users.id IN (?)", followed_user_ids).pluck("videos.id")
 
-    where("#{except_sql_str} AND user_id IN (?) OR #{entity_context_sql_part_for('User')} OR #{entity_context_sql_part_for('Event')} OR #{entity_context_sql_part_for('Place')} OR #{entity_context_sql_part_for('Perfromer')} OR #{entity_context_sql_part_for('Video')}", followed_user_ids, followed_user_ids, followed_user_ids,  followed_event_ids,  followed_event_ids, followed_place_ids, followed_place_ids,  followed_performer_ids, followed_performer_ids, followings_video_ids, followings_video_ids)
+    where("#{except_sql_str} AND user_id IN (?) OR #{entity_context_sql_part_for('User')} OR #{entity_context_sql_part_for('Event')} OR #{entity_context_sql_part_for('Place')} OR #{entity_context_sql_part_for('Performer')} OR #{entity_context_sql_part_for('Video')}", followed_user_ids, followed_user_ids, followed_user_ids,  followed_event_ids,  followed_event_ids, followed_place_ids, followed_place_ids,  followed_performer_ids, followed_performer_ids, followings_video_ids, followings_video_ids)
   }
 
   scope :notification_feed, lambda { |user|
@@ -103,7 +103,7 @@ class FeedItem < ActiveRecord::Base
     if video
       FeedItem.create!(:action => 'like_video', :user => like.user, :entity => video, :context => video.event)
       video.performers.each do |performer|
-        FeedItem.create!(:action => 'like_perfomers_video', :user => like.user, :entity => video, :context => performer)
+        FeedItem.create!(:action => 'like_performers_video', :user => like.user, :entity => video, :context => performer)
       end
     end
   end
@@ -156,6 +156,7 @@ class FeedItem < ActiveRecord::Base
     class << self
 
       def entity_context_sql_part_for(klass_name)
+        klass_name.constantize # check class name correctness
         "(entity_type = '#{klass_name}' AND entity_id IN (?)) OR (context_type = '#{klass_name}' AND context_id IN (?))"
       end
 
