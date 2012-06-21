@@ -33,6 +33,8 @@ class User < ActiveRecord::Base
   validates :email_notification_status, :inclusion => ["none", "immediate", "day", "week"]
   validates :sex, :inclusion => ["m", "f"], :if => lambda {|u| u.sex }
 
+  validates_format_of :device_token, :with => /^[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}$/, :allow_nil => true
+
   has_many :comments, :dependent => :destroy
   has_many :videos
   has_many :places
