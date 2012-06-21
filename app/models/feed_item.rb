@@ -86,6 +86,8 @@ class FeedItem < ActiveRecord::Base
         object.name
       when 'Video'
         'video'
+      when 'Authentication'
+        object.provider
       else
         ""
     end
