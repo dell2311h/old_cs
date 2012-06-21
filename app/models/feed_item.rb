@@ -3,7 +3,7 @@ class FeedItem < ActiveRecord::Base
   ALLOWED_ENTITIES = ["User", "Video", "Song", "Comment", "Event", "Place", "Performer"]
   ALLOWED_CONTEXTS = ["Video", "Event", "Comment", "Authentication", "Performer"]
   ALLOWED_ACTIONS = ["video_upload", "comment_video", "follow", "mention",
-                     "like_video", "join_crowdsync", "add_song", "tagging", "mention", "like_performers_video", "comment_performers_video"]
+                     "like_video", "join_crowdsync", "add_song", "tagging", "mention", "like_performers_video", "comment_performers_video", "video_upload_to_performer"]
 
   belongs_to :user
 
@@ -89,6 +89,13 @@ class FeedItem < ActiveRecord::Base
     end
   end
 
+  def self.create_for_upload_video(video)
+    FeedItem.create(:action => "video_upload", :user_id => video.user_id, :entity => video, :context => video.event)
+    video.performers.each do |performer|
+      FeedItem.create(:action => "video_upload_to_performer", :user_id => video.user_id, :entity => video, :context => performer)
+    end
+  end
+
   def self.create_for_like(like)
     video = like.video
     if video
@@ -139,6 +146,7 @@ class FeedItem < ActiveRecord::Base
                         :context_id => tagging.comment.video_id);
       end
     end
+
   end
 
   private

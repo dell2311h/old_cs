@@ -21,12 +21,14 @@ en:
       video_upload: "$actor$ uploaded $entity$ to $context$ event"
       mention: "$actor$ mentioned $entity$ in $context$"
       add_song: "$actor$ added song $entity$ to $context$"
+      video_upload_to_performer: "$actor$ uploaded $entity$ to $context$"
     news:
       follow: '$actor$ started following $entity$'
       like_video: '$actor$ liked $entity$ from the $context$ event'
       tagging: '$actor$ tagged $entity$ in $context$'
       comment_video: "$actor$ commented $entity$ from the $context$ event"
       video_upload: "$actor$ uploaded $entity$ to $context$ event"
+      video_upload_to_performer: "$actor$ uploaded $entity$ to $context$"
       mention: "$actor$ mentioned $entity$ in $context$"
       add_song: "$actor$ added song $entity$ to $context$"
     notification:
@@ -38,4 +40,5 @@ en:
       mention: "$actor$ mentioned $entity$ in $context$"
       like_performers_video: "$context$'s $entity$ was liked by $actor$"
       comment_performers_video: "$context$'s $entity$ was commented by $actor$"
+      video_upload_to_performer: "$actor$ uploaded $entity$ to $context$"
 
