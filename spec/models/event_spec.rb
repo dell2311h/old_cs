@@ -83,11 +83,7 @@ describe Event do
 
   describe "#create_timings_by_pluraleyes_sync_results" do
 
-    let(:event) { Factory.create(:event) }
-
-    before :each do
-      Clip.any_instance.stub(:add_to_pluraleyes)
-    end
+    let(:event) { Factory.create(:event_without_add_to_pe_callback) }
 
     before :all do
       @clips_data = [{:recorded_at => Time.now, :pe_id => SecureRandom.uuid, :encoding_id => SecureRandom.uuid },
@@ -100,7 +96,7 @@ describe Event do
       @clips_data.each do |data|
         video = Factory.create(:video, :event => event, :status => Video::STATUS_NEW, :clip => nil)
         @videos_ids << video.id
-        Factory.create(:clip, :clip_type => Clip::TYPE_DEMUX_AUDIO, :pluraleyes_id => data[:pe_id], :encoding_id => data[:encoding_id], :video => video, :synced => false )
+        Factory.create(:clip_without_add_to_pe_callback, :clip_type => Clip::TYPE_DEMUX_AUDIO, :pluraleyes_id => data[:pe_id], :encoding_id => data[:encoding_id], :video => video, :synced => false )
         video.create_meta_info :recorded_at => data[:recorded_at]
       end
 
