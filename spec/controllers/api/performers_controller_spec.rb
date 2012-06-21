@@ -9,6 +9,7 @@ describe Api::PerformersController do
   describe 'GET index' do
     before :each do
       @result_array = []
+      @performer.stub!(:search).and_return(@performer)
       @performer.stub!(:paginate).and_return(@result_array)
       @performer.stub!(:count => 2)
       @result_array.stub!(:with_flag_followed_by).and_return(@result_array)
