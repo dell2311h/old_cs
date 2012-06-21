@@ -62,11 +62,6 @@ ActiveRecord::Schema.define(:version => 20120620184204) do
     t.integer  "master_track_version"
   end
 
-  create_table "events_performers", :id => false, :force => true do |t|
-    t.integer "performer_id", :null => false
-    t.integer "event_id",     :null => false
-  end
-
   create_table "feed_items", :force => true do |t|
     t.string   "action"
     t.integer  "user_id"
@@ -223,6 +218,13 @@ ActiveRecord::Schema.define(:version => 20120620184204) do
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
+
+  create_table "video_performers", :force => true do |t|
+    t.integer  "video_id"
+    t.integer  "performer_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
 
   create_table "video_songs", :force => true do |t|
     t.integer  "user_id"

@@ -6,7 +6,7 @@ class Video < ActiveRecord::Base
   STATUS_IN_PROCESSING = 2
   STATUS_PROCESSING_DONE = 4
 
-  attr_accessible :clip, :event_id, :user_id, :uuid, :tags, :songs, :thumbnail, :encoding_id, :status
+  attr_accessible :clip, :event_id, :user_id, :uuid, :tags, :songs, :thumbnail, :encoding_id, :status, :performer_ids
 
   mount_uploader :thumbnail, ThumbnailUploader
 #  validates_presence_of :thumbnail
@@ -41,6 +41,9 @@ class Video < ActiveRecord::Base
 
   has_many :feed_entities, :as => :entity, :class_name => "FeedItem", :dependent => :destroy
   has_many :feed_contexts, :as => :context, :class_name => "FeedItem", :dependent => :destroy
+
+  has_many :video_performers, :dependent => :destroy
+  has_many :performers, :through => :video_performers
 
   # default scope to hide videos that are not ready.
   default_scope where(:status => STATUS_PROCESSING_DONE)
@@ -165,6 +168,14 @@ class Video < ActiveRecord::Base
     self.user_id == user.id
   end
 
+  def update_by(video_params)
+    event_assigned = self.event_id
+    video_params.delete(:event_id) if event_assigned
+    video_params[:performer_ids] ||= []
+    self.update_attributes!(video_params)
+    self.create_encoding_media if !event_assigned && self.event_id
+  end
+
   #----- Chunked uploading ---------------
 
   after_create do |video|
@@ -279,3 +290,4 @@ class Video < ActiveRecord::Base
       self.update_attribute :last_chunk_id, chunk_id
     end
 end
+

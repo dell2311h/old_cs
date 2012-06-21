@@ -8,6 +8,9 @@ en:
       empty_videos: "Not defined parameter 'videos' for search recommended events"
       empty_count:  "Count parameter not defined"
       empty_name:   "Name parameter not defined"
+    models:
+      video_performer:
+        uniqueness_by_performer: 'was already added'
 
   feed:
     user:
@@ -33,6 +36,8 @@ en:
       tagging: '$entity$ was tagged by $actor$ in $context$'
     performer:
       mention: "$actor$ mentioned $entity$ in $context$"
+      like_performers_video: "$context$'s $entity$ was liked by $actor$"
+      comment_performers_video: "$context$'s $entity$ was commented by $actor$"
 
   notification:
     email:
