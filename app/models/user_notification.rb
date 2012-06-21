@@ -10,6 +10,7 @@ class UserNotification < ActiveRecord::Base
     text = format_notification_text
     email = self.user.email
     NotificationMailer.send_single_notification(email, text).deliver
+    #self.destroy
   end
 
   def self.process_email_notification(feed_item)
@@ -25,23 +26,41 @@ class UserNotification < ActiveRecord::Base
 
   end
 
-  private
+  def self.send_email_notifications
+    notifications = find_notification_to_deliver().group_by(& :user_id)
 
-  def self.creat_by(feed_item)
-    UserNotification.new(:user_id => feed_item.user_id, :feed_item_id => feed_item.id, :creation_date => Time.now)
+    notifications.each {|user_id, user_notification| self.deliver_email_notifications user_notification}
   end
 
   def format_notification_text
-    message_template = "notification.email.self.#{self.feed_item.action}"
+    message_template = "notification.email.#{self.feed_item.action}"
 
     case self.feed_item.action
     when "comment_video", "like_video"
       I18n.t message_template
     when "follow", "mention"
-      I18n.t message_template, :user => self.feed_item.user_id
+      I18n.t message_template, :user => self.user.username
     when "add_song"
       I18n.t message_template
     end
+  end
+
+  private
+
+  def self.deliver_email_notifications(notifications)
+    texts = []
+    notifications.each { |notification| texts << notification.format_notification_text }
+    email = notifications.first.user.email
+    NotificationMailer.send_multiply_notifications(email, texts).deliver
+  end
+
+  def self.find_notification_to_deliver
+    user_notifications = UserNotification.where("(users.email_notification_status > 0)  AND (DATEDIFF(?, creation_date) >= users.email_notification_status)", Time.now)
+    user_notifications.joins(:user).includes(:user, :feed_item)
+  end
+
+  def self.creat_by(feed_item)
+    UserNotification.new(:user_id => feed_item.user_id, :feed_item_id => feed_item.id, :creation_date => Time.now)
   end
 
 end
