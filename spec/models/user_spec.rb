@@ -89,6 +89,10 @@ describe User do
 
     end
 
+    describe ".with_relationships_counters" do
+      pending
+    end
+
   end
 
 end
