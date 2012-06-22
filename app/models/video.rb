@@ -267,7 +267,7 @@ class Video < ActiveRecord::Base
       self.clip = file
       if self.save!
         notify_observers(:after_upload)
-        notify_observers(:after_first_upload_to_event) unless self.event_id.nil?
+        notify_about_first_upload_to_event
         true
       else
         false
@@ -276,7 +276,7 @@ class Video < ActiveRecord::Base
 
     def after_attach_to_event
       self.create_encoding_media
-      notify_observers(:after_first_upload_to_event)
+      notify_about_first_upload_to_event
     end
 
     def increment_views
@@ -296,5 +296,11 @@ class Video < ActiveRecord::Base
     def set_chunk_id! chunk_id
       raise "Invalid chunk id!" unless self.last_chunk_id + 1 == chunk_id
       self.update_attribute :last_chunk_id, chunk_id
+    end
+
+    def notify_about_first_upload_to_event
+      unless self.event_id.nil? && self.clip.nil?
+        notify_observers(:after_first_upload_to_event) if Video.unscoped.where(:event_id => self.event_id).where("clip IS NOT NULL").count == 1
+      end
     end
 end
