@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120621134938) do
+ActiveRecord::Schema.define(:version => 20120622101446) do
 
   create_table "apn_bases", :id => false, :force => true do |t|
     t.integer "id", :null => false
@@ -243,6 +243,7 @@ ActiveRecord::Schema.define(:version => 20120621134938) do
     t.string   "last_name"
     t.integer  "points",                    :default => 0
     t.string   "device_token"
+    t.integer  "new_notifications_count",   :default => 0
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

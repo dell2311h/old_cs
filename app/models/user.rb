@@ -29,6 +29,7 @@ class User < ActiveRecord::Base
   validates :username, :email, :uniqueness => true
 
   validates :latitude, :longitude, :numericality => true, :allow_nil => true
+  validates_numericality_of :new_notifications_count, :only_integer => true,:greater_than_or_equal_to => 0
 
   validates :email_notification_status, :inclusion => ["none", "immediate", "day", "week"]
   validates :sex, :inclusion => ["m", "f"], :if => lambda {|u| u.sex }
@@ -80,6 +81,17 @@ class User < ActiveRecord::Base
   scope :with_calculated_counters, select('users.*').select("(#{Video.select("COUNT(videos.user_id)").where("users.id = videos.user_id").to_sql}) AS uploaded_videos_count, (#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count, (#{Like.select("COUNT(likes.user_id)").where("users.id = likes.user_id").to_sql}) AS liked_videos_count").with_followers_count.with_follings_count
 
   scope :without_user, lambda { |user| where("id <> ?", user.id) }
+
+  def increment_new_notifications_count
+      self.new_notifications_count += 1
+      self.save
+  end
+
+  def decrement_new_notifications_count_by_val(val)
+    self.new_notifications_count -= val
+    self.new_notifications_count = 0 if self.new_feeds_count < 0
+    self.save
+  end
 
   def email_notification_status=(status)
     days = case status
