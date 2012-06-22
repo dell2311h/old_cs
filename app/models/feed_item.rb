@@ -4,7 +4,7 @@ class FeedItem < ActiveRecord::Base
   ALLOWED_ENTITIES = ["User", "Video", "Song", "Comment", "Event", "Place", "Performer"]
   ALLOWED_CONTEXTS = ["Video", "Event", "Comment", "Authentication", "Performer"]
   ALLOWED_ACTIONS = ["video_upload", "comment_video", "follow", "mention",
-                     "like_video", "join_crowdsync", "add_song", "tagging", "mention", "like_performers_video", "comment_performers_video"]
+                     "like_video", "join_crowdsync", "add_song", "tagging", "mention", "like_performers_video", "comment_performers_video", "video_upload_to_performer"]
 
   belongs_to :user
 
@@ -31,7 +31,9 @@ class FeedItem < ActiveRecord::Base
     followed_place_ids = user.relationships.where(:followable_type => 'Place').pluck(:followable_id)
     followed_performer_ids = user.relationships.where(:followable_type => 'Performer').pluck(:followable_id)
 
-    where("#{except_sql_str} AND user_id IN (?) OR #{entity_context_sql_part_for('User')} OR #{entity_context_sql_part_for('Event')} OR #{entity_context_sql_part_for('Place')} OR #{entity_context_sql_part_for('Perfromer')}", followed_user_ids, followed_user_ids, followed_user_ids,  followed_event_ids,  followed_event_ids, followed_place_ids, followed_place_ids,  followed_performer_ids, followed_performer_ids)
+    followings_video_ids = Video.joins(:user).where("users.id IN (?)", followed_user_ids).pluck("videos.id")
+
+    where("#{except_sql_str} AND user_id IN (?) OR #{entity_context_sql_part_for('User')} OR #{entity_context_sql_part_for('Event')} OR #{entity_context_sql_part_for('Place')} OR #{entity_context_sql_part_for('Perfromer')} OR #{entity_context_sql_part_for('Video')}", followed_user_ids, followed_user_ids, followed_user_ids,  followed_event_ids,  followed_event_ids, followed_place_ids, followed_place_ids,  followed_performer_ids, followed_performer_ids, followings_video_ids, followings_video_ids)
   }
 
   scope :notification_feed, lambda { |user|
@@ -89,6 +91,13 @@ class FeedItem < ActiveRecord::Base
     end
   end
 
+  def self.create_for_upload_video(video)
+    FeedItem.create(:action => "video_upload", :user_id => video.user_id, :entity => video, :context => video.event)
+    video.performers.each do |performer|
+      FeedItem.create(:action => "video_upload_to_performer", :user_id => video.user_id, :entity => video, :context => performer)
+    end
+  end
+
   def self.create_for_like(like)
     video = like.video
     if video
@@ -138,6 +147,7 @@ class FeedItem < ActiveRecord::Base
                         :context_id => tagging.comment.video_id);
       end
     end
+
   end
 
   def send_notification

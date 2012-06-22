@@ -13,6 +13,8 @@ module Follow::FlagsAndCounters
       table_name = base.scoped.table.name
       base.select("#{table_name}.*").select("(#{Relationship.select("COUNT(relationships.followable_id)").where("#{table_name}.id = relationships.followable_id AND relationships.followable_type = '#{model_name}'").to_sql}) AS followers_count")
     }
+
+    base.scope :with_relationships_counters, base.with_followers_count
   end
 end
 

@@ -1,10 +1,7 @@
 class VideoObserver < ActiveRecord::Observer
 
   def after_set_status_done(video)
-    FeedItem.create(:action      => "video_upload",
-                    :user_id     => video.user_id,
-                    :entity      => video,
-                    :context => video.event)
+    FeedItem.create_for_upload_video(video)
   end
 
 end

@@ -7,7 +7,6 @@ class Event < ActiveRecord::Base
   belongs_to :place
   has_many :videos
 
-  has_and_belongs_to_many :performers
   has_many :master_tracks, dependent: :destroy
 
   validates :name, :date, presence: true
@@ -199,3 +198,4 @@ class Event < ActiveRecord::Base
     end
 
 end
+
