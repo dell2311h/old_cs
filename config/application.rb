@@ -32,7 +32,7 @@ module Crowdsync
 
     config.active_record.observers = :relationship_observer, :tagging_observer,
                                      :comment_observer, :video_observer, :like_observer,
-                                     :video_song_observer, :feed_item_observer
+                                     :video_song_observer, :feed_item_observer, :authentication_observer
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
