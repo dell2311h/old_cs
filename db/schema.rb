@@ -11,10 +11,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120622101446) do
+ActiveRecord::Schema.define(:version => 20120622155050) do
 
-  create_table "apn_bases", :id => false, :force => true do |t|
-    t.integer "id", :null => false
+  create_table "apn_bases", :force => true do |t|
   end
 
   create_table "apn_devices", :force => true do |t|
