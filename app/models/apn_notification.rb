@@ -19,15 +19,15 @@ class ApnNotification < UserNotification
   private
 
   def format_apn_notification
-    badge = 1
+    badge = self.user.new_notifications_count
     alert = format_message
-    sound = "apnsTune.caf"
+    sound = Settings.notifications.apn.sound
 
     {:badge => badge, :alert => alert, :sound => sound}
   end
 
   def self.find_device_by_token device_token
-   APN::Device.find_or_create_by_token device_token
+    APN::Device.find_or_create_by_token device_token  if device_token
   end
 
 end

@@ -83,14 +83,14 @@ class User < ActiveRecord::Base
   scope :without_user, lambda { |user| where("id <> ?", user.id) }
 
   def increment_new_notifications_count
-      self.new_notifications_count += 1
-      self.save
+    count = self.new_notifications_count + 1
+    self.update_attribute(:new_notifications_count, count)
   end
 
   def decrement_new_notifications_count_by_val(val)
-    self.new_notifications_count -= val
-    self.new_notifications_count = 0 if self.new_feeds_count < 0
-    self.save
+    count =  self.new_notifications_count - val
+    count = 0 if count < 0
+    self.update_attribute(:new_notifications_count, count)
   end
 
   def email_notification_status=(status)
