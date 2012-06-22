@@ -77,6 +77,7 @@ defaults: &defaults
       exceeding_followings_count:         50
       exceeding_comment_count_for_user:   25
       upload_longest_video_to_event:      50
+      create_bridge:                      40
     limits:
       exceeding_likes_count:              100
       exceeding_comments_count_for_video: 100
