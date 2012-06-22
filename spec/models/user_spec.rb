@@ -54,31 +54,39 @@ describe User do
 
   end
 
-  describe "#follow" do
-    it "should create an relationship" do
-      relationship = user_one.follow(user_two)
-      relationship.follower.should == user_one
-      relationship.followable.should == user_two
-    end
-  end
+  describe "relationships" do
 
-  describe "#unfollow" do
-    it "should delete an relationship" do
-      user_one.follow(user_two)
-      relationship = user_one.unfollow(user_two)
-      relationship.persisted?.should be false
-    end
-  end
-
-  describe "#following?" do
-
-    it "should be true if one user follows other" do
-      user_one.follow(user_two)
-      user_one.following?(user_two).should be true
+    before :each do
+      FeedItem.stub!(:create_for_follow)
     end
 
-    it "should be false if one user doesn't follow other" do
-      user_one.following?(user_two).should be false
+    describe "#follow" do
+      it "should create an relationship" do
+        relationship = user_one.follow(user_two)
+        relationship.follower.should == user_one
+        relationship.followable.should == user_two
+      end
+    end
+
+    describe "#unfollow" do
+      it "should delete an relationship" do
+        user_one.follow(user_two)
+        relationship = user_one.unfollow(user_two)
+        relationship.persisted?.should be false
+      end
+    end
+
+    describe "#following?" do
+
+      it "should be true if one user follows other" do
+        user_one.follow(user_two)
+        user_one.following?(user_two).should be true
+      end
+
+      it "should be false if one user doesn't follow other" do
+        user_one.following?(user_two).should be false
+      end
+
     end
 
   end
