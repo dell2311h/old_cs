@@ -40,7 +40,6 @@ en:
       comment_performers_video: "$context$'s $entity$ was commented by $actor$"
 
   notification:
-    email:
       comment_video: "Your video for event %{event} was commented by %{user}."
       like_video:    "Your video for event %{event} was liked by %{user}."
       follow:        "User %{user} followed you."

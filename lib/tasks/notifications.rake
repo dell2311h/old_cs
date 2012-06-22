@@ -3,7 +3,7 @@ namespace :cs do
   namespace :notifications do
     desc "Deliver notifications for period"
     task :deliver => :environment do
-      UserNotification.send_email_notifications
+      EmailNotification.deliver_undelivered
     end
   end
 end

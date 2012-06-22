@@ -242,7 +242,7 @@ ActiveRecord::Schema.define(:version => 20120621134938) do
     t.string   "first_name"
     t.string   "last_name"
     t.integer  "points",                    :default => 0
-    t.string   "device_id"
+    t.string   "device_token"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
