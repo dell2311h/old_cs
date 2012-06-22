@@ -31,6 +31,7 @@ en:
       video_upload_to_performer: "$actor$ uploaded $entity$ to $context$"
       mention: "$actor$ mentioned $entity$ in $context$"
       add_song: "$actor$ added song $entity$ to $context$"
+      video_upload_to_performer: "$actor$ uploaded $entity$ to $context$"
     notification:
       comment_video: "$actor$ commented $entity$ from the $context$ event"
       mention: "$actor$ mentioned $entity$ in $context$"
