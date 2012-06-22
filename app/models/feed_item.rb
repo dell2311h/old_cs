@@ -61,6 +61,9 @@ class FeedItem < ActiveRecord::Base
 
   def self.for_user(user, params)
     feed_type = params[:feed_type] || 'user'
+
+    raise "Not allowed feed type" unless ['user', 'news', 'notification'].include?(feed_type)
+
     case feed_type
       when 'user'
         user_feed(user)
