@@ -88,10 +88,8 @@ class User < ActiveRecord::Base
     self.update_attribute(:new_notifications_count, count)
   end
 
-  def decrement_new_notifications_count_by_val(val)
-    count =  self.new_notifications_count - val
-    count = 0 if count < 0
-    self.update_attribute(:new_notifications_count, count)
+  def reset_new_notifications_count
+    self.update_attribute(:new_notifications_count, 0)
   end
 
   def email_notification_status=(status)

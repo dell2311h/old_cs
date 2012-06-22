@@ -72,6 +72,7 @@ class FeedItem < ActiveRecord::Base
       when 'news'
         news_feed(user)
       when 'notification'
+        user.reset_new_notifications_count
         notification_feed(user)
     end
   end
