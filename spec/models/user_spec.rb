@@ -90,8 +90,57 @@ describe User do
 
     end
 
-    describe ".with_relationships_counters" do
-      pending
+    describe "counters" do
+
+      before :all do
+        @user_one = Factory.create(:user)
+        @user_two = Factory.create(:user)
+      end
+
+      describe ".with_followers_count" do
+
+        context "when user doesn't have any followers" do
+          it "should have followers_count attribute with 0 value" do
+            attributes = User.with_followers_count.find(@user_one.id).attributes
+            attributes["followers_count"].should == 0
+          end
+        end
+
+        context "when user has followers" do
+          it "should have followers_count attribute with value equal to 1" do
+            @user_two.follow(@user_one)
+            attributes = User.with_followers_count.find(@user_one.id).attributes
+            attributes["followers_count"].should == 1
+          end
+        end
+
+      end
+
+      describe ".with_followings_count" do
+
+        context "when user doesn't have any followers" do
+          it "should have followings_count attribute with 0 value" do
+            attributes = User.with_followings_count.find(@user_one.id).attributes
+            attributes["followings_count"].should == 0
+          end
+        end
+
+        context "when user has followers" do
+          it "should have followings_count attribute with value equal to 1" do
+            @user_one.follow(@user_two)
+            attributes = User.with_followings_count.find(@user_one.id).attributes
+            attributes["followings_count"].should == 1
+          end
+        end
+
+      end
+
+     describe ".with_relationships_counters" do
+       it "should return result that have 'followers_count', 'followings_count' attributes" do
+         User.with_relationships_counters.first.attributes.should include("followers_count", "followings_count")
+       end
+     end
+
     end
 
   end
