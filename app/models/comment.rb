@@ -7,7 +7,7 @@ class Comment < ActiveRecord::Base
   has_many :taggings
   has_many :tags, :through => :taggings
 
-  after_create :create_tags
+  after_create :create_tags, :accure_achievement_points
 
   validates :text, :user_id, :video_id, :presence => true
 
@@ -28,10 +28,21 @@ class Comment < ActiveRecord::Base
   end
 
   private
-  
-  def create_tags
-    Tag.create_by_comment self
-  end
 
+    def create_tags
+      Tag.create_by_comment self
+    end
+
+    def accure_achievement_points
+      if Comment.where(:video_id => self.video_id).count >= Settings.achievements.limits.exceeding_comments_count_for_video &&
+         AchievementPoint.where(:user_id => self.video.user_id,
+                                :reason_code => AchievementPoint::REASONS[:exceeding_comments_count_for_video]).count == 0
+        notify_observers(:after_exceeding_comments_count_for_video)
+      end
+      if Comment.where(:user_id => self.user_id).count >= Settings.achievements.limits.exceeding_comments_count_for_user &&
+         AchievementPoint.where(:user_id => self.user_id,
+                                :reason_code => AchievementPoint::REASONS[:exceeding_comments_count_for_user]).count == 0
+        notify_observers(:after_exceeding_comments_count_for_user)
+      end
+    end
 end
-

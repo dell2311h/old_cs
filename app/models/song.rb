@@ -1,6 +1,9 @@
 class Song < ActiveRecord::Base
   has_many :video_songs, dependent: :destroy
   has_many :videos, through: :video_songs
+  belongs_to :user
+
+  after_create :accure_achievement_points
 
   validates :name, presence: true, uniqueness: true
 
@@ -41,5 +44,10 @@ class Song < ActiveRecord::Base
     self.videos.most_popular.first
   end
 
-end
+  private
 
+    def accure_achievement_points
+      notify_observers(:after_definition)
+    end
+
+end

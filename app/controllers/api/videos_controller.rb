@@ -70,6 +70,12 @@ class Api::VideosController < Api::BaseController
     render status: :ok, action: :show
   end
 
+  def view
+    @video = Video.unscoped.find params[:id]
+    @video.increment_views
+    render status: :ok, action: :show
+  end
+
   private
     def auth_check_for_me
       auth_check if me?
@@ -81,4 +87,3 @@ class Api::VideosController < Api::BaseController
       @videos = @videos.with_flag_liked_by_me(current_user) if current_user
     end
 end
-

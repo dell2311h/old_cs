@@ -16,7 +16,21 @@ describe Api::VideosController do
         result = JSON.parse(response.body)
         result['error'].should_not be_nil
       end
+    end
+  end
+  describe "#view" do
+    before :each do
+      @video = Factory.create(:video)
+      @user = User
+      @user.stub(:find_by_authentication_token).and_return(@user)
+    end
 
+    it "should increment view_count" do
+      video_view_count = @video.view_count.to_i
+      put :view, :id => @video.id, :format => :json
+      response.code.should eq "200"
+      @video.reload
+      @video.view_count.should == video_view_count + 1
     end
   end
 end

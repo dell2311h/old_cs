@@ -12,11 +12,25 @@ class Relationship < ActiveRecord::Base
 
   validate :no_self_following
 
+  after_create :accure_achievement_points
+
   private
 
     def no_self_following
       errors.add(:base, "can't be the current user!") if (self.follower_id == self.followable_id) && (self.followable_type == "User")
     end
 
-end
+    def accure_achievement_points
+      if Relationship.where(:follower_id => self.follower_id).count >= Settings.achievements.limits.exceeding_followings_count &&
+         AchievementPoint.where(:user_id => self.follower_id,
+                                :reason_code => AchievementPoint::REASONS[:exceeding_followings_count]).count == 0
+        notify_observers(:after_exceeding_followings_count)
+      end
+      if Relationship.where(:followable_id => self.followable_id, :followable_type => 'User').count >= Settings.achievements.limits.exceeding_followers_count &&
+         AchievementPoint.where(:user_id => self.followable_id,
+                                :reason_code => AchievementPoint::REASONS[:exceeding_followers_count]).count == 0
+        notify_observers(:after_exceeding_followers_count)
+      end
+    end
 
+end
