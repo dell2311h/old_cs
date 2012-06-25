@@ -135,7 +135,11 @@ describe User do
 
       end
 
-
+     describe ".with_relationships_counters" do
+       it "should return result that have 'followers_count', 'followings_count' attributes" do
+         User.with_relationships_counters.first.attributes.should include("followers_count", "followings_count")
+       end
+     end
 
     end
 
