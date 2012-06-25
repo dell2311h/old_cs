@@ -11,7 +11,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120622155050) do
+ActiveRecord::Schema.define(:version => 20120622165618) do
+
+  create_table "achievement_points", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "points"
+    t.integer  "reason_code"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
 
   create_table "apn_bases", :force => true do |t|
   end
@@ -39,14 +47,6 @@ ActiveRecord::Schema.define(:version => 20120622155050) do
   end
 
   add_index "apn_notifications", ["device_id"], :name => "index_apn_notifications_on_device_id"
-
-  create_table "achievement_points", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "points"
-    t.integer  "reason_code"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-  end
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -87,14 +87,15 @@ ActiveRecord::Schema.define(:version => 20120622155050) do
 
   create_table "events", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at",           :null => false
-    t.datetime "updated_at",           :null => false
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
     t.integer  "place_id"
     t.integer  "user_id"
     t.date     "date"
     t.string   "eventful_id"
     t.string   "pluraleyes_id"
     t.integer  "master_track_version"
+    t.integer  "pluraleyes_group_count", :default => 0
   end
 
   create_table "feed_items", :force => true do |t|
@@ -250,12 +251,9 @@ ActiveRecord::Schema.define(:version => 20120622155050) do
     t.string   "first_name"
     t.string   "last_name"
     t.integer  "points",                    :default => 0
-<<<<<<< HEAD
     t.string   "device_token"
     t.integer  "new_notifications_count",   :default => 0
-=======
     t.integer  "achievement_points_sum",    :default => 0
->>>>>>> 31285889-user-can-get-achievement-points
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
