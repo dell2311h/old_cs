@@ -8,8 +8,10 @@ class MetaInfo < ActiveRecord::Base
   private
 
     def accure_achievement_points
-      if Video.unscoped.find(self.video_id).event.videos.joins(:meta_info).order('meta_infos.duration DESC').first.id == self.video_id
+      event_id = Video.unscoped.find(self.video_id).event_id
+      if Video.unscoped.where(:event_id => event_id).joins(:meta_info).order('meta_infos.duration DESC').first.id == self.video_id
         notify_observers(:after_upload_longest_video_to_event)
       end
     end
 end
+
