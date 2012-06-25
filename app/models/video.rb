@@ -142,6 +142,7 @@ class Video < ActiveRecord::Base
 
   def add_songs_by songs_params, user
     songs_params.each do |song_params|
+      song_params.merge!({:user_id => user.id})
       song = song_params[:id] ? Song.find(song_params[:id]) : Song.create!(song_params)
       self.video_songs.create(:user_id => user.id, :song_id => song.id) if !self.songs.find_by_id(song)
     end
@@ -173,7 +174,7 @@ class Video < ActiveRecord::Base
     video_params.delete(:event_id) if event_assigned
     video_params[:performer_ids] ||= []
     self.update_attributes!(video_params)
-    self.create_encoding_media if !event_assigned && self.event_id
+    self.after_attach_to_event if !event_assigned && self.event_id
   end
 
   #----- Chunked uploading ---------------
@@ -245,8 +246,7 @@ class Video < ActiveRecord::Base
     File.rename(self.tmpfile_fullpath, self.renamed_file_fullpath_by(filename))
     self.status = STATUS_NEW # File upload finished
     File.open(self.renamed_file_fullpath_by(filename)) do |file|
-      self.clip = file              #Attach uploaded file to 'clip' attribute
-      self.save!
+      self.attach_clip(file) #Attach uploaded file to 'clip' attribute
     end
     self.remove_attached_data! # Remove uploaded data
     create_encoding_media
@@ -280,6 +280,31 @@ class Video < ActiveRecord::Base
       notify_observers :after_set_status_done
     end
 
+    def attach_clip(file)
+      self.clip = file
+      if self.save!
+        notify_observers(:after_upload)
+        notify_about_first_upload_to_event
+        true
+      else
+        false
+      end
+    end
+
+    def after_attach_to_event
+      self.create_encoding_media
+      notify_about_first_upload_to_event
+    end
+
+    def increment_views
+      self.update_attribute(:view_count, self.view_count.to_i + 1)
+      if self.view_count >= Settings.achievements.limits.exceeding_views_count &&
+         AchievementPoint.where(:user_id => self.user_id,
+                                :reason_code => AchievementPoint::REASONS[:exceeding_views_count]).count == 0
+        notify_observers(:after_exceeding_views_count)
+      end
+    end
+
   private
 
     @@users = nil
@@ -289,5 +314,10 @@ class Video < ActiveRecord::Base
       raise "Invalid chunk id!" unless self.last_chunk_id + 1 == chunk_id
       self.update_attribute :last_chunk_id, chunk_id
     end
-end
 
+    def notify_about_first_upload_to_event
+      unless self.event_id.nil? && self.clip.nil?
+        notify_observers(:after_first_upload_to_event) if Video.unscoped.where(:event_id => self.event_id).where("clip IS NOT NULL").count == 1
+      end
+    end
+end

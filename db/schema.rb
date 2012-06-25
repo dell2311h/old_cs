@@ -40,6 +40,14 @@ ActiveRecord::Schema.define(:version => 20120622155050) do
 
   add_index "apn_notifications", ["device_id"], :name => "index_apn_notifications_on_device_id"
 
+  create_table "achievement_points", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "points"
+    t.integer  "reason_code"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
     t.string   "provider"
@@ -185,6 +193,7 @@ ActiveRecord::Schema.define(:version => 20120622155050) do
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.integer  "user_id"
   end
 
   create_table "taggings", :force => true do |t|
@@ -241,8 +250,12 @@ ActiveRecord::Schema.define(:version => 20120622155050) do
     t.string   "first_name"
     t.string   "last_name"
     t.integer  "points",                    :default => 0
+<<<<<<< HEAD
     t.string   "device_token"
     t.integer  "new_notifications_count",   :default => 0
+=======
+    t.integer  "achievement_points_sum",    :default => 0
+>>>>>>> 31285889-user-can-get-achievement-points
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
@@ -274,6 +287,7 @@ ActiveRecord::Schema.define(:version => 20120622155050) do
     t.string   "uuid"
     t.string   "thumbnail"
     t.string   "clip"
+    t.integer  "view_count",    :default => 0
   end
 
   add_index "videos", ["event_id"], :name => "index_videos_on_event_id"
