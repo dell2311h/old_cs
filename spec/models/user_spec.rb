@@ -58,6 +58,7 @@ describe User do
 
     before :each do
       FeedItem.stub!(:create_for_follow)
+      Relationship.stub!(:accure_achievement_points)
     end
 
     describe "#follow" do
