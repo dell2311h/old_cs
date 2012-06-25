@@ -2,14 +2,21 @@ require 'spec_helper'
 
 describe Event do
 
-  it { should respond_to :name }
-  it { should validate_presence_of(:name) }
-  it { should validate_presence_of(:user_id) }
-  it { should validate_presence_of(:place_id) }
+  describe 'validations' do
+    it { should respond_to :name }
+    it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:user_id) }
+    it { should validate_presence_of(:place_id) }
+  end
 
-  it { should belong_to(:user) }
-  it { should belong_to(:place) }
-  it { should have_many(:videos) }
+  describe 'associations' do
+    it { should belong_to(:user) }
+    it { should belong_to(:place) }
+    it { should have_many(:videos) }
+    it { should have_many(:relationships).class_name("Relationship").dependent(:destroy) }
+    it { should have_many(:followers).through(:relationships) }
+  end
+
 
   describe ".order_by_video_count" do
     it 'should give events ordered by video count in descending order' do
