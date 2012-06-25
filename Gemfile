@@ -54,9 +54,11 @@ gem 'capistrano-ext' # Multistage deployments
 gem 'rvm-capistrano' # RVM support
 
 group :test, :development do
+  gem 'spork'
   gem "rspec-rails", "~> 2.6"
   gem 'shoulda'
   gem "factory_girl_rails", "~> 1.2"
   gem "ffaker"
   gem 'ruby-debug19', :require => 'ruby-debug'
 end
+

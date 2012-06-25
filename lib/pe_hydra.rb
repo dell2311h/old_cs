@@ -64,7 +64,7 @@ module PeHydra
       xml = Nokogiri::XML::Builder.new do |q|
         q.Media {
           q.Name name
-          q.RemoteURL path
+          q.RemoteURL path unless path.nil?
         }
       end.to_xml
       response = request_send(:add_media, xml, {:project_id => project_id})
@@ -73,6 +73,22 @@ module PeHydra
         media[field.name.underscore.to_sym] = field.text
       end
       media
+    end
+
+    def add_audio(path, params)
+      #audio = File.open(path, 'rb'){ |file| file.read }
+      #query = build_query(:add_audio, params)
+      #query[:request].body = audio
+      #query[:request].add_field "Content-Type", "application/octet-stream"
+      #response = Net::HTTP.new(query[:url].host, query[:url].port).start { |http|
+      #  http.request(query[:request])
+      #}
+      #response.body
+
+      # FIX ME!!! :)
+      url = "#{@base_url}/#{@session_token}/#{params[:project_id]}/#{params[:media_id]}/audio"
+      response = `curl -F 'media=@#{path}' #{url}`
+      response.match(/<string xmlns.*>(OK)<\/string>$/)[1]
     end
 
     def media_list(project_id)
@@ -126,6 +142,9 @@ module PeHydra
       when :add_media
         url = "#{@base_url}/#{@session_token}/#{params[:project_id]}/media"
         request = Net::HTTP::Post.new(url)
+      when :add_audio
+        url = "#{@base_url}/#{@session_token}/#{params[:project_id]}/#{params[:media_id]}/audio"
+        request = Net::HTTP::Post.new(url)
       when :media
         url = "#{@base_url}/#{@session_token}/#{params[:project_id]}/media"
         request = Net::HTTP::Get.new(url)
@@ -155,4 +174,3 @@ module PeHydra
 
   end
 end
-

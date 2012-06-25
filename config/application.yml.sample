@@ -64,6 +64,28 @@ defaults: &defaults
     width: 100
     height: 100
 
+  achievements:
+    points:
+      upload_video:                       10
+      first_upload_to_event:              10
+      add_song:                           10
+      define_song:                        25
+      exceeding_likes_count:              50
+      exceeding_comments_count_for_video: 50
+      exceeding_views_count:              25
+      exceeding_followers_count:          50
+      exceeding_followings_count:         50
+      exceeding_comment_count_for_user:   25
+      upload_longest_video_to_event:      50
+      create_bridge:                      40
+    limits:
+      exceeding_likes_count:              100
+      exceeding_comments_count_for_video: 100
+      exceeding_views_count:              100
+      exceeding_followers_count:          100
+      exceeding_followings_count:         100
+      exceeding_comment_count_for_user:   100
+
 development:
   <<: *defaults
 
