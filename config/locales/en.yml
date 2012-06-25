@@ -31,14 +31,29 @@ en:
       video_upload_to_performer: "$actor$ uploaded $entity$ to $context$"
       mention: "$actor$ mentioned $entity$ in $context$"
       add_song: "$actor$ added song $entity$ to $context$"
+      video_upload_to_performer: "$actor$ uploaded $entity$ to $context$"
     notification:
+      comment_video: "$actor$ commented $entity$ from the $context$ event"
+      mention: "$actor$ mentioned $entity$ in $context$"
+      like_video: '$actor$ liked $entity$ from the $context$ event'
+      follow: '$actor$ started following $entity$'
+      join_crowdsync_via_social_network: "Your $context$ friend $actor$ just joined Crowdsync"
+      add_song: "$actor$ added song $entity$ to $context$"
     place:
       tagging: '$entity$ was tagged by $actor$ in $context$'
     event:
       tagging: '$entity$ was tagged by $actor$ in $context$'
+      video_upload: "$entity$ was uploaded by $actor$ to $context$"
+      comment_video: "$context$'s $entity$ was commented by $actor$"
     performer:
       mention: "$actor$ mentioned $entity$ in $context$"
       like_performers_video: "$context$'s $entity$ was liked by $actor$"
       comment_performers_video: "$context$'s $entity$ was commented by $actor$"
       video_upload_to_performer: "$actor$ uploaded $entity$ to $context$"
 
+  notification:
+      comment_video: "Your video for event %{event} was commented by %{user}."
+      like_video:    "Your video for event %{event} was liked by %{user}."
+      follow:        "User %{user} followed you."
+      mention:       "User %{user} mentioned you."
+      add_song:      "New song was added for your video"
