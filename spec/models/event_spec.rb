@@ -183,6 +183,52 @@ describe Event do
     end
   end
 
+
+  describe "relationships" do
+
+    before :each do
+      FeedItem.stub!(:create_for_follow)
+      Relationship.stub!(:accure_achievement_points)
+    end
+
+    describe "counters" do
+
+      before :all do
+        @user = Factory.create(:user)
+        @event = Factory.create(:event)
+      end
+
+      describe ".with_followers_count" do
+
+        context "when event doesn't have any followers" do
+          it "should have followers_count attribute with 0 value" do
+            attributes = Event.with_followers_count.find(@event.id).attributes
+            attributes["followers_count"].should == 0
+          end
+        end
+
+        context "when event has followers" do
+          it "should have followers_count attribute with value equal to 1" do
+            @user.follow(@event)
+            attributes = Event.with_followers_count.find(@event.id).attributes
+            attributes["followers_count"].should == 1
+          end
+        end
+
+      end
+
+     describe ".with_relationships_counters" do
+       it "should return result that have 'followers_count' attribute" do
+         Event.with_relationships_counters.first.attributes.should include("followers_count")
+       end
+     end
+
+    end
+
+  end
+
+
+
   describe '#get_random_N_top_events' do
     before :all do
       Event.destroy_all
