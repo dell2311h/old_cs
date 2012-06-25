@@ -23,7 +23,7 @@ class AchievementPoint < ActiveRecord::Base
   end
 
   def self.reward_for(reason, user_id)
-    create(:user_id => user_id
+    create(:user_id => user_id,
            :reason_code => self::REASONS[reason],
            :points => Settings.achievements.points[reason])
   end
@@ -34,3 +34,4 @@ class AchievementPoint < ActiveRecord::Base
     end
 
 end
+
