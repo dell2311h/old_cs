@@ -29,9 +29,12 @@ class User < ActiveRecord::Base
   validates :username, :email, :uniqueness => true
 
   validates :latitude, :longitude, :numericality => true, :allow_nil => true
+  validates_numericality_of :new_notifications_count, :only_integer => true,:greater_than_or_equal_to => 0
 
   validates :email_notification_status, :inclusion => ["none", "immediate", "day", "week"]
   validates :sex, :inclusion => ["m", "f"], :if => lambda {|u| u.sex }
+
+  validates_format_of :device_token, :with => /^[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}$/, :allow_nil => true
 
   has_many :comments, :dependent => :destroy
   has_many :videos
@@ -61,6 +64,7 @@ class User < ActiveRecord::Base
   has_many :feed_items, :dependent => :destroy
   has_many :feed_entities, :as => :entity, :class_name => "FeedItem", :dependent => :destroy
   has_many :feed_contexts, :as => :context, :class_name => "FeedItem", :dependent => :destroy
+  has_many :user_notifications
 
   accepts_nested_attributes_for :authentications
 
@@ -77,8 +81,38 @@ class User < ActiveRecord::Base
   scope :with_calculated_counters, select('users.*').select("(#{Video.select("COUNT(videos.user_id)").where("users.id = videos.user_id").to_sql}) AS uploaded_videos_count, (#{Relationship.select("COUNT(relationships.follower_id)").where("users.id = relationships.follower_id").to_sql}) AS followings_count, (#{Like.select("COUNT(likes.user_id)").where("users.id = likes.user_id").to_sql}) AS liked_videos_count").with_followers_count.with_followings_count
 
   scope :without_user, lambda { |user| where("id <> ?", user.id) }
-
   scope :with_relationships_counters, with_followers_count.with_followings_count
+
+  def increment_new_notifications_count
+    count = self.new_notifications_count + 1
+    self.update_attribute(:new_notifications_count, count)
+  end
+
+  def reset_new_notifications_count
+    self.update_attribute(:new_notifications_count, 0)
+  end
+
+  def email_notification_status=(status)
+    days = case status
+           when 'day';       1
+           when 'week';      7
+           when 'immediate'; 0
+           else              nil
+           end
+
+    write_attribute(:email_notification_status, days)
+  end
+
+  def email_notification_status
+    days = read_attribute(:email_notification_status)
+
+    case days
+    when 1; 'day'
+    when 7; 'week'
+    when 0; 'immediate'
+    else    'none'
+    end
+  end
 
   self.per_page = Settings.paggination.per_page
 

@@ -76,6 +76,10 @@ development:
      user_name: 'your_test_email@gmail.com'
      password: 'your_password'
 
+  notifications:
+    apn:
+      sound: "apnsTune.caf"
+
 test:
   <<: *defaults
 

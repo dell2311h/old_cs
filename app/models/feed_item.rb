@@ -1,5 +1,6 @@
 class FeedItem < ActiveRecord::Base
 
+  NOTIFICATIBLE_ACTIONS = ["comment_video", "like_video", "follow", "mention", "add_song"]
   ALLOWED_ENTITIES = ["User", "Video", "Song", "Comment", "Event", "Place", "Performer"]
   ALLOWED_CONTEXTS = ["Video", "Event", "Comment", "Authentication", "Performer"]
   ALLOWED_ACTIONS = ["video_upload", "comment_video", "follow", "mention",
@@ -9,6 +10,7 @@ class FeedItem < ActiveRecord::Base
 
   belongs_to :entity, :polymorphic => true
   belongs_to :context, :polymorphic => true
+  has_one    :user_notification
 
   validates :user_id, :entity_id, :entity_type, :action, :presence => true
   validates :context_id, :context_type, :presence => true, :if => lambda { |f| f.context_type or f.context_type }
@@ -58,7 +60,7 @@ class FeedItem < ActiveRecord::Base
     end
     search.includes [:user, :entity, :context]
   }
-
+  
   def self.for_user(user, params)
     feed_type = params[:feed_type] || 'user'
 
@@ -70,17 +72,16 @@ class FeedItem < ActiveRecord::Base
       when 'news'
         news_feed(user)
       when 'notification'
+        user.reset_new_notifications_count
         notification_feed(user)
     end
   end
-
-
-
+  
   def message_for_feed(feed_type)
     raise "Not allowed feed type" unless [:user, :news, :notification, :place, :event, :performer].include?(feed_type)
     I18n.t "feed.#{feed_type}.#{self.action}"
   end
-
+  
   def self.name_for(object)
     case object.class.to_s
       when "User"
@@ -143,7 +144,6 @@ class FeedItem < ActiveRecord::Base
       tag = tagging.tag.name
       place = Place.find_by_name tag
       event = Event.find_by_name tag
-
       if place
         FeedItem.create(:action      => "tagging",
                         :user_id     => tagging.user_id,
@@ -163,7 +163,17 @@ class FeedItem < ActiveRecord::Base
 
   end
 
+  def send_notification
+    UserNotification.process_notifications self if should_send_notification?
+  end
+
   private
+
+  def should_send_notification?
+    NOTIFICATIBLE_ACTIONS.include?(self.action) &&
+    (self.action != "mention" || self.entity_type == "User") &&
+    (self.action != "follow"  || self.entity_type == "User")
+  end
 
     class << self
 
@@ -233,9 +243,5 @@ class FeedItem < ActiveRecord::Base
         performers = Performer.where("UPPER(name) = ?", mention.upcase)
         create_mention_feeds comment, performers
       end
-
     end
-
-
 end
-

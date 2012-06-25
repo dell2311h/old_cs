@@ -11,7 +11,34 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120620084545) do
+ActiveRecord::Schema.define(:version => 20120622155050) do
+
+  create_table "apn_bases", :force => true do |t|
+  end
+
+  create_table "apn_devices", :force => true do |t|
+    t.string   "token",              :default => "", :null => false
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
+    t.datetime "last_registered_at"
+  end
+
+  add_index "apn_devices", ["token"], :name => "index_apn_devices_on_token", :unique => true
+
+  create_table "apn_notifications", :force => true do |t|
+    t.integer  "device_id",                        :null => false
+    t.integer  "errors_nb",         :default => 0
+    t.string   "device_language"
+    t.string   "sound"
+    t.string   "alert"
+    t.integer  "badge"
+    t.text     "custom_properties"
+    t.datetime "sent_at"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+  end
+
+  add_index "apn_notifications", ["device_id"], :name => "index_apn_notifications_on_device_id"
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -186,13 +213,19 @@ ActiveRecord::Schema.define(:version => 20120620084545) do
 
   add_index "timings", ["video_id"], :name => "index_timings_on_video_id"
 
+  create_table "user_notifications", :force => true do |t|
+    t.integer "user_id"
+    t.integer "feed_item_id"
+    t.date    "creation_date"
+  end
+
   create_table "users", :force => true do |t|
     t.string   "email"
     t.string   "username"
     t.string   "phone"
-    t.datetime "created_at",                                    :null => false
-    t.datetime "updated_at",                                    :null => false
-    t.string   "encrypted_password",        :default => "",     :null => false
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
+    t.string   "encrypted_password",        :default => "", :null => false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.string   "password_salt"
@@ -203,11 +236,13 @@ ActiveRecord::Schema.define(:version => 20120620084545) do
     t.float    "latitude"
     t.float    "longitude"
     t.string   "avatar"
-    t.string   "email_notification_status", :default => "week"
+    t.integer  "email_notification_status", :default => 7
     t.string   "sex"
     t.string   "first_name"
     t.string   "last_name"
     t.integer  "points",                    :default => 0
+    t.string   "device_token"
+    t.integer  "new_notifications_count",   :default => 0
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

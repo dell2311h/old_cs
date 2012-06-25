@@ -51,3 +51,9 @@ en:
       comment_performers_video: "$context$'s $entity$ was commented by $actor$"
       video_upload_to_performer: "$actor$ uploaded $entity$ to $context$"
 
+  notification:
+      comment_video: "Your video for event %{event} was commented by %{user}."
+      like_video:    "Your video for event %{event} was liked by %{user}."
+      follow:        "User %{user} followed you."
+      mention:       "User %{user} mentioned you."
+      add_song:      "New song was added for your video"
