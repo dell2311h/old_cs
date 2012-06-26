@@ -90,6 +90,27 @@ describe User do
 
     end
 
+    describe "#followed_with_type(type)" do
+      context "when type is valid" do
+        it "should call approproate associations by specified type" do
+          user_one.should_receive(:followed_users)
+          user_one.followed_with_type('users')
+          user_one.should_receive(:followed_places)
+          user_one.followed_with_type('places')
+          user_one.should_receive(:followed_performers)
+          user_one.followed_with_type('performers')
+          user_one.should_receive(:followed_events)
+          user_one.followed_with_type('events')
+        end
+      end
+
+      context "when type is not valid" do
+        it "should raise an exception" do
+          expect { user_one.followed_with_type('aliens') }.should raise_error(RuntimeError) { |error| error.message.should == "Incorrect followable type" }
+        end
+      end
+    end
+
     describe "counters" do
 
       before :all do
