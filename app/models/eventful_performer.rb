@@ -27,16 +27,12 @@ class EventfulPerformer
     end
 
     def self.format_result input
-      return [] if input["total_items"] < 1
+      return [] if input["total_items"] < 1 || input["performers"].nil?
       performers = input["performers"]["performer"]
-
-      if input["total_items"] == 1
-        performers_array = []
-        performers_array.push performers
-        performers = performers_array
-      end
+      performers = [performers] if !performers.kind_of?(Array)
 
       output_performers = []
+
       performers.each do |performer|
         tmp = {}
         tmp[:name] = performer["name"]
