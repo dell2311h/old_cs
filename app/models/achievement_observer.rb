@@ -22,7 +22,7 @@ class AchievementObserver < ActiveRecord::Observer
   end
 
   def after_exceeding_comments_count_for_video(comment)
-    AchievementPoint.reward_for :exceeding_comments_count_for_video, comment.video.user_id
+    AchievementPoint.reward_for :exceeding_comments_count_for_video, Video.unscoped.find(comment.video_id).user_id
   end
 
   def after_exceeding_comments_count_for_user(comment)
@@ -46,7 +46,6 @@ class AchievementObserver < ActiveRecord::Observer
   end
 
   def after_create_bridge(clip)
-    AchievementPoint.reward_for :create_bridge, clip.video.user_id
+    AchievementPoint.reward_for :create_bridge, Video.unscoped.find(clip.video_id).user_id
   end
 end
-
