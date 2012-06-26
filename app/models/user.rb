@@ -125,7 +125,7 @@ class User < ActiveRecord::Base
     friends = remote_friends_for provider
     uids = friends.map { |friend| friend[:uid] }
     users = User.by_remote_provider_ids provider, uids
-    users = users.with_flag_followed_by(self)
+    users = users.with_flag_followed_by(self).with_relationships_counters
 
     users.all
   end
