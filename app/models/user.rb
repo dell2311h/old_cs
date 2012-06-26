@@ -230,6 +230,7 @@ class User < ActiveRecord::Base
 
   def followed_with_type(type)
     type = 'users' unless type
+    raise "Incorrect followable type" unless ['users', 'places', 'performers', 'events'].include?(type)
     instance_eval("followed_#{type}")
   end
 
