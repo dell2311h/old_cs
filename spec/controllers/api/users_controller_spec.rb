@@ -3,43 +3,43 @@ require 'spec_helper'
 describe Api::UsersController do
 
   describe "#create" do
-
+    before :each do
+      FeedItem.stub!(:create_for_join_crowdsync_via_social_network)
+    end
     context 'with correct request params' do
       before :all do
-        @json = {:username => "User", :email => "user@gmail.com", :password => "password"}
+        @user_params = {:username => "User", :email => "user@gmail.com", :password => "password"}
         @user = Factory.create :user
       end
 
       it "should return object of the newly created user" do
-        post :create, :format => :json, :user => @json
+        post :create, :format => :json, :user => @user_params
         response.code.should == '201'
         result = JSON.parse(response.body)
         result['id'].should_not be_nil
         result['username'].should eq 'User'
       end
 
-        context 'with information about user from social network' do
-          before :all do
-            @json = {:username => "User", :email => "user@gmail.com", :password => "password",
-                     :authentications_attributes => [{:provider => "facebook", :uid => "33232",
-                                                       :token => "567GFHJJHGghGJG76876VBVJHG"}]}
-          end
-          it "should create authentication for newly created user" do
-            post :create, :format => :json, :user => @json
-            response.code.should == '201'
-            result = JSON.parse(response.body)
-            result['id'].should_not be_nil
-            User.find(result['id']).authentications.count.should eq 1
-          end
+      context 'with information about user from social network' do
+        before :all do
+          @oauth = {:provider => "facebook", :uid => "33232", :token => "567GFHJJHGghGJG76876VBVJHG"}
         end
+        it "should create authentication for newly created user" do
+          post :create, :format => :json, :user => @user_params, :oauth => @oauth
+          response.code.should == '201'
+          result = JSON.parse(response.body)
+          result['id'].should_not be_nil
+          User.find(result['id']).authentications.count.should eq 1
+        end
+      end
     end
 
     context 'with incorrect request params' do
       before :all do
-        @json = {:username => "Us", :email => "usergmail.com", :password => "****", :login => "us"}
+        @user_params = {:username => "Us", :email => "usergmail.com", :password => "****", :login => "us"}
       end
       it "should return hash with error message" do
-        post :create, :format => :json, :user => @json
+        post :create, :format => :json, :user => @user_params
         response.code.should == '400'
         result = JSON.parse(response.body)
         result['error'].should_not be_nil

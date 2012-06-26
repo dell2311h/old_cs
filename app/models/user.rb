@@ -233,6 +233,24 @@ class User < ActiveRecord::Base
     instance_eval("followed_#{type}")
   end
 
+  def self.authorize_by(params)
+    if params[:email]
+      user = self.find_by_email(params[:email])
+      raise "Wrong email or password" if user.nil? or !user.valid_password? params[:password]
+    elsif params[:provider]
+      auth = Authentication.find_by_provider_and_uid(params[:provider], params[:uid])
+      raise "Can't find user with #{params[:provider]} provider" unless auth
+      unless auth.token == params[:token]
+        raise "Token for #{params[:provider]} provider incorrect" unless auth.correct_token?(params[:token])
+        auth.update_attribute(:token, params[:token])
+      end
+      user = auth.user
+    else
+      raise "Not enough options for authorization"
+    end
+    user
+  end
+
   private
     def remote_friends_for provider
       authenication = self.authentications.provider(provider).first
@@ -242,4 +260,3 @@ class User < ActiveRecord::Base
       user.friends
     end
 end
-
