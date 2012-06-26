@@ -1,6 +1,6 @@
 object @video
 
-attributes :id, :user_id, :event_id, :uuid, :last_chunk_id, :status, :likes_count, :comments_count
+attributes :id, :user_id, :event_id, :uuid, :last_chunk_id, :status, :likes_count, :comments_count, :duration
 
 node(:video_url) { |video| video.clip.url if video.clip? }
 
@@ -15,10 +15,9 @@ end
 
 attribute :created_at => :date
 
-node(:duration) { |video| video.meta_info.duration }
-
 node(:uploaded_file_size) { |video| video.tmpfile_size }
 
 if current_user
   node(:liked_by_me) { |video| video.respond_to?(:liked_by_me) && (video.liked_by_me == 1) ? true : false }
 end
+

@@ -125,7 +125,7 @@ class User < ActiveRecord::Base
     friends = remote_friends_for provider
     uids = friends.map { |friend| friend[:uid] }
     users = User.by_remote_provider_ids provider, uids
-    users = users.with_flag_followed_by(self)
+    users = users.with_flag_followed_by(self).with_relationships_counters
 
     users.all
   end
@@ -230,6 +230,7 @@ class User < ActiveRecord::Base
 
   def followed_with_type(type)
     type = 'users' unless type
+    raise "Incorrect followable type" unless ['users', 'places', 'performers', 'events'].include?(type)
     instance_eval("followed_#{type}")
   end
 

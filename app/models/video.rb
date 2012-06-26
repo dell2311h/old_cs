@@ -79,6 +79,11 @@ class Video < ActiveRecord::Base
                                         scoped
                                       }
 
+  scope :with_duration, lambda {
+    joins("LEFT OUTER JOIN meta_infos ON meta_infos.video_id = videos.id").select("videos.*").select("meta_infos.duration AS duration")
+  }
+
+
   self.per_page = Settings.paggination.per_page
 
   def self.find_by(user = nil, id)
@@ -321,3 +326,4 @@ class Video < ActiveRecord::Base
       end
     end
 end
+

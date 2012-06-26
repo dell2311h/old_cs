@@ -37,18 +37,17 @@ class Api::UsersController < Api::BaseController
   def index
     @users = User.search_by params, current_user
     if @users.count > 0
-      @users = @users.paginate(:page => params[:page], :per_page => params[:per_page])
+      @users = @users.paginate(:page => params[:page], :per_page => params[:per_page]).with_relationships_counters
     else
       render :status => :not_found, json: {}
     end
   end
 
   def provider_local_friends
-    @users = current_user.remote_friends_on_crowdsync_for params['provider']
-    @followed_users = User.find_followed_by current_user
+    @users = current_user.remote_friends_on_crowdsync_for(params['provider'])
+    @followed_users = User.find_followed_by(current_user)
     if @users.count < 1
       render :status => :not_found, json: {}
-      return
     end
 
     render status: :ok, :template => "api/users/index"
@@ -58,7 +57,6 @@ class Api::UsersController < Api::BaseController
     @users = current_user.remote_friends_not_on_crowdsync_for params['provider']
     if @users.count < 1
       render :status => :not_found, json: {}
-      return
     end
 
   end
