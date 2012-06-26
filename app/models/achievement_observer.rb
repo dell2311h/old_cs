@@ -42,10 +42,11 @@ class AchievementObserver < ActiveRecord::Observer
   end
 
   def after_upload_longest_video_to_event(meta_info)
-    AchievementPoint.reward_for :upload_longest_video_to_event, meta_info.video.user_id
+    AchievementPoint.reward_for :upload_longest_video_to_event, Video.unscoped.find(meta_info.video_id).user_id
   end
 
   def after_create_bridge(clip)
     AchievementPoint.reward_for :create_bridge, clip.video.user_id
   end
 end
+
