@@ -28,7 +28,7 @@ class Api::VideosController < Api::BaseController
   end
 
   def update
-    @video = Video.unscoped.for_user(current_user).find params[:id]
+    @video = Video.unscoped.for_user(current_user).with_duration.find params[:id]
     @video.update_by(params[:video])
     render status: :accepted, action: :show
   end
@@ -47,7 +47,7 @@ class Api::VideosController < Api::BaseController
 
   def most_popular
     raise 'count not set!' if params[:count].nil?
-    @videos = Video.first_popular params[:count]
+    @videos = Video.with_duration.first_popular params[:count]
 
     if (@videos.count) < 1
       render :status => :not_found, json: {}
@@ -71,7 +71,7 @@ class Api::VideosController < Api::BaseController
   end
 
   def view
-    @video = Video.unscoped.find params[:id]
+    @video = Video.unscoped.with_duration.find params[:id]
     @video.increment_views
     render status: :ok, action: :show
   end
@@ -85,5 +85,7 @@ class Api::VideosController < Api::BaseController
       @videos = Video
       @videos = @videos.unscoped if me?
       @videos = @videos.with_flag_liked_by_me(current_user) if current_user
+      @videos = @videos.with_duration
     end
 end
+
