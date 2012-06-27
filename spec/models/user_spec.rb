@@ -54,7 +54,7 @@ describe User do
 
   end
 
-  describe "relationships" do
+  describe "relationships " do
 
     before :each do
       FeedItem.stub!(:create_for_follow)
@@ -162,6 +162,21 @@ describe User do
        end
      end
 
+    end
+
+    describe ".with_flag_followed_by(user)" do
+      context "when user donesn't follow another user" do
+        it "should have followed attribute with 0 value" do
+          User.with_flag_followed_by(user_one).find(user_two.id).attributes["followed"].should == 0
+        end
+      end
+
+      context "when user follows another user" do
+        it "should have followed attribute with 1 value" do
+          user_one.follow(user_two)
+          User.with_flag_followed_by(user_one).find(user_two.id).attributes["followed"].should == 1
+        end
+      end
     end
 
   end
