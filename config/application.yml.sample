@@ -24,6 +24,7 @@ defaults: &defaults
       port: 3002
     storage:
       host: 'http://crowdsync.dimalexsoftware.com:8989'
+      location: '/media/storage/'
 
   eventful:
     app_key: "fFNCjc4kh2Gc3XVW"
@@ -107,4 +108,3 @@ test:
 
 production:
   <<: *defaults
-

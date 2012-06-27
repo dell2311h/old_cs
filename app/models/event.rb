@@ -5,7 +5,7 @@ class Event < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :place
-  has_many :videos
+  has_many :videos, dependent: :destroy
 
   has_many :master_tracks, dependent: :destroy
 
@@ -198,4 +198,3 @@ class Event < ActiveRecord::Base
     end
 
 end
-

@@ -34,12 +34,12 @@ describe VideosController do
 
   describe "GET 'create'" do
     it "returns http success" do
-      @video.should_receive(:save)
+      @video.stub!(:attach_clip){ true }
+      @video.should_receive(:attach_clip)
       @video.should_receive(:create_encoding_media)
-      post 'create'
+      post 'create', :video => {:clip => 'clip'}
       response.should be_success
     end
   end
 
 end
-
