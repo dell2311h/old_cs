@@ -46,12 +46,15 @@ describe Place do
     end
   end
 
-    describe "relationships" do
+  describe "relationships " do
 
     before :each do
       FeedItem.stub!(:create_for_follow)
       Relationship.stub!(:accure_achievement_points)
     end
+
+    let(:user) { Factory.create :user }
+    let(:place) { Factory.create :place }
 
     describe "counters" do
 
@@ -85,6 +88,21 @@ describe Place do
        end
      end
 
+    end
+
+    describe ".with_flag_followed_by(user)" do
+      context "when user donesn't follow place" do
+        it "should have 'followed' attribute with 0 value" do
+          Place.with_flag_followed_by(user).find(place.id).attributes["followed"].should == 0
+        end
+      end
+
+      context "when user follows place" do
+        it "should have 'followed' attribute with 1 value" do
+          user.follow(place)
+          Place.with_flag_followed_by(user).find(place.id).attributes["followed"].should == 1
+        end
+      end
     end
 
   end
