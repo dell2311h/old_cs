@@ -60,7 +60,7 @@ class FeedItem < ActiveRecord::Base
     end
     search.includes [:user, :entity, :context]
   }
-  
+
   def self.for_user(user, params)
     feed_type = params[:feed_type] || 'user'
 
@@ -76,12 +76,17 @@ class FeedItem < ActiveRecord::Base
         notification_feed(user)
     end
   end
-  
+
   def message_for_feed(feed_type)
     raise "Not allowed feed type" unless [:user, :news, :notification, :place, :event, :performer].include?(feed_type)
-    I18n.t "feed.#{feed_type}.#{self.action}"
+    case self.action
+      when 'join_crowdsync_via_social_network'
+        hash = { :social_network => self.context.provider }
+    end
+
+    I18n.t("feed.#{feed_type}.#{self.action}", hash)
   end
-  
+
   def self.name_for(object)
     case object.class.to_s
       when "User"
@@ -245,3 +250,4 @@ class FeedItem < ActiveRecord::Base
       end
     end
 end
+
