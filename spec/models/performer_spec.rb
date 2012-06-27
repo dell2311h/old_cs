@@ -45,6 +45,9 @@ describe Performer do
       Relationship.stub!(:accure_achievement_points)
     end
 
+    let(:user) { Factory.create :user }
+    let(:performer) { Factory.create :performer }
+
     describe "counters" do
 
       before :all do
@@ -77,6 +80,21 @@ describe Performer do
        end
      end
 
+    end
+
+    describe ".with_flag_followed_by(user)" do
+      context "when user donesn't follow performer" do
+        it "should have 'followed' attribute with 0 value" do
+          Performer.with_flag_followed_by(user).find(performer.id).attributes["followed"].should == 0
+        end
+      end
+
+      context "when user follows performer" do
+        it "should have 'followed' attribute with 1 value" do
+          user.follow(performer)
+          Performer.with_flag_followed_by(user).find(performer.id).attributes["followed"].should == 1
+        end
+      end
     end
 
   end
