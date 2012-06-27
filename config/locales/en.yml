@@ -37,7 +37,7 @@ en:
       mention: "$actor$ mentioned $entity$ in $context$"
       like_video: '$actor$ liked $entity$ from the $context$ event'
       follow: '$actor$ started following $entity$'
-      join_crowdsync_via_social_network: "Your $context$ friend $actor$ just joined Crowdsync"
+      join_crowdsync_via_social_network: "Your %{social_network} friend $actor$ just joined Crowdsync"
       add_song: "$actor$ added song $entity$ to $context$"
     place:
       tagging: '$entity$ was tagged by $actor$ in $context$'
@@ -57,3 +57,4 @@ en:
       follow:        "User %{user} followed you."
       mention:       "User %{user} mentioned you."
       add_song:      "New song was added for your video"
+
