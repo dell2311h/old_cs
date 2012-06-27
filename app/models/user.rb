@@ -2,7 +2,7 @@ class User < ActiveRecord::Base
 
   include Follow::FlagsAndCounters
 
-  attr_protected :points
+  attr_protected :achievement_points_sum
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable,

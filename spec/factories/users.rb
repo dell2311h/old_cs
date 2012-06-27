@@ -16,11 +16,10 @@ FactoryGirl.define do
     f.website { Faker::Internet.domain_name }
     f.bio { Faker::Lorem.sentence }
     f.email_notification_status { ["none", "immediate", "day", "week"].to_a.sample }
-    f.points { rand(1000) }
+    f.achievement_points_sum { rand(100) }
   end
 
   factory :social_user, :parent => :user do |f|
     f.authentications {|auth| [auth.association(:authentication)]}
   end
 end
-
