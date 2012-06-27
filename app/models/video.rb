@@ -20,22 +20,22 @@ class Video < ActiveRecord::Base
   belongs_to :user
   has_many :comments, :dependent => :destroy
 
-  has_many :taggings, dependent: :destroy
-  has_many :tags, through: :taggings
+  has_many :taggings, :dependent => :destroy
+  has_many :tags, :through => :taggings
 
-  has_many :video_songs, dependent: :destroy
-  has_many :songs, through: :video_songs
+  has_many :video_songs, :dependent => :destroy
+  has_many :songs, :through => :video_songs
 
-  has_many :clips, dependent: :destroy
+  has_many :clips, :dependent => :destroy
   has_one  :demux_video, :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_DEMUX_VIDEO }
   has_one  :demux_audio, :class_name => 'Clip', :conditions => { :clip_type => Clip::TYPE_DEMUX_AUDIO }
 
-  has_many :likes
+  has_many :likes, :dependent => :destroy
   has_many :likers, :through => :likes, :source => :user
 
-  has_many :timings, dependent: :destroy
+  has_many :timings, :dependent => :destroy
 
-  has_one :meta_info, dependent: :destroy
+  has_one :meta_info, :dependent => :destroy
 
   has_many :review_flags, dependent: :destroy
 
@@ -326,4 +326,3 @@ class Video < ActiveRecord::Base
       end
     end
 end
-
