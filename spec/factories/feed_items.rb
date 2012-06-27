@@ -1,12 +1,10 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
-  factory :feed_item do
-    action "MyString"
-    user_id 1
-    itemable_type "MyString"
-    itemable_id ""
-    contextable_id 1
-    contextable_type "MyString"
+  factory :comment_video_feed, :class => FeedItem do |f|
+    f.association :user
+    f.association :entity, :factory => :video
+    f.association :context, :factory => :event
+    f.action "comment_video"
   end
 end

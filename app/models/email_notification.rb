@@ -26,13 +26,21 @@ class EmailNotification < UserNotification
 
   private
 
-  def self.deliver_multiply(notifications)
+  def self.format_multiply_notifications(notifications)
     texts = []
     notifications.each { |notification| texts << notification.format_message }
     email = notifications.first.user.email
     period = Time.now - notifications.first.user.read_attribute(:email_notification_status).days
+    
+    {:email => email, period => :period, :texts => texts}
+  end
+
+  def self.deliver_multiply(notifications)
+    notification_params = self.format_multiply_notifications notifications
     begin
-      NotificationMailer.send_multiply_notifications(email, texts, period).deliver
+      NotificationMailer.send_multiply_notifications(notification_params[:email],
+                                                     notification_params[:texts],
+                                                     notification_params[:period]).deliver
       self.destroy_delivered(notifications)
     rescue
     end
