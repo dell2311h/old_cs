@@ -6,6 +6,7 @@ FactoryGirl.define do
     f.association :user
     f.latitude { Faker::Geolocation.lat }
     f.longitude { Faker::Geolocation.lng }
+    f.address { "#{Faker::AddressUS.state_abbr}, #{Faker::AddressUS.city}" }
   end
 end
 
