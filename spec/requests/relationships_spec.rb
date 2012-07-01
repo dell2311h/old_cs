@@ -133,12 +133,22 @@ describe "Relationships" do
     end
   end
 
-  describe "POST /api/me/followers.json" do
+  describe "POST /api/me/followings.json" do
     it "should create new relationship" do
       User.should_receive(:find_by_authentication_token).and_return(@user)
       User.should_receive(:find).and_return(@another_user)
       @user.should_receive(:follow).with(@another_user)
       post "/api/me/followings.json", :followable => 'users', :id => @another_user.id
+      response.status.should be(200)
+    end
+  end
+
+  describe "POST /api/me/followings/destroy.json" do
+    it "should des a relationship" do
+      User.should_receive(:find_by_authentication_token).and_return(@user)
+      User.should_receive(:find).and_return(@another_user)
+      @user.should_receive(:unfollow).with(@another_user)
+      post "/api/me/followings/destroy.json", :followable => 'users', :id => @another_user.id
       response.status.should be(200)
     end
   end
