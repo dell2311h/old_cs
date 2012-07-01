@@ -24,6 +24,17 @@ describe Api::RelationshipsController do
       end
 
     end
+
+    context "#set_status_by(collection)" do
+      it "should be :ok if collection isn't empty" do
+        controller.send(:set_status_by, [1]).should be(:ok)
+      end
+
+      it "should be :not_found if collection is empty" do
+        controller.send(:set_status_by, []).should be(:not_found)
+      end
+    end
+
   end
 
 end
