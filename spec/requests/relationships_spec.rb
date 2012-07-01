@@ -133,6 +133,16 @@ describe "Relationships" do
     end
   end
 
+  describe "POST /api/me/followers.json" do
+    it "should create new relationship" do
+      User.should_receive(:find_by_authentication_token).and_return(@user)
+      User.should_receive(:find).and_return(@another_user)
+      @user.should_receive(:follow).with(@another_user)
+      post "/api/me/followings.json", :followable => 'users', :id => @another_user.id
+      response.status.should be(200)
+    end
+  end
+
 private
   def check_for_entity(entity)
     entity_class_name = entity.class.to_s.downcase
