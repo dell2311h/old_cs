@@ -116,6 +116,23 @@ describe "Relationships" do
     end
   end
 
+  describe "GET /api/users/:id/followers.json" do
+    it "returns list of followers of user with :id" do
+      User.should_receive(:find_by_authentication_token).and_return(@user)
+      User.should_receive(:find).with(@another_user.id.to_s).and_return(@another_user)
+      @another_user.should_receive(:followers).and_return(relation)
+      relation.should_receive(:with_flag_followed_by).with(@user).and_return(relation_with_followed_flag)
+      relation_with_followed_flag.should_receive(:with_relationships_counters).and_return([@another_user])
+      get "/api/users/#{@another_user.id}/followers.json"
+      response.should render_template(:index)
+      result = JSON.parse(response.body)
+      result.should be_kind_of(Array)
+      element = result[0]
+      element.should include(expected_user_hash)
+      response.status.should be(200)
+    end
+  end
+
 private
   def check_for_entity(entity)
     entity_class_name = entity.class.to_s.downcase
