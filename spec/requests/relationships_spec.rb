@@ -104,6 +104,18 @@ describe "Relationships" do
     end
   end
 
+  describe "GET /api/users/:id/followings.json" do
+    it "should call methods for proper user" do
+      User.should_receive(:find_by_authentication_token).and_return(@user)
+      User.should_receive(:find).with(@another_user.id.to_s).and_return(@another_user)
+      @another_user.should_receive(:followed_with_type).and_return(relation)
+      relation.should_receive(:with_flag_followed_by).with(@user).and_return(relation_with_followed_flag)
+      relation_with_followed_flag.should_receive(:with_relationships_counters).and_return([@user])
+      get "/api/users/#{@another_user.id}/followings.json"
+      response.status.should be(200)
+    end
+  end
+
 private
   def check_for_entity(entity)
     entity_class_name = entity.class.to_s.downcase
