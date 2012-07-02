@@ -191,12 +191,15 @@ describe Event do
   end
 
 
-  describe "relationships" do
+  describe "relationships " do
 
     before :each do
       FeedItem.stub!(:create_for_follow)
       Relationship.stub!(:accure_achievement_points)
     end
+
+    let(:user) { Factory.create :user }
+    let(:event) { Factory.create :event }
 
     describe "counters" do
 
@@ -230,6 +233,21 @@ describe Event do
        end
      end
 
+    end
+
+    describe ".with_flag_followed_by(user)" do
+      context "when user donesn't follow event" do
+        it "should have 'followed' attribute with 0 value" do
+          Event.with_flag_followed_by(user).find(event.id).attributes["followed"].should == 0
+        end
+      end
+
+      context "when user follows event" do
+        it "should have 'followed' attribute with 1 value" do
+          user.follow(event)
+          Event.with_flag_followed_by(user).find(event.id).attributes["followed"].should == 1
+        end
+      end
     end
 
   end
