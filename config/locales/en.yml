@@ -11,7 +11,8 @@ en:
     models:
       video_performer:
         uniqueness_by_performer: 'was already added'
-
+      event:
+        master_track_not_reay: "Processing not compleated yet."
   feed:
     user:
       follow: '$actor$ started following $entity$'

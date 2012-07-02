@@ -78,6 +78,7 @@ class Api::EventsController < Api::BaseController
   def playlist
     @event = Event.with_videos_comments_count.find params[:event_id]
     @master_track = @event.current_master_track
+    render( :status => :not_found, :json =>  { :error => I18n.t('errors.models.event.master_track_not_reay') } ) if @master_track.nil?
     @timelines = @event.playlist
   end
 

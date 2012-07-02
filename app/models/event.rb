@@ -39,7 +39,7 @@ class Event < ActiveRecord::Base
   end
 
   def current_master_track
-    master_tracks.where("version = ?", master_track_version).first
+    master_tracks.where("version = ? AND is_ready = ?", master_track_version, true).first
   end
 
   def videos_comments
