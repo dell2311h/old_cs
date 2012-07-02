@@ -12,11 +12,16 @@ en:
     errors:
       messages:
         blank: "is required"
+        taken: "has already been taken"
       models:
         authentication:
           attributes:
             provider:
               taken: "already linked"
+        clip:
+          attributes:
+            video_id:
+              taken: "already has such clip"
 
   errors:
     parameters:
