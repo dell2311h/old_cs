@@ -12,7 +12,7 @@ class EventfulEvent
   def self.search params
     search_params = {}
     if params[:nearby]
-      raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
+      raise I18n.t('errors.parameters.coordinates_not_provided') unless params[:latitude] && params[:longitude]
       check_coordinates
       search_params[:within] = Settings.search.radius
       search_params[:latitude] = params[:latitude]
@@ -39,7 +39,7 @@ class EventfulEvent
 
     format_result  results
   end
-    
+
     private
       @@eventful_api = nil
 
@@ -90,3 +90,4 @@ class EventfulEvent
        interval
     end
 end
+
