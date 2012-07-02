@@ -2,7 +2,22 @@
 # See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  hello: "Hello world"
+  activerecord:
+    models:
+      authentication: "Social network account"
+    attributes:
+      authentication:
+        provider: "Social network"
+        uid: "Social network ID"
+    errors:
+      messages:
+        blank: "is required"
+      models:
+        authentication:
+          attributes:
+            provider:
+              taken: "already linked"
+
   errors:
     parameters:
       empty_videos: "Not defined parameter 'videos' for search recommended events"
@@ -11,6 +26,7 @@ en:
     models:
       video_performer:
         uniqueness_by_performer: 'was already added'
+
 
   feed:
     user:
