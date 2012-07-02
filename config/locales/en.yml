@@ -22,6 +22,10 @@ en:
           attributes:
             video_id:
               taken: "already has such clip"
+        encoding_profile:
+          attributes:
+            name:
+              taken: "should be unique"
 
   errors:
     parameters:
