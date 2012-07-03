@@ -9,7 +9,7 @@ class Api::BaseController < ApplicationController
   rescue_from Exception do |exeption|
     error = case exeption.class.name
       when 'Errno::ECONNREFUSED'
-        { :status => :internal_server_error, :message => I18n.t('errors.parameters.remote_service_unavailable') }
+        { :status => :service_unavailable, :message => I18n.t('errors.parameters.remote_service_unavailable') }
       when 'ActiveRecord::RecordNotFound'
         { :status => :not_found, :message => exeption.message }
       else
