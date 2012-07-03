@@ -33,6 +33,7 @@ en:
       empty_count:  "Count parameter not defined"
       empty_name:   "Name parameter not defined"
       coordinates_not_provided: "Coordinates are not provided"
+      remote_service_unavailable: "Remote service unavailable"
     models:
       video_performer:
         uniqueness_by_performer: 'was already added'

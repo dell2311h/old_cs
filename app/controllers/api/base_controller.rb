@@ -7,8 +7,16 @@ class Api::BaseController < ApplicationController
   respond_to :json
 
   rescue_from Exception do |exeption|
-    status = (exeption.class == ActiveRecord::RecordNotFound) ? :not_found : :bad_request
-    render status: status, json: { error: exeption.message }, layout: false
+    error = case exeption.class.name
+      when 'Errno::ECONNREFUSED'
+        { :status => :internal_server_error, :message => I18n.t('errors.parameters.remote_service_unavailable') }
+      when 'ActiveRecord::RecordNotFound'
+        { :status => :not_found, :message => exeption.message }
+      else
+        { :status => :bad_request, :message => exeption.message }
+    end
+
+    render :status => error[:status], :json => { :error => error[:message] }, :layout => false
   end
 
   private
