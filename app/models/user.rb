@@ -65,6 +65,7 @@ class User < ActiveRecord::Base
   has_many :feed_items, :dependent => :destroy
   has_many :feed_entities, :as => :entity, :class_name => "FeedItem", :dependent => :destroy
   has_many :feed_contexts, :as => :context, :class_name => "FeedItem", :dependent => :destroy
+
   has_many :user_notifications
 
   accepts_nested_attributes_for :authentications
@@ -261,3 +262,4 @@ class User < ActiveRecord::Base
       user.friends
     end
 end
+
