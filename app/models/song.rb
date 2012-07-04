@@ -22,8 +22,12 @@ class Song < ActiveRecord::Base
 
   scope :with_comments_count, lambda { |params = {}|
     query_str = params[:event_id] ? "where(\"videos.event_id = ?\", params[:event_id])" : "scoped"
-    select("songs.*").select("SUM((#{Comment.select("COUNT(comments.video_id)").where("videos.id = comments.video_id").instance_eval(query_str).to_sql})) AS comments_count").joins(:videos).group("songs.id")
+    select("songs.*").select("SUM((#{Comment.select("COUNT(comments.video_id)").where("videos.id = comments.video_id").instance_eval(query_str).to_sql})) AS comments_count").joins("LEFT OUTER JOIN `video_songs` ON `video_songs`.`song_id` = `songs`.`id` LEFT OUTER JOIN `videos` ON `videos`.`id` = `video_songs`.`video_id`").group("songs.id")
   }
+
+
+
+
 
   scope :with_calculated_counters, lambda { |params = {}| with_videos_count(params).with_comments_count(params) }
 
