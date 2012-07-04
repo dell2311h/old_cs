@@ -5,19 +5,22 @@ describe EmailNotification do
   describe "find_undelivered" do
     it "should find undelivered notifications that should be delivered" do
       user = Factory.create :user, :email_notification_status => "day"
-      should_not_be_delivered_notification = Factory.create :email_notification,
-                                                        :creation_date => Time.now - 1.day,
-                                                        :user => user
+      feed_item = Factory.create :comment_video_feed, :user => user
       should_be_delivered_notification = Factory.create :email_notification,
+                                                        :creation_date => Time.now - 2.day,
+                                                        :user => user,
+                                                        :feed_item => feed_item
+      should_not_be_delivered_notification = Factory.create :email_notification,
                                                             :creation_date => Time.now,
-                                                            :user =>user
-                                                            
+                                                            :user => user,
+                                                            :feed_item => feed_item
+
       EmailNotification.find_undelivered.should include(should_be_delivered_notification)
       EmailNotification.find_undelivered.should_not include(should_not_be_delivered_notification)
     end
     
   end
-  
+
   describe "#destroy_delivered" do
     def create_notification
       notification = Factory.create(:email_notification)
@@ -35,7 +38,7 @@ describe EmailNotification do
       result.should be_empty
     end
   end
-  
+
   describe "#deliver_multiply" do
     it "should deliver notifications" do
       notifications = []
@@ -51,7 +54,7 @@ describe EmailNotification do
       EmailNotification.deliver_multiply notifications
     end
   end
-  
+
   describe "#format_multiply_notifications" do
     it "should format notifications propperly" do
       notifications = []
@@ -66,7 +69,7 @@ describe EmailNotification do
       result[:texts].count.should be_eql 2
     end
   end
-  
+
   describe "#deliver" do
     it "should deliver email notification" do
       email_notification = EmailNotification.new
@@ -81,7 +84,7 @@ describe EmailNotification do
       email_notification.deliver
     end
   end
-  
+
   describe "#deliver_undelivered" do
     it "should deliver undelivered notification" do
       notifications = []
