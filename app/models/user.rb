@@ -177,7 +177,8 @@ class User < ActiveRecord::Base
   end
 
   def unlink_authentication provider
-    Authentication.delete_all([ "provider = ? AND user_id = ?",provider, self.id ])
+    authentication = self.authentications.find_by_provider(provider)
+    authentication.destroy if authentication
   end
 
   def update_coordinates coordinates
