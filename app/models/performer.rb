@@ -3,13 +3,15 @@ class Performer < ActiveRecord::Base
   include Follow::Relations
   include Follow::FlagsAndCounters
 
-  validates :name , :presence => true
-  validates :name,  :uniqueness => true
+  validates :name, :presence => true, :uniqueness => true
 
   mount_uploader :picture, ThumbnailUploader
 
   has_many :video_performers, :dependent => :destroy
   has_many :videos, :through => :video_performers
+
+  has_many :feed_entities, :as => :entity, :class_name => "FeedItem", :dependent => :destroy
+  has_many :feed_contexts, :as => :context, :class_name => "FeedItem", :dependent => :destroy
 
   self.per_page = Settings.paggination.per_page
 
