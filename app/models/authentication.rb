@@ -2,9 +2,12 @@ class Authentication < ActiveRecord::Base
   belongs_to :user
   validates :provider, :uniqueness => {:scope => :uid}
   validates :provider, :uniqueness => {:scope => :user_id}
-  validates :provider, :uid, presence: true
+  validates :provider, :uid, :presence => true
 
   scope :provider, lambda {|provider| where("provider =  ?", provider) }
+
+  has_many :feed_entities, :as => :entity, :class_name => "FeedItem", :dependent => :destroy
+  has_many :feed_contexts, :as => :context, :class_name => "FeedItem", :dependent => :destroy
 
   def self.not_on_remote_provider remote_users, provider
         uids = remote_users.map { |remote_user| remote_user[:uid] }
@@ -21,3 +24,4 @@ class Authentication < ActiveRecord::Base
   end
 
 end
+
