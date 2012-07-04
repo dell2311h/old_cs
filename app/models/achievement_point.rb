@@ -11,7 +11,8 @@ class AchievementPoint < ActiveRecord::Base
     :exceeding_followers_count          => 8,
     :exceeding_followings_count         => 9,
     :exceeding_comment_count_for_user   => 10,
-    :upload_longest_video_to_event      => 11
+    :upload_longest_video_to_event      => 11,
+    :create_bridge                      => 12
   }
 
   belongs_to :user
