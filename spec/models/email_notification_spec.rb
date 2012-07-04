@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe EmailNotification do
-  
+
   describe "find_undelivered" do
     it "should find undelivered notifications that should be delivered" do
       user = Factory.create :user, :email_notification_status => "day"
-      should_be_delivered_notification = Factory.create :user_notification,
+      should_not_be_delivered_notification = Factory.create :email_notification,
                                                         :creation_date => Time.now - 1.day,
                                                         :user => user
-      should_not_be_delivered_notification = Factory.create :user_notification,
+      should_be_delivered_notification = Factory.create :email_notification,
                                                             :creation_date => Time.now,
                                                             :user =>user
                                                             
@@ -17,10 +17,10 @@ describe EmailNotification do
     end
     
   end
-
+  
   describe "#destroy_delivered" do
     def create_notification
-      notification = Factory.create(:user_notification)
+      notification = Factory.create(:email_notification)
       @ids << notification.id
       @notifications << notification
     end
@@ -28,10 +28,10 @@ describe EmailNotification do
       @notifications = []
       @ids = []
       2.times { create_notification }
-
+  
       EmailNotification.destroy_delivered @notifications
       result = EmailNotification.where :id => @ids
-
+  
       result.should be_empty
     end
   end
@@ -45,7 +45,7 @@ describe EmailNotification do
       NotificationMailer.should_receive(:send_multiply_notifications).with(notification_params[:email],
                                                                            notification_params[:texts],
                                                                            notification_params[:period]).and_return(email)
-
+  
       EmailNotification.should_receive(:destroy_delivered).with(notifications)
       email.should_receive(:deliver)
       EmailNotification.deliver_multiply notifications
@@ -56,11 +56,11 @@ describe EmailNotification do
     it "should format notifications propperly" do
       notifications = []
       2.times do
-        notification =  Factory.create(:user_notification)
+        notification =  Factory.create(:email_notification)
         notifications << notification
         notification.should_receive(:format_message)
       end
-
+  
       result = EmailNotification.format_multiply_notifications notifications
       result[:email].should be_eql(notifications.first.user.email)
       result[:texts].count.should be_eql 2
@@ -81,7 +81,7 @@ describe EmailNotification do
       email_notification.deliver
     end
   end
-
+  
   describe "#deliver_undelivered" do
     it "should deliver undelivered notification" do
       notifications = []
@@ -92,9 +92,9 @@ describe EmailNotification do
       end
       EmailNotification.should_receive(:find_undelivered).and_return(notifications)
       grouped_notifications = notifications.group_by(& :user_id)
-      grouped_notifications.each {|user_id, user_notifications| EmailNotification.should_receive(:deliver_multiply).with(user_notifications)}
+      grouped_notifications.each {|user_id, email_notifications| EmailNotification.should_receive(:deliver_multiply).with(email_notifications)}
       notifications.should_receive(:group_by).and_return(grouped_notifications)
-
+  
       EmailNotification.deliver_undelivered
     end
   end
@@ -103,10 +103,10 @@ describe EmailNotification do
     context "deliver immediately" do
       it "should deliver email notification" do
         user = Factory.create :user, :email_notification_status => "immediate"
-        user_notificatin = Factory.create :user_notification, :user_id => user.id
-        feed_item = user_notificatin.feed_item
-        user_notificatin.should_receive(:deliver)
-        EmailNotification.should_receive(:create_by_feed_item).with(feed_item).and_return(user_notificatin)
+        feed_item = Factory.create :comment_video_feed, :user => user
+        email_notification = Factory.create :email_notification, :user => user, :feed_item => feed_item
+        email_notification.should_receive(:deliver)
+        EmailNotification.should_receive(:create_by_feed_item).with(feed_item).and_return(email_notification)
         EmailNotification.process_email_notification(feed_item)
       end
     end
@@ -114,10 +114,10 @@ describe EmailNotification do
     context "deviver later" do
       it "should store notification to deliver later" do
         user = Factory.create :user, :email_notification_status => "day"
-        user_notificatin = Factory.create :user_notification, :user_id => user.id
-        feed_item = user_notificatin.feed_item
-        user_notificatin.should_receive(:save)
-        EmailNotification.should_receive(:create_by_feed_item).with(feed_item).and_return(user_notificatin)
+        feed_item = Factory.create :comment_video_feed, :user => user
+        email_notification = Factory.create :email_notification, :user => user, :feed_item => feed_item
+        email_notification.should_receive(:save)
+        EmailNotification.should_receive(:create_by_feed_item).with(feed_item).and_return(email_notification)
         EmailNotification.process_email_notification(feed_item)
       end
     end
@@ -125,9 +125,12 @@ describe EmailNotification do
     context 'should not deliver notifications' do
       it "should not prpcess notification for user with turned off email notifications" do
         user = Factory.create :user, :email_notification_status => "none"
-        user_notificatin = Factory.create :user_notification, :user_id => user.id
+        feed_item = Factory.create :comment_video_feed, :user => user
+        email_notification = Factory.create :email_notification, :user => user, :feed_item => feed_item
         EmailNotification.should_not_receive(:create_by_feed_item)
+        EmailNotification.process_email_notification(feed_item)
       end
     end
   end
+
 end
