@@ -25,14 +25,17 @@ class Clip < ActiveRecord::Base
       pe_media = hydra.create_media("clip ID #{self.id}", nil, pluraleyes_project_id)
       response = hydra.add_audio("#{Settings.encoding.storage.location}#{self.source}", {:project_id => pluraleyes_project_id, :media_id => pe_media[:id]})
       if response == "OK"
+        Rails.logger.info "Clip was uploaded to PluralEyes. PE Media ID #{self.pluraleyes_id}"
         new_pluraleyes_group_count = hydra.sync(pluraleyes_project_id).count
         if new_pluraleyes_group_count > 0 && new_pluraleyes_group_count < event.pluraleyes_group_count
           notify_observers(:after_create_bridge)
         end
         event.update_attribute(:pluraleyes_group_count, new_pluraleyes_group_count)
+      else
+        raise "Clip #{self.id} was not uploaded to PluralEyes. PE Media ID: #{self.pluraleyes_id}.\nPE response: #{response}"
       end
       self.update_attribute :pluraleyes_id, pe_media[:id]
-      Rails.logger.info "PluralEyes media created. Media ID #{self.pluraleyes_id}"
+      Rails.logger.info "PluralEyes media created. PE Media ID #{self.pluraleyes_id}"
     end
   end
 end
