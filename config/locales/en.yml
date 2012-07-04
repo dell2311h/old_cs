@@ -39,6 +39,8 @@ en:
         uniqueness_by_performer: 'was already added'
       event:
         master_track_not_reay: "Processing not completed yet."
+      comment:
+        you_can_not_delete: "You can't delete this comment"
 
   feed:
     user:
