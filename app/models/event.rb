@@ -5,12 +5,14 @@ class Event < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :place
-  has_many :videos, dependent: :destroy
+  has_many :videos, :dependent => :destroy
 
-  has_many :master_tracks, dependent: :destroy
+  has_many :master_tracks, :dependent => :destroy
 
-  validates :name, :date, presence: true
-  validates :user_id, :place_id, presence: true
+  has_many :feed_entities, :as => :entity, :class_name => "FeedItem", :dependent => :destroy
+  has_many :feed_contexts, :as => :context, :class_name => "FeedItem", :dependent => :destroy
+
+  validates :name, :date, :user_id, :place_id, :presence => true
 
   after_create :create_pluraleyes_project
 
@@ -198,3 +200,4 @@ class Event < ActiveRecord::Base
     end
 
 end
+

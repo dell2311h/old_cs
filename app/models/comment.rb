@@ -4,6 +4,7 @@ class Comment < ActiveRecord::Base
 
   has_many :feed_entities, :as => :entity, :class_name => "FeedItem", :dependent => :destroy
   has_many :feed_contexts, :as => :context, :class_name => "FeedItem", :dependent => :destroy
+
   has_many :taggings
   has_many :tags, :through => :taggings
 
@@ -46,3 +47,4 @@ class Comment < ActiveRecord::Base
       end
     end
 end
+

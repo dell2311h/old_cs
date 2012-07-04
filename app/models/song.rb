@@ -1,11 +1,15 @@
 class Song < ActiveRecord::Base
-  has_many :video_songs, dependent: :destroy
-  has_many :videos, through: :video_songs
+
   belongs_to :user
+
+  has_many :video_songs, :dependent => :destroy
+  has_many :videos, :through => :video_songs
+  has_many :feed_entities, :as => :entity, :class_name => "FeedItem", :dependent => :destroy
+  has_many :feed_contexts, :as => :context, :class_name => "FeedItem", :dependent => :destroy
 
   after_create :accure_achievement_points
 
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true, :uniqueness => true
 
   scope :suggestions_by_name, lambda {|name| where("UPPER(name) LIKE ?", "#{name.to_s.upcase}%") }
 
@@ -51,3 +55,4 @@ class Song < ActiveRecord::Base
     end
 
 end
+
