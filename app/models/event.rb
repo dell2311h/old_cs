@@ -1,3 +1,4 @@
+require 'custom_validators'
 class Event < ActiveRecord::Base
 
   include Follow::Relations
@@ -33,6 +34,29 @@ class Event < ActiveRecord::Base
   scope :around_date, lambda { |search_date| where(:date => (search_date - 1.day)..(search_date)) }
 
   scope :with_calculated_counters, with_followers_count.with_videos_comments_count
+
+
+  def self.search(params)
+
+    events = params[:user_id] ? User.find(params[:user_id]).events : scoped
+
+    events = events.order_by_video_count if params[:top]
+
+    if params[:nearby]
+      raise I18n.t('errors.parameters.coordinates_not_provided') unless params[:latitude] && params[:longitude]
+      Custom::Validators.validate_coordinates_with_message(params[:latitude], params[:longitude], I18n.t('errors.parameters.invalid_coordinates_format'))
+      events = events.nearby([params[:latitude], params[:longitude]], Settings.search.radius)
+    end
+
+    events = events.around_date(Date.parse(params[:date])) if params[:date]
+
+    if query_str = params[:event_name] || params[:q]
+      events = events.with_name_like(query_str)
+    end
+
+    events
+  end
+
 
   def self.top_random_for count
     events = Event.order_by_video_count.limit count
