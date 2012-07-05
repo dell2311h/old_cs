@@ -10,8 +10,6 @@ class Clip < ActiveRecord::Base
 
   validates :video_id, uniqueness: { :scope => :clip_type }
 
-  after_create {|clip| Resque.enqueue(Worker::PluraleyesUploader, clip.id)}
-
   def location
     "#{Settings.encoding.storage.host}/#{self.source}"
   end
