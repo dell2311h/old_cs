@@ -2,7 +2,7 @@ class FoursquarePlace
 
   def self.find params
     search_params = {}
-    raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
+    raise I18n.t('errors.parameters.coordinates_not_provided') unless params[:latitude] && params[:longitude]
     check_coordinates params[:latitude], params[:longitude]
     search_params[:ll] = "#{params[:latitude]},#{params[:longitude]}"
     search_params[:radius] = self.cast_radius Settings.search.radius
@@ -11,7 +11,7 @@ class FoursquarePlace
       search_params[:query] = params[:place_name]
     end
 
-    raise 'Invalid  search params provided' if search_params.empty?
+    raise I18n.t('errors.parameters.empty_search_params') if search_params.empty?
 
     places =  self.foursuare_api.search_venues search_params
 
