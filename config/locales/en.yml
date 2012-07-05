@@ -35,6 +35,7 @@ en:
       coordinates_not_provided: "Coordinates are not provided"
       remote_service_unavailable: "Remote service unavailable"
       empty_search_params: "Empty search parameters"
+      invalid_coordinates_format: "Incorrect coordinates"
     models:
       video_performer:
         uniqueness_by_performer: 'was already added'
