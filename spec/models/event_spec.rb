@@ -280,7 +280,7 @@ describe Event do
         nearby_events = double('nearby_events')
         Event.should_receive(:scoped).and_return(events)
         events.should_receive(:nearby).and_return(nearby_events)
-        Event.search(:top => true).should be(nearby_events)
+        Event.search(:nearby => true, :latitude => Faker::Geolocation.lat, :longitude => Faker::Geolocation.lng).should be(nearby_events)
       end
     end
 
