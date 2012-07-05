@@ -1,3 +1,4 @@
+require 'custom_validators'
 class Api::BaseController < ApplicationController
 
   skip_before_filter :verify_authenticity_token
@@ -32,11 +33,6 @@ class Api::BaseController < ApplicationController
     def sign_in(user)
       @token = user.authentication_token
       self.current_user= user
-    end
-
-    def check_coordinates_format
-      Float(params[:latitude])
-      Float(params[:longitude])
     end
 
     def auth_check
