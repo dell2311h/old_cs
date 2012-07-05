@@ -14,7 +14,7 @@ class Api::PlacesController < Api::BaseController
     @places = Place
 
     if params[:nearby]
-      raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
+      raise I18n.t('errors.parameters.coordinates_not_provided') unless params[:latitude] && params[:longitude]
       check_coordinates_format
       @places = @places.near [params[:latitude], params[:longitude]], Settings.search.radius, :order => :distance
     end

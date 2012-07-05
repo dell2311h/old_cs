@@ -20,7 +20,7 @@ class Api::EventsController < Api::BaseController
     end
 
     if params[:nearby]
-      raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
+      raise I18n.t('errors.parameters.coordinates_not_provided') unless params[:latitude] && params[:longitude]
       check_coordinates_format
       @events = @events.nearby [params[:latitude], params[:longitude]], Settings.search.radius
     end
