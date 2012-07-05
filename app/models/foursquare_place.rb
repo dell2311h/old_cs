@@ -1,9 +1,10 @@
+require 'custom_validators'
 class FoursquarePlace
 
   def self.find params
     search_params = {}
     raise I18n.t('errors.parameters.coordinates_not_provided') unless params[:latitude] && params[:longitude]
-    check_coordinates params[:latitude], params[:longitude]
+    Custom::Validators.validate_coordinates_with_message(params[:latitude], params[:longitude], I18n.t('errors.parameters.invalid_coordinates_format'))
     search_params[:ll] = "#{params[:latitude]},#{params[:longitude]}"
     search_params[:radius] = self.cast_radius Settings.search.radius
 
@@ -37,11 +38,6 @@ class FoursquarePlace
       end
 
       output_places
-    end
-
-    def self.check_coordinates latitude, longitude
-      Float(latitude)
-      Float(longitude)
     end
 
     def self.cast_radius radius
