@@ -1,3 +1,4 @@
+require 'custom_validators'
 class User < ActiveRecord::Base
 
   include Follow::FlagsAndCounters
@@ -182,7 +183,7 @@ class User < ActiveRecord::Base
   end
 
   def update_coordinates coordinates
-    raise "Incorrevt coordinates" if coordinates[:latitude].nil? || coordinates[:longitude].nil?
+    Custom::Validators.validate_coordinates_with_message(coordinates[:latitude], coordinates[:longitude], I18n.t('errors.parameters.invalid_coordinates_format'))
     self.update_attributes!({ :latitude  => coordinates[:latitude],
                               :longitude => coordinates[:longitude]
                               })
