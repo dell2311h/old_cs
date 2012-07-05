@@ -1,8 +1,5 @@
 object @event
-attributes :id, :name, :date
-
-# TODO: need fix after build
-node(:image_url) { "http://dummyimage.com/200x200/54575c/ffffff.jpg" }
+attributes :id, :name, :date, :user_id
 
 child :place do
   extends "api/places/show"

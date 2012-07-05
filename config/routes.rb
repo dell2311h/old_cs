@@ -29,6 +29,7 @@ Crowdsync::Application.routes.draw do
     get 'events/random_playlist' => 'events#random_playlist'
 
     resources :events, :only => [:index, :create, :show]
+    get 'users/:user_id/events' => 'events#index'
 
     resources :places, :only => [:create]
 
@@ -129,3 +130,4 @@ Crowdsync::Application.routes.draw do
   root :to => "videos#index"
 
 end
+

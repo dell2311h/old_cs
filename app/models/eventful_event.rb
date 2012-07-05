@@ -1,4 +1,5 @@
 require 'eventful/api'
+require 'custom_validators'
 class EventfulEvent
 
   def self.create_event params
@@ -12,8 +13,9 @@ class EventfulEvent
   def self.search params
     search_params = {}
     if params[:nearby]
-      raise "Coordinates are not provided" unless params[:latitude] && params[:longitude]
-      check_coordinates
+      raise I18n.t('errors.parameters.coordinates_not_provided') unless params[:latitude] && params[:longitude]
+      Custom::Validators.validate_coordinates_with_message(params[:latitude], params[:longitude], I18n.t('errors.parameters.invalid_coordinates_format'))
+
       search_params[:within] = Settings.search.radius
       search_params[:latitude] = params[:latitude]
       search_params[:longitude] = params[:longitude]
@@ -39,7 +41,7 @@ class EventfulEvent
 
     format_result  results
   end
-    
+
     private
       @@eventful_api = nil
 
@@ -75,11 +77,6 @@ class EventfulEvent
         { events: output_events, size: input["total_items"]}
       end
 
-    def self.check_coordinates latitude, longitude
-      Float(latitude)
-      Float(longitude)
-    end
-
     def self.format_date date
        date = Date.parse date
        date_begin = date - 1
@@ -90,3 +87,4 @@ class EventfulEvent
        interval
     end
 end
+

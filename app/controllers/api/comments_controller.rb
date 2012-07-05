@@ -9,7 +9,7 @@ class Api::CommentsController < Api::BaseController
     if @comments.count > 0
       @comments = @comments.paginate(:page => params[:page], :per_page => params[:per_page])
     else
-      render :status => :not_found, json: {}
+      render :status => :not_found, :json => {}
     end
   end
 
@@ -34,7 +34,7 @@ class Api::CommentsController < Api::BaseController
 
   def destroy
     @comment = Comment.find(params[:comment_id])
-    raise "You can't delete this comment" unless @comment.destroy_by(current_user)
+    raise I18n.t('errors.models.comment.you_can_not_delete') unless @comment.destroy_by(current_user)
     render status: :accepted, json: {}
   end
 

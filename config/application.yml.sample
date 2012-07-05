@@ -87,6 +87,10 @@ defaults: &defaults
         exceeding_followings_count:         100
         exceeding_comments_count_for_user:  100
 
+  notifications:
+    apn:
+      sound: "apnsTune.caf"
+
 development:
   <<: *defaults
 
@@ -98,10 +102,6 @@ development:
      authentication: :plain
      user_name: 'your_test_email@gmail.com'
      password: 'your_password'
-
-  notifications:
-    apn:
-      sound: "apnsTune.caf"
 
 test:
   <<: *defaults

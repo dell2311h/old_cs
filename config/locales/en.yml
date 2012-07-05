@@ -2,17 +2,50 @@
 # See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  hello: "Hello world"
+  activerecord:
+    models:
+      authentication: "Social network account"
+    attributes:
+      authentication:
+        provider: "Social network"
+        uid: "Social network ID"
+    errors:
+      messages:
+        blank: "is required"
+        taken: "has already been taken"
+      models:
+        authentication:
+          attributes:
+            provider:
+              taken: "already linked"
+        clip:
+          attributes:
+            video_id:
+              taken: "already has such clip"
+        encoding_profile:
+          attributes:
+            name:
+              taken: "should be unique"
+
   errors:
     parameters:
       empty_videos: "Not defined parameter 'videos' for search recommended events"
       empty_count:  "Count parameter not defined"
       empty_name:   "Name parameter not defined"
+      coordinates_not_provided: "Coordinates are not provided"
+      remote_service_unavailable: "Remote service unavailable"
+      empty_search_params: "Empty search parameters"
+      invalid_coordinates_format: "Incorrect coordinates"
     models:
       video_performer:
         uniqueness_by_performer: 'was already added'
       event:
-        master_track_not_reay: "Processing not compleated yet."
+        master_track_not_reay: "Processing not completed yet."
+      comment:
+        you_can_not_delete: "You can't delete this comment"
+      eventful_performer:
+        name_is_not_set: "performer_name is not provided"
+
   feed:
     user:
       follow: '$actor$ started following $entity$'

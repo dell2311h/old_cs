@@ -1,3 +1,4 @@
+require 'custom_validators'
 class Api::BaseController < ApplicationController
 
   skip_before_filter :verify_authenticity_token
@@ -7,8 +8,16 @@ class Api::BaseController < ApplicationController
   respond_to :json
 
   rescue_from Exception do |exeption|
-    status = (exeption.class == ActiveRecord::RecordNotFound) ? :not_found : :bad_request
-    render status: status, json: { error: exeption.message }, layout: false
+    error = case exeption.class.name
+      when 'Errno::ECONNREFUSED'
+        { :status => :service_unavailable, :message => I18n.t('errors.parameters.remote_service_unavailable') }
+      when 'ActiveRecord::RecordNotFound'
+        { :status => :not_found, :message => exeption.message }
+      else
+        { :status => :bad_request, :message => exeption.message }
+    end
+
+    render :status => error[:status], :json => { :error => error[:message] }, :layout => false
   end
 
   private
@@ -24,11 +33,6 @@ class Api::BaseController < ApplicationController
     def sign_in(user)
       @token = user.authentication_token
       self.current_user= user
-    end
-
-    def check_coordinates_format
-      Float(params[:latitude])
-      Float(params[:longitude])
     end
 
     def auth_check

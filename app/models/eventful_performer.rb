@@ -3,7 +3,7 @@ class EventfulPerformer
 
   def self.search params
 
-    raise 'performer_name not set' if params[:performer_name].nil?
+    raise I18n.t('errors.models.eventful_performer.name_is_not_set') if params[:performer_name].nil?
     search_params = {}
     search_params[:keywords] = params[:performer_name]
     unless params[:page].nil?

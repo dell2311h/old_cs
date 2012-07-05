@@ -2,7 +2,7 @@ class Authentication < ActiveRecord::Base
   belongs_to :user
   validates :provider, :uniqueness => {:scope => :uid}
   validates :provider, :uniqueness => {:scope => :user_id}
-  validates :provider, :uid, :presence => true
+  validates :provider, :uid, :user_id, :presence => true
 
   scope :provider, lambda {|provider| where("provider =  ?", provider) }
 
