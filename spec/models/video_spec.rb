@@ -100,7 +100,8 @@ describe Video do
 
       before :all do
         @song = Factory.create :song
-        @valid_video = @song.videos.first
+        @valid_video = Factory.create :video
+        Factory.create :video_song, :video => @valid_video, :song => @song
         @invalid_video = Factory.create :video
       end
 
@@ -132,4 +133,3 @@ describe Video do
 
   end
 end
-
