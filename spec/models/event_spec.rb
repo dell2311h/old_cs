@@ -296,6 +296,17 @@ describe Event do
       end
     end
 
+    context "by name" do
+      it "should return events name" do
+        name = Faker::Lorem.word.capitalize
+        events = double('events')
+        events_by_name = double('events_by_name')
+        Event.should_receive(:scoped).and_return(events)
+        events.should_receive(:with_name_like).with(name).and_return(events_by_name)
+        Event.search(:q => name).should be(events_by_name)
+      end
+    end
+
   end
 
   describe '#get_random_N_top_events' do
