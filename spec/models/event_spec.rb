@@ -252,7 +252,51 @@ describe Event do
 
   end
 
+  describe ".search" do
+    context "by user owner" do
+      it "should return users events" do
+        user_id = rand(100)
+        user = double('events_owner')
+        events = double('events')
+        User.should_receive(:find).with(user_id).and_return(user)
+        user.should_receive(:events).and_return(events)
+        Event.search(:user_id => user_id).should be(events)
+      end
+    end
 
+    context "by top events" do
+      it "should return events ordered by video count" do
+        events = double('events')
+        top_events = double('top_events')
+        Event.should_receive(:scoped).and_return(events)
+        events.should_receive(:order_by_video_count).and_return(top_events)
+        Event.search(:top => true).should be(top_events)
+      end
+    end
+
+    context "by nearby events" do
+      it "should return nearby events" do
+        events = double('events')
+        nearby_events = double('nearby_events')
+        Event.should_receive(:scoped).and_return(events)
+        events.should_receive(:nearby).and_return(nearby_events)
+        Event.search(:top => true).should be(nearby_events)
+      end
+    end
+
+    context "by date" do
+      it "should return events by date" do
+        date = Time.at(rand * Time.now.to_i).to_date
+        events = double('events')
+        events_by_date = double('events_by_date')
+        Event.should_receive(:scoped).and_return(events)
+        events.should_receive(:around_date).with(date).and_return(events_by_date)
+
+        Event.search(:date => date.to_s).should be(events_by_date)
+      end
+    end
+
+  end
 
   describe '#get_random_N_top_events' do
     before :all do
