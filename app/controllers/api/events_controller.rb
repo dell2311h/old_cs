@@ -21,7 +21,7 @@ class Api::EventsController < Api::BaseController
 
     if params[:nearby]
       raise I18n.t('errors.parameters.coordinates_not_provided') unless params[:latitude] && params[:longitude]
-      check_coordinates_format
+      Custom::Validators.validate_coordinates_with_message(params[:latitude], params[:longitude], I18n.t('errors.parameters.invalid_coordinates_format'))
       @events = @events.nearby [params[:latitude], params[:longitude]], Settings.search.radius
     end
 
