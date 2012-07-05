@@ -21,12 +21,12 @@ describe Api::EventsController do
       it 'should get list of ALL events' do
         params = {}
 
-        @events.should_not_receive(:order_by_video_count)
-        @events.should_not_receive(:nearby)
+        @events.should_receive(:search).and_return(@events)
         @events.should_receive(:count).and_return(2)
         @events.should_receive(:paginate).and_return(@events)
         @events.should_receive(:with_calculated_counters).and_return(@result_array)
         get :index, :format => :json
+
         response.should be_ok
       end
 
@@ -75,7 +75,9 @@ describe Api::EventsController do
       end
 
       it 'should respond with not_found HTTP status' do
+        @events.should_receive(:search).and_return(@events)
         get :index, :format => :json
+
         response.should be_not_found
       end
     end
@@ -85,3 +87,4 @@ describe Api::EventsController do
   end
 
 end
+
