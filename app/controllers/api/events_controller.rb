@@ -13,25 +13,7 @@ class Api::EventsController < Api::BaseController
   end
 
   def index
-    @events = Event
-
-    if params[:top]
-      @events = @events.order_by_video_count
-    end
-
-    if params[:nearby]
-      raise I18n.t('errors.parameters.coordinates_not_provided') unless params[:latitude] && params[:longitude]
-      Custom::Validators.validate_coordinates_with_message(params[:latitude], params[:longitude], I18n.t('errors.parameters.invalid_coordinates_format'))
-      @events = @events.nearby [params[:latitude], params[:longitude]], Settings.search.radius
-    end
-
-    if params[:date]
-      @events = @events.around_date Date.parse(params[:date])
-    end
-
-    if query_str = params[:event_name] || params[:q]
-      @events = @events.with_name_like query_str
-    end
+    @events = Event.search(params)
 
     if (@events_count = @events.count) > 0
       @events = @events.paginate(:page => params[:page], :per_page => params[:per_page]).with_flag_followed_by(current_user).with_calculated_counters
