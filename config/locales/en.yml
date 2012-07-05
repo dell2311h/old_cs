@@ -41,6 +41,8 @@ en:
         master_track_not_reay: "Processing not completed yet."
       comment:
         you_can_not_delete: "You can't delete this comment"
+      eventful_performer:
+        name_is_not_set: "performer_name is not provided"
 
   feed:
     user:
