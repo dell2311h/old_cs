@@ -1,11 +1,15 @@
 class Song < ActiveRecord::Base
-  has_many :video_songs, dependent: :destroy
-  has_many :videos, through: :video_songs
+
   belongs_to :user
+
+  has_many :video_songs, :dependent => :destroy
+  has_many :videos, :through => :video_songs
+  has_many :feed_entities, :as => :entity, :class_name => "FeedItem", :dependent => :destroy
+  has_many :feed_contexts, :as => :context, :class_name => "FeedItem", :dependent => :destroy
 
   after_create :accure_achievement_points
 
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true, :uniqueness => true
 
   scope :suggestions_by_name, lambda {|name| where("UPPER(name) LIKE ?", "#{name.to_s.upcase}%") }
 
@@ -18,8 +22,12 @@ class Song < ActiveRecord::Base
 
   scope :with_comments_count, lambda { |params = {}|
     query_str = params[:event_id] ? "where(\"videos.event_id = ?\", params[:event_id])" : "scoped"
-    select("songs.*").select("SUM((#{Comment.select("COUNT(comments.video_id)").where("videos.id = comments.video_id").instance_eval(query_str).to_sql})) AS comments_count").joins(:videos).group("songs.id")
+    select("songs.*").select("SUM((#{Comment.select("COUNT(comments.video_id)").where("videos.id = comments.video_id").instance_eval(query_str).to_sql})) AS comments_count").joins("LEFT OUTER JOIN `video_songs` ON `video_songs`.`song_id` = `songs`.`id` LEFT OUTER JOIN `videos` ON `videos`.`id` = `video_songs`.`video_id`").group("songs.id")
   }
+
+
+
+
 
   scope :with_calculated_counters, lambda { |params = {}| with_videos_count(params).with_comments_count(params) }
 
@@ -51,3 +59,4 @@ class Song < ActiveRecord::Base
     end
 
 end
+

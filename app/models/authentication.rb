@@ -6,6 +6,9 @@ class Authentication < ActiveRecord::Base
 
   scope :provider, lambda {|provider| where("provider =  ?", provider) }
 
+  has_many :feed_entities, :as => :entity, :class_name => "FeedItem", :dependent => :destroy
+  has_many :feed_contexts, :as => :context, :class_name => "FeedItem", :dependent => :destroy
+
   def self.not_on_remote_provider remote_users, provider
         uids = remote_users.map { |remote_user| remote_user[:uid] }
         local_users = Authentication.provider(provider).where("uid IN (?)", uids).select("uid")

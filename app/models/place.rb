@@ -3,10 +3,13 @@ class Place < ActiveRecord::Base
   include Follow::Relations
   include Follow::FlagsAndCounters
 
-  has_many :events
+  has_many :events, :dependent => :destroy
   belongs_to :user
 
-  has_many :place_providers, dependent: :destroy
+  has_many :place_providers, :dependent => :destroy
+
+  has_many :feed_entities, :as => :entity, :class_name => "FeedItem", :dependent => :destroy
+  has_many :feed_contexts, :as => :context, :class_name => "FeedItem", :dependent => :destroy
 
   validates :name, :user_id, :latitude, :longitude, :presence => true
 

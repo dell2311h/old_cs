@@ -88,7 +88,8 @@ module PeHydra
       # FIX ME!!! :)
       url = "#{@base_url}/#{@session_token}/#{params[:project_id]}/#{params[:media_id]}/audio"
       response = `curl -F 'media=@#{path}' #{url}`
-      response.match(/<string xmlns.*>(OK)<\/string>$/)[1]
+      result = response.match(/<string xmlns.*>(OK)<\/string>$/)
+      result.nil? ? response : result[1]
     end
 
     def media_list(project_id)

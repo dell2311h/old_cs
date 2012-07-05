@@ -51,7 +51,7 @@ class EmailNotification < UserNotification
   end
 
   def self.find_undelivered
-    user_notifications = UserNotification.where("(users.email_notification_status IS NOT NULL)  AND (DATEDIFF(?, creation_date) >= users.email_notification_status)", Time.now)
+    user_notifications = EmailNotification.where("(users.email_notification_status IS NOT NULL)  AND (DATEDIFF(?, creation_date) >= users.email_notification_status)", Time.now)
     user_notifications.joins(:user).includes(:user, :feed_item)
   end
 
