@@ -167,8 +167,11 @@ module PeHydra
       query = build_query(action, params)
       query[:request].body = xml unless xml.nil?
       query[:request].add_field "Content-Type", "application/xml"
-      response = Net::HTTP.new(query[:url].host, query[:url].port).start { |http|
-        http.request(query[:request])
+      query[:request].read_timeout = 600
+      http = Net::HTTP.new(query[:url].host, query[:url].port)
+      http.read_timeout = 600
+      response = http.start { |req|
+        req.request(query[:request])
       }
       output = Nokogiri::XML(response.body)
     end
