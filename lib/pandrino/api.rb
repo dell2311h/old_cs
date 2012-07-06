@@ -40,6 +40,7 @@ module Pandrino
 
     def self.prepare_params(params)
       params[:encoder].store(:callback_url, Settings.encoding.callback_url) if params.has_key?(:encoder)
+      params[:encoder].store(:server_type, Settings.application.type) if params.has_key?(:encoder)
       params.to_param
     end
   end

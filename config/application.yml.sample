@@ -3,6 +3,7 @@ defaults: &defaults
   application:
     name: 'CrowdSync'
     host: 'crowdsync.dimalexsoftware.com'
+    type: 'staging'
 
   mailers:
     email:
