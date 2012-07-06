@@ -6,6 +6,10 @@ node(:video_url) { |video| video.clip.url if video.clip? }
 
 child :cached_event => :event do
   attributes :id, :name
+
+  child :place do
+    extends "api/places/show"
+  end
 end
 
 child :cached_user => :user do
