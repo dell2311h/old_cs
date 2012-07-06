@@ -92,3 +92,11 @@ en:
       mention:       "User %{user} mentioned you."
       add_song:      "New song was added for your video"
 
+  descriptions:
+      video:
+        status:
+          uploading: "Uploading"
+          new: "Uploading done"
+          processing: "In processing"
+          processing_done: "Processing done"
+
