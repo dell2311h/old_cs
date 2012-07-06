@@ -21,7 +21,7 @@ class Clip < ActiveRecord::Base
       pluraleyes_project_id = event.pluraleyes_id
       hydra = PeHydra::Query.new Settings.pluraleyes.login, Settings.pluraleyes.password
       pe_media = hydra.create_media("clip ID #{self.id}", nil, pluraleyes_project_id)
-      response = hydra.add_audio("#{Settings.encoding.storage.location}#{self.source}", {:project_id => pluraleyes_project_id, :media_id => pe_media[:id]})
+      response = hydra.add_audio("#{Settings.encoding.storage.location}#{Settings.application.type}/#{self.source}", {:project_id => pluraleyes_project_id, :media_id => pe_media[:id]})
       if response == "OK"
         Rails.logger.info "Clip was uploaded to PluralEyes. PE Media ID #{self.pluraleyes_id}"
         new_pluraleyes_group_count = hydra.sync(pluraleyes_project_id).count
@@ -37,4 +37,3 @@ class Clip < ActiveRecord::Base
     end
   end
 end
-
