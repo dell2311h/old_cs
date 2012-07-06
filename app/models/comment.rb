@@ -23,8 +23,16 @@ class Comment < ActiveRecord::Base
     self.destroy if self.destroyable_by?(user)
   end
 
-  def mentions
-    self.text.scan(/@(\S*)(?:\z|\s)/).uniq.flatten.map! {|x| x.gsub("_"," ") }
+  def mentions(underscore_as_whitespace = true)
+    self.text.scan(/@(\S*)(?:\z|\s)/).uniq.flatten.map! {|x| underscore_as_whitespace ? x.gsub("_"," ") : x }
+  end
+
+  def user_mentions
+    self.mentions(false)
+  end
+
+  def performer_mentions
+    self.mentions(true)
   end
 
   private

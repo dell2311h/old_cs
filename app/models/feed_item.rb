@@ -131,7 +131,10 @@ class FeedItem < ActiveRecord::Base
   end
 
   def self.create_for_song_definition(video_song)
-    FeedItem.create!(:action => 'add_song', :user => video_song.user, :entity => video_song.song, :context => video_song.video)
+    video = video_song.video
+    if video
+      FeedItem.create!(:action => 'add_song', :user => video_song.user, :entity => video_song.song, :context => video)
+    end
   end
 
   def self.create_for_comment(comment)
@@ -200,53 +203,50 @@ class FeedItem < ActiveRecord::Base
 
       def create_performers_video_comment_feeds_for(comment)
         video = comment.video
-        video.performers.each do |performer|
-          FeedItem.create!(:action => 'comment_performers_video', :user => comment.user, :entity => video, :context => performer)
-        end
-      end
-
-      def create_video_comment_feeds_for comment
-        FeedItem.create(:action       => "comment_video",
-                      :user_id      => comment.user_id,
-                      :entity_type  => "Video",
-                      :entity_id    => comment.video_id,
-                      :context => comment.video.event
-                      )
-      end
-
-      def create_mention_feeds_for comment
-        mentions = comment.mentions
-        if mentions
-          FeedItem.transaction do
-            begin
-              mentions.each do |mention|
-                feed_users  mention, comment
-                feed_performers mention, comment
-              end
-            rescue ActiveRecord::StatementInvalid
-            end
+        if video
+          video.performers.each do |performer|
+            FeedItem.create!(:action => 'comment_performers_video', :user => comment.user, :entity => video, :context => performer)
           end
         end
       end
 
-      def create_mention_feeds comment, feeded_items
-        feeded_items.each do |feeded_item|
-          FeedItem.create(:action       => "mention",
-                          :user_id      => comment.user_id,
-                          :entity       => feeded_item,
-                          :context_type => "Video",
-                          :context_id   => comment.video_id)
+      def create_video_comment_feeds_for(comment)
+        video = comment.video
+        if video
+          FeedItem.create(:action => "comment_video", :user_id => comment.user_id, :entity => video, :context => video.event)
         end
       end
 
-      def feed_users mention, comment
-        users = User.where("UPPER(username) = ?", mention.upcase)
-        create_mention_feeds comment, users
+      def create_mention_feeds_for(comment)
+        user_mentions = comment.user_mentions
+        performer_mentions = comment.performer_mentions
+        FeedItem.transaction do
+          begin
+            user_mentions.each { |mention| feed_users(mention, comment) }
+            performer_mentions.each { |mention| feed_performers(mention, comment) }
+          rescue ActiveRecord::StatementInvalid
+          end
+        end
+
       end
 
-      def feed_performers mention, comment
+      def create_mention_feeds(comment, feeded_items)
+        video = comment.video
+        if video
+          feeded_items.each do |feeded_item|
+            FeedItem.create(:action => "mention", :user_id => comment.user_id, :entity => feeded_item, :context => video)
+          end
+        end
+      end
+
+      def feed_users(mention, comment)
+        users = User.where("UPPER(username) = ?", mention.upcase)
+        create_mention_feeds(comment, users)
+      end
+
+      def feed_performers(mention, comment)
         performers = Performer.where("UPPER(name) = ?", mention.upcase)
-        create_mention_feeds comment, performers
+        create_mention_feeds(comment, performers)
       end
     end
 end
