@@ -4,7 +4,7 @@ class VideosController < ApplicationController
 
 
   def index
-    @videos = current_user.videos.order("created_at DESC").paginate(:page => params[:page])
+    @videos = Video.unscoped.for_user(current_user).order("created_at DESC").paginate(:page => params[:page])
   end
 
   def new
@@ -46,3 +46,4 @@ class VideosController < ApplicationController
   end
 
 end
+
