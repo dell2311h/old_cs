@@ -5,7 +5,7 @@ set :rvm_ruby_string, "1.9.2-p290@#{application}"
 set :rvm_type, :system
 
 set :default_stage, "staging"
-set :stages, %w(staging, production)
+set :stages, %w(staging production)
 
 set :keep_releases, 1
 
@@ -130,5 +130,4 @@ def watch_log(command)
     break if stream == :err
   end
 end
-
 
