@@ -38,7 +38,11 @@ class Event < ActiveRecord::Base
 
   def self.search(params)
 
-    events = params[:user_id] ? User.find(params[:user_id]).events : scoped
+    events = scoped
+
+    events = User.find(params[:user_id]).events if params[:user_id]
+
+    events = Place.find(params[:place_id]).events if params[:place_id]
 
     events = events.order_by_video_count if params[:top]
 
