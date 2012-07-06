@@ -6,7 +6,9 @@
   <tr>
     <th>ID</th>
     <th>Event</th>
+    <th>Name</th>
     <th>Download link</th>
+    <th>Status</th>
     <th></th>
   </tr>
 
@@ -14,8 +16,10 @@
     <tr>
       <td><%= video.id %></td>
       <td><%= video.event.name %></td>
+      <td><%= video[:clip] %></td>
       <td><%= link_to "Download", video.clip.url %></td>
-      <td><%= link_to "Delete", video, method: :delete, confirm: "Are you sure to delete this video?" %></td>
+      <td><%= textual_status_for(video) %></td>
+      <td>Upload thumbnail</td>
     </tr>
   <% end %>
 </table>
