@@ -119,21 +119,21 @@ class FeedItem < ActiveRecord::Base
   def self.create_for_like(like)
     video = like.video
     if video
-      FeedItem.create!(:action => 'like_video', :user => like.user, :entity => video, :context => video.event)
+      FeedItem.create(:action => 'like_video', :user => like.user, :entity => video, :context => video.event)
       video.performers.each do |performer|
-        FeedItem.create!(:action => 'like_performers_video', :user => like.user, :entity => video, :context => performer)
+        FeedItem.create(:action => 'like_performers_video', :user => like.user, :entity => video, :context => performer)
       end
     end
   end
 
   def self.create_for_follow(relationship)
-    FeedItem.create!(:action => 'follow', :user => relationship.follower, :entity => relationship.followable)
+    FeedItem.create(:action => 'follow', :user => relationship.follower, :entity => relationship.followable)
   end
 
   def self.create_for_song_definition(video_song)
     video = video_song.video
     if video
-      FeedItem.create!(:action => 'add_song', :user => video_song.user, :entity => video_song.song, :context => video)
+      FeedItem.create(:action => 'add_song', :user => video_song.user, :entity => video_song.song, :context => video)
     end
   end
 
@@ -205,7 +205,7 @@ class FeedItem < ActiveRecord::Base
         video = comment.video
         if video
           video.performers.each do |performer|
-            FeedItem.create!(:action => 'comment_performers_video', :user => comment.user, :entity => video, :context => performer)
+            FeedItem.create(:action => 'comment_performers_video', :user => comment.user, :entity => video, :context => performer)
           end
         end
       end
