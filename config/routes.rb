@@ -30,6 +30,7 @@ Crowdsync::Application.routes.draw do
 
     resources :events, :only => [:index, :create, :show]
     get 'users/:user_id/events' => 'events#index'
+    get 'places/:place_id/events' => 'events#index'
 
     resources :places, :only => [:create]
 
