@@ -6,22 +6,23 @@ module Pandrino
     @port     = Settings.encoding.url.port
 
     def self.log text
-        @logger.info Time::now.to_s + "\n" + text + "\n"
+      @logger.info Time::now.to_s + "\n" + text + "\n"
     end
 
-    def self.deliver url, params, method = :post
+    def self.deliver(url, params, method = :post)
       begin
         raise 'Wrong url' if url.nil?
         raise 'Wrong params' if params.nil?
         raise 'Wrong method' if method.nil?
         http = Net::HTTP.new(@base_url, @port)
+        body = prepare_params(params)
         case method
         when :post
           request = Net::HTTP::Post.new(url)
-          request.body = params.to_param
+          request.body = body
         when :get
           request = Net::HTTP::Get.new(url)
-          request.body = params.to_param
+          request.body = body
         else
           raise 'unknown request method'
         end
@@ -35,6 +36,11 @@ module Pandrino
         log "Unable to perform request with params: #{params.to_json} to #{url} failed by: #{e.message}"
         false
       end
+    end
+
+    def self.prepare_params(params)
+      params[:encoder].store(:callback_url, Settings.encoding.callback_url) if params.has_key?(:encoder)
+      params.to_param
     end
   end
 end
