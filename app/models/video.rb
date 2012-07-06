@@ -74,8 +74,8 @@ class Video < ActiveRecord::Base
   scope :with_calculated_counters, with_likes_count.with_comments_count
 
   scope :with_events_and_users, lambda{
-                                        @@users = User.find scoped.map(&:user_id).uniq
-                                        @@events = Event.find scoped.map(&:event_id).uniq
+                                        @@users = User.find(scoped.map(&:user_id).uniq)
+                                        @@events = Event.where(:id => scoped.map(&:event_id).uniq).includes([:place])
                                         scoped
                                       }
 
@@ -326,3 +326,4 @@ class Video < ActiveRecord::Base
       end
     end
 end
+
