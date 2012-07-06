@@ -218,18 +218,16 @@ class FeedItem < ActiveRecord::Base
       end
 
       def create_mention_feeds_for(comment)
-        mentions = comment.mentions
-        if mentions
-          FeedItem.transaction do
-            begin
-              mentions.each do |mention|
-                feed_users(mention, comment)
-                feed_performers(mention, comment)
-              end
-            rescue ActiveRecord::StatementInvalid
-            end
+        user_mentions = comment.user_mentions
+        performer_mentions = comment.performer_mentions
+        FeedItem.transaction do
+          begin
+            user_mentions.each { |mention| feed_users(mention, comment) }
+            performer_mentions.each { |mention| feed_performers(mention, comment) }
+          rescue ActiveRecord::StatementInvalid
           end
         end
+
       end
 
       def create_mention_feeds(comment, feeded_items)
