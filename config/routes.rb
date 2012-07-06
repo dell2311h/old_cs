@@ -123,7 +123,7 @@ Crowdsync::Application.routes.draw do
 
   end
 
-  resources :videos, :only => [:index, :new, :create, :destroy]
+  resources :videos, :only => [:index, :new, :create, :update, :destroy]
 
   post "/callbacks/:profile_id" => "callbacks#callback"
 

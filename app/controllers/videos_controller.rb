@@ -36,6 +36,14 @@ class VideosController < ApplicationController
 
   end
 
+  def update
+    @video = Video.unscoped {
+      Video.for_user(current_user).find(params[:id]).update_attributes!(params[:video])
+    }
+
+    redirect_to videos_path, :notice => "Thumbnail for video ID #{params[:id]} was successfully set up."
+  end
+
   def destroy
     @video = Video.find params[:id]
     @video.destroy if @video.user == current_user

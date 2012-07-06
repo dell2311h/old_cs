@@ -9,7 +9,8 @@
     <th>Name</th>
     <th>Download link</th>
     <th>Status</th>
-    <th></th>
+    <th>Thumbnail</th>
+    <th>Upload thumbnail</th>
   </tr>
 
   <% @videos.each do |video| %>
@@ -19,7 +20,12 @@
       <td><%= video[:clip] %></td>
       <td><%= link_to "Download", video.clip.url %></td>
       <td><%= textual_status_for(video) %></td>
-      <td>Upload thumbnail</td>
+      <td><%= video[:thumbnail] ? image_tag(video.thumbnail.normal.url(:small)) : "None" %></td>
+      <td><%= form_for video, :html => { :multipart => true } do |f| %>
+          <%= file_field_tag "video_thumbnail", name: "video[thumbnail]" %>
+          <%= f.submit "Upload" %>
+        <% end %>
+      </td>
     </tr>
   <% end %>
 </table>
