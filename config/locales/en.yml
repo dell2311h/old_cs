@@ -75,6 +75,10 @@ en:
       empty_search_params: "Empty search parameters"
       invalid_coordinates_format: "Incorrect coordinates"
       wrong_password: "Wrong password"
+      wrong_email_or_password: "Wrong email or password"
+      can_not_find_user_by_provider: "Can't find user with %{provider} provider"
+      incorrect_token_for_provider: "Token for %{provider} provider is incorrect"
+      not_enough_options_for_authorization: "Not enough options for authorization"
     models:
       event:
         master_track_not_reay: "Processing not completed yet."
