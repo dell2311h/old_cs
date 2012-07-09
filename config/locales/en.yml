@@ -13,11 +13,13 @@ en:
       invitation:
         mode: "Invitation type"
         code: "Invitation code"
+      relationship:
+        follower_id: "You"
 
     errors:
       messages:
         blank: "is required"
-        taken: "has already been taken"
+        taken: "should be unique"
       models:
         authentication:
           attributes:
@@ -45,6 +47,11 @@ en:
           attributes:
             name:
               taken: "should be unique"
+        relationship:
+          attributes:
+            follower_id:
+              taken: "already following this"
+
 
   errors:
     parameters:
@@ -64,6 +71,8 @@ en:
         you_can_not_delete: "You can't delete this comment"
       eventful_performer:
         name_is_not_set: "performer_name is not provided"
+      relationship:
+        you_can_not_follow_yourself: "You can't follow yourself"
 
   feed:
     user:
