@@ -27,6 +27,10 @@ en:
               taken: "was already invited by you"
             code:
               taken: "should be unique"
+        like:
+          attributes:
+            video_id:
+              taken: "was already liked by you"
         clip:
           attributes:
             video_id:
