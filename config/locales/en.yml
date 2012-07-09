@@ -74,6 +74,7 @@ en:
       remote_service_unavailable: "Remote service unavailable"
       empty_search_params: "Empty search parameters"
       invalid_coordinates_format: "Incorrect coordinates"
+      wrong_password: "Wrong password"
     models:
       event:
         master_track_not_reay: "Processing not completed yet."
