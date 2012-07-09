@@ -3,6 +3,7 @@
 
 en:
   activerecord:
+
     models:
       authentication: "Social network account"
     attributes:
@@ -12,6 +13,7 @@ en:
       invitation:
         mode: "Invitation type"
         code: "Invitation code"
+
     errors:
       messages:
         blank: "is required"
@@ -36,6 +38,10 @@ en:
             video_id:
               taken: "already has such clip"
         encoding_profile:
+          attributes:
+            name:
+              taken: "should be unique"
+        performer:
           attributes:
             name:
               taken: "should be unique"
