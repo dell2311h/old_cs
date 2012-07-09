@@ -9,6 +9,9 @@ en:
       authentication:
         provider: "Social network"
         uid: "Social network ID"
+      invitation:
+        mode: "Invitation type"
+        code: "Invitation code"
     errors:
       messages:
         blank: "is required"
@@ -18,6 +21,12 @@ en:
           attributes:
             provider:
               taken: "already linked"
+        invitation:
+          attributes:
+            invitee:
+              taken: "was already invited by you"
+            code:
+              taken: "should be unique"
         clip:
           attributes:
             video_id:
