@@ -240,17 +240,17 @@ class User < ActiveRecord::Base
   def self.authorize_by(params)
     if params[:email]
       user = self.find_by_email(params[:email])
-      raise "Wrong email or password" if user.nil? or !user.valid_password? params[:password]
+      raise I18n.t('errors.parameters.wrong_email_or_password') if user.nil? or !user.valid_password? params[:password]
     elsif params[:provider]
       auth = Authentication.find_by_provider_and_uid(params[:provider], params[:uid])
-      raise "Can't find user with #{params[:provider]} provider" unless auth
+      raise I18n.t('errors.parameters.can_not_find_user_by_provider', :provider => params[:provider]) unless auth
       unless auth.token == params[:token]
-        raise "Token for #{params[:provider]} provider incorrect" unless auth.correct_token?(params[:token])
+        raise I18n.t('errors.parameters.incorrect_token_for_provider', :provider => params[:provider]) unless auth.correct_token?(params[:token])
         auth.update_attribute(:token, params[:token])
       end
       user = auth.user
     else
-      raise "Not enough options for authorization"
+      raise I18n.t('errors.parameters.not_enough_options_for_authorization')
     end
     user
   end
