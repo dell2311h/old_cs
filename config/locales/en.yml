@@ -17,6 +17,8 @@ en:
         follower_id: "You"
       review_flag:
         user_id: "You"
+      video_performer:
+        performer_id: "Artist"
 
     errors:
       messages:
@@ -57,6 +59,10 @@ en:
           attributes:
             user_id:
               taken: "already flagged this video"
+        video_performer:
+          attributes:
+            performer_id:
+              taken: 'was already added'
 
 
   errors:
@@ -69,8 +75,6 @@ en:
       empty_search_params: "Empty search parameters"
       invalid_coordinates_format: "Incorrect coordinates"
     models:
-      video_performer:
-        uniqueness_by_performer: 'was already added'
       event:
         master_track_not_reay: "Processing not completed yet."
       comment:
