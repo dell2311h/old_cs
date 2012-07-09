@@ -33,6 +33,9 @@ describe User do
     it { should_not allow_value(".gmail.com1").for(:email) }
     it { should_not allow_value("email.sddsds.").for(:email) }
 
+    it { should allow_value("username_123.test-01").for(:username) }
+    it { should_not allow_value("user:;()*,%/'&@?<>").for(:username) }
+
   end
 
   describe "associations" do
@@ -182,4 +185,3 @@ describe User do
   end
 
 end
-

@@ -36,6 +36,7 @@ class User < ActiveRecord::Base
   validates :sex, :inclusion => ["m", "f"], :if => lambda {|u| u.sex }
 
   validates_format_of :device_token, :with => /^[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}$/, :allow_nil => true
+  validates :username, :format => { :with => /^[\w.-]*$/ }
 
   has_many :comments, :dependent => :destroy
   has_many :videos
@@ -264,4 +265,3 @@ class User < ActiveRecord::Base
       user.friends
     end
 end
-
