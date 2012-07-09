@@ -188,6 +188,15 @@ describe Event do
       @event.should_receive(:send_master_track_creation_to_encoding_with).with(@timings_result)
       @event.make_new_master_track
     end
+
+    context 'with empty params from pluraleyes' do
+      it "should not call internal methods" do
+        @event.stub(:sync_with_pluraleyes).and_return([])
+        @event.should_not_receive(:create_timings_by_pluraleyes_sync_results)
+        @event.should_not_receive(:send_master_track_creation_to_encoding_with)
+        @event.make_new_master_track
+      end
+    end
   end
 
 
@@ -339,4 +348,3 @@ describe Event do
       end
     end
 end
-

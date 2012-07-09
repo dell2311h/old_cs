@@ -186,8 +186,10 @@ class Event < ActiveRecord::Base
 
   def make_new_master_track
     sync_results = self.sync_with_pluraleyes # Sync with PluralEyes
-    result = self.create_timings_by_pluraleyes_sync_results(sync_results) # Create timings
-    self.send_master_track_creation_to_encoding_with(result) # Enqueue master track creation at Encoding Server
+    unless sync_results.empty?
+      result = self.create_timings_by_pluraleyes_sync_results(sync_results) # Create timings
+      self.send_master_track_creation_to_encoding_with(result) # Enqueue master track creation at Encoding Server
+    end
   end
 
   private
@@ -228,4 +230,3 @@ class Event < ActiveRecord::Base
     end
 
 end
-
