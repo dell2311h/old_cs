@@ -4,5 +4,6 @@ class Tagging < ActiveRecord::Base
   belongs_to :video
   belongs_to :comment
 
-  validates :tag_id, :video_id, :comment_id, :presence => true
+  validates :tag_id, :user_id, :video_id, :comment_id, :presence => true
 end
+
