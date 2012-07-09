@@ -30,12 +30,12 @@ class User < ActiveRecord::Base
   validates :username, :email, :uniqueness => true
 
   validates :latitude, :longitude, :numericality => true, :allow_nil => true
-  validates_numericality_of :new_notifications_count, :only_integer => true,:greater_than_or_equal_to => 0
+  validates :new_notifications_count, :numericality => { :only_integer => true, :greater_than_or_equal_to => 0 }
 
   validates :email_notification_status, :inclusion => ["none", "immediate", "day", "week"]
   validates :sex, :inclusion => ["m", "f"], :if => lambda {|u| u.sex }
 
-  validates_format_of :device_token, :with => /^[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}$/, :allow_nil => true
+  validates :device_token, :format => { :with => /^[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}$/, :allow_nil => true }
   validates :username, :format => { :with => /^[\w.-]*$/ }
 
   has_many :comments, :dependent => :destroy
