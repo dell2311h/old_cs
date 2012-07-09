@@ -83,6 +83,8 @@ en:
         name_is_not_set: "performer_name is not provided"
       relationship:
         you_can_not_follow_yourself: "You can't follow yourself"
+      song:
+        you_can_not_add_songs_for_this_video: "You can't add songs for this video"
 
   feed:
     user:
