@@ -35,6 +35,7 @@ class Event < ActiveRecord::Base
 
   scope :with_calculated_counters, with_followers_count.with_videos_comments_count
 
+  scope :with_ready_master_track, joins(:master_tracks).where('master_tracks.is_ready' => true).where('master_tracks.version = events.master_track_version')
 
   def self.search(params)
 
@@ -44,7 +45,7 @@ class Event < ActiveRecord::Base
 
     events = Place.find(params[:place_id]).events if params[:place_id]
 
-    events = events.order_by_video_count if params[:top]
+    events = events.with_ready_master_track.order_by_video_count if params[:top]
 
     if params[:nearby]
       raise I18n.t('errors.parameters.coordinates_not_provided') unless params[:latitude] && params[:longitude]
