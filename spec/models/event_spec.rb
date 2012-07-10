@@ -31,28 +31,38 @@ describe Event do
   end
 
   describe ".nearby" do
-    pending "Need rewrite this shit"
-    #before :all do
-    #  @radius = 1 # mile
-    #  @latitude_shift = 0.2
-    #  @places = (0..1).collect { Factory.create :place }
-    #  @places[1].update_attributes(:latitude => @places[0].latitude + @latitude_shift, :longitude => @places[0].longitude)
-    #  @events = (0..1).collect { Factory.create :event }
-    #  2.times do |i|
-    #    @events[i].update_attribute(:place_id , @places[i].id)
-    #  end
-    #  @coordinates = [@places[0].latitude, @places[0].longitude]
-    #end
-    #
-    #it 'should return list of events from all places in specified radius' do
-    #  nearby_events = Event.nearby @coordinates, @radius
-    #  nearby_events.should include @events[0]
-    #end
-    #
-    #it 'should not return list of events from all places that are not in specified radius' do
-    #  nearby_events = Event.nearby @coordinates, @radius
-    #  nearby_events.should_not include @events[1]
-    #end
+    before :all do
+      @radius = 1 # mile
+      @latitude_shift = 0.2
+      @places = (0..1).collect { Factory.create :place }
+      @places[1].update_attributes(:latitude => @places[0].latitude + @latitude_shift, :longitude => @places[0].longitude)
+      @events = []
+      2.times {|i| @events[i] = Factory.create :event, :place => @places[i]}
+      @coordinates = [@places[0].latitude, @places[0].longitude]
+    end
+
+    it 'should return list of events from all places in specified radius' do
+      nearby_events = Event.nearby @coordinates, @radius
+      nearby_events.should include @events[0]
+    end
+
+    it 'should not return list of events from all places trhat are not in specified radius' do
+      nearby_events = Event.nearby @coordinates, @radius
+      nearby_events.should_not include @events[1]
+    end
+  end
+
+  describe ".with_ready_mastertrack" do
+    before :all do
+      @event1 = Factory.create(:event_with_ready_master_track)
+      @event2 = Factory.create(:event_with_not_ready_master_track)
+    end
+
+    it 'should return list of events with ready master_track proper version' do
+      events = Event.with_ready_master_track
+      events.should include @event1
+      events.should_not include @event2
+    end
   end
 
   describe "#create_not_ready_master_track" do
@@ -90,7 +100,7 @@ describe Event do
 
   describe "#create_timings_by_pluraleyes_sync_results" do
 
-    let(:event) { Factory.create(:event_without_add_to_pe_callback) }
+    let(:event) { Factory.create(:event) }
 
     before :all do
       @clips_data = [{:recorded_at => Time.now, :pe_id => SecureRandom.uuid, :encoding_id => SecureRandom.uuid },
@@ -278,7 +288,7 @@ describe Event do
         events = double('events')
         top_events = double('top_events')
         Event.should_receive(:scoped).and_return(events)
-        events.should_receive(:order_by_video_count).and_return(top_events)
+        events.stub_chain(:with_ready_master_track, :order_by_video_count).and_return(top_events)
         Event.search(:top => true).should be(top_events)
       end
     end
@@ -319,19 +329,14 @@ describe Event do
   end
 
   describe '#get_random_N_top_events' do
-    before :all do
+    it "should find random event from N top events" do
       Event.destroy_all
       @events_ids = []
-
       10.times do |i|
         event = Factory.create :event
         @events_ids[9-i] = event.id
         create_videos i, event
       end
-
-    end
-
-    it "should find random event from N top events" do
       10.times do |i|
         ids = @events_ids.first(i+1)
         event = Event.top_random_for(i+1)
