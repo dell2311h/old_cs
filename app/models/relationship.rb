@@ -17,7 +17,7 @@ class Relationship < ActiveRecord::Base
   private
 
     def no_self_following
-      errors.add(:base, "can't be the current user!") if (self.follower_id == self.followable_id) && (self.followable_type == "User")
+      errors.add(:base, I18n.t('errors.models.relationship.you_can_not_follow_yourself')) if (self.follower_id == self.followable_id) && (self.followable_type == "User")
     end
 
     def accure_achievement_points
@@ -34,3 +34,4 @@ class Relationship < ActiveRecord::Base
     end
 
 end
+

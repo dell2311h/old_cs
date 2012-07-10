@@ -17,7 +17,7 @@ class Api::SongsController < Api::BaseController
   def create
     @video = Video.unscoped.find params[:video_id]
     @songs = @video.add_songs_by_user(current_user, params[:songs])
-    raise "You can't add songs for this video" unless @songs
+    raise I18n.t('errors.models.song.you_can_not_add_songs_for_this_video') unless @songs
     render :status => :ok, :action => "added_songs"
   end
 
