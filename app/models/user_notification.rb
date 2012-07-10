@@ -9,7 +9,7 @@ class UserNotification < ActiveRecord::Base
   def self.process_notifications(feed_item)
     feed_item.user.increment_new_notifications_count
     EmailNotification.process_email_notification feed_item
-    ApnNotification.deliver feed_item
+    #ApnNotification.deliver feed_item
   end
 
   def format_message
