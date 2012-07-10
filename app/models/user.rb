@@ -35,7 +35,6 @@ class User < ActiveRecord::Base
   validates :email_notification_status, :inclusion => ["none", "immediate", "day", "week"]
   validates :sex, :inclusion => ["m", "f"], :if => lambda {|u| u.sex }
 
-  validates :device_token, :format => { :with => /^[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}\s[a-z0-9]{8}$/, :allow_nil => true }
   validates :username, :format => { :with => /^[\w.-]*$/ }
 
   has_many :comments, :dependent => :destroy
@@ -69,6 +68,8 @@ class User < ActiveRecord::Base
   has_many :feed_contexts, :as => :context, :class_name => "FeedItem", :dependent => :destroy
 
   has_many :user_notifications
+
+  has_one :device
 
   accepts_nested_attributes_for :authentications
 

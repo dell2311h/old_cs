@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120627090853) do
+ActiveRecord::Schema.define(:version => 20120709153521) do
 
   create_table "achievement_points", :force => true do |t|
     t.integer  "user_id"
@@ -21,32 +21,18 @@ ActiveRecord::Schema.define(:version => 20120627090853) do
     t.datetime "updated_at",  :null => false
   end
 
-  create_table "apn_bases", :force => true do |t|
-  end
-
-  create_table "apn_devices", :force => true do |t|
-    t.string   "token",              :default => "", :null => false
-    t.datetime "created_at",                         :null => false
-    t.datetime "updated_at",                         :null => false
-    t.datetime "last_registered_at"
-  end
-
-  add_index "apn_devices", ["token"], :name => "index_apn_devices_on_token", :unique => true
-
   create_table "apn_notifications", :force => true do |t|
-    t.integer  "device_id",                        :null => false
-    t.integer  "errors_nb",         :default => 0
-    t.string   "device_language"
+    t.integer  "user_id",           :null => false
     t.string   "sound"
     t.string   "alert"
     t.integer  "badge"
     t.text     "custom_properties"
     t.datetime "sent_at"
-    t.datetime "created_at",                       :null => false
-    t.datetime "updated_at",                       :null => false
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
   end
 
-  add_index "apn_notifications", ["device_id"], :name => "index_apn_notifications_on_device_id"
+  add_index "apn_notifications", ["user_id"], :name => "index_apn_notifications_on_user_id"
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -76,6 +62,13 @@ ActiveRecord::Schema.define(:version => 20120627090853) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.integer  "video_id"
+  end
+
+  create_table "devices", :force => true do |t|
+    t.string   "token",      :null => false
+    t.integer  "user_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "encoding_profiles", :force => true do |t|
@@ -250,9 +243,8 @@ ActiveRecord::Schema.define(:version => 20120627090853) do
     t.string   "sex"
     t.string   "first_name"
     t.string   "last_name"
-    t.integer  "achievement_points_sum",    :default => 0
-    t.string   "device_token"
     t.integer  "new_notifications_count",   :default => 0
+    t.integer  "achievement_points_sum",    :default => 0
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

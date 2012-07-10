@@ -1,4 +1,10 @@
 GIT
+  remote: git://github.com/jpoz/APNS.git
+  revision: 60f8dd8afa3761344af3d8addf12fdebb441acee
+  specs:
+    apns (1.0.0)
+
+GIT
   remote: https://github.com/Instagram/instagram-ruby-gem
   revision: f8af597ef24d7ad5efe20d381c8021cd4f901086
   specs:
@@ -7,14 +13,6 @@ GIT
       faraday_middleware (~> 0.8)
       hashie (>= 0.4.0)
       multi_json (~> 1.0.3)
-
-GIT
-  remote: https://github.com/natescherer/apn_on_rails.git
-  revision: 18f5d37397e3f003152c51b257d9da939b70438f
-  branch: rails3
-  specs:
-    apn_on_rails (0.3.1rails3)
-      configatron
 
 GEM
   remote: https://rubygems.org/
@@ -70,8 +68,6 @@ GEM
       execjs
     coffee-script-source (1.3.1)
     columnize (0.3.6)
-    configatron (2.9.1)
-      yamler (>= 0.1.0)
     devise (2.0.4)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.0.3)
@@ -279,13 +275,12 @@ GEM
     warden (1.1.1)
       rack (>= 1.0)
     will_paginate (3.0.3)
-    yamler (0.1.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  apn_on_rails!
+  apns!
   capistrano
   capistrano-ext
   carrierwave
