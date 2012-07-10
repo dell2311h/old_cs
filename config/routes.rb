@@ -89,7 +89,9 @@ Crowdsync::Application.routes.draw do
     get "me/provider_remote_friends" => "users#provider_remote_friends"
     get "me/invitations" => "invitations#index"
     get "me/invitations/:mode" => "invitations#index"
-
+    #Devices
+    put "me/device/" => "devices#create"
+    delete "me/device" => "devices#destroy"
     #Authentications
     put    "/me/authentications/:provider" => "authentications#link"
     delete "/me/authentications/:provider" => "authentications#destroy"

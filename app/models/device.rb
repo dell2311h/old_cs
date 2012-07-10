@@ -4,11 +4,14 @@ class Device < ActiveRecord::Base
 
   def self.register_device(user, token)
     Device.unregister_device user
-    Device.create({:user => user, token => token})
+    device = Device.create({:user => user, :token => token})
+    device.save!
+
+    device
   end
 
   def self.unregister_device(user)
-    User.device.destroy if User.device
+    user.device.destroy if user.device
   end
 
 end
