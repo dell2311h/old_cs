@@ -92,6 +92,9 @@ defaults: &defaults
   notifications:
     apn:
       sound: "apnsTune.caf"
+      pem_sertificate: "config/apple_push_notification_development.pem"
+      #gateway: "gateway.push.apple.com"
+      gateway: "gateway.sandbox.push.apple.com"
 
 development:
   <<: *defaults
