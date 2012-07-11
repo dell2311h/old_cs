@@ -6,7 +6,7 @@ class Api::UsersController < Api::BaseController
     oauth = params[:oauth]
     @user = User.find_by_email(params[:user][:email]) || User.new(params[:user])
     if @user.new_record?
-      @user.authentications.build(oauth) if oauth
+      @user.authentications.build(oauth) if oauth && @user.save!
     else
       raise I18n.t('errors.parameters.wrong_password') unless @user.valid_password? params[:user][:password]
       @user.authentications.create(oauth) unless @user.authentications.find_by_provider_and_uid(oauth[:provider], oauth[:uid]) if oauth
@@ -61,4 +61,3 @@ class Api::UsersController < Api::BaseController
 
   end
 end
-
