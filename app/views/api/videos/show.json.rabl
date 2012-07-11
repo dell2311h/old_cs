@@ -17,6 +17,10 @@ child :cached_user => :user do
   node(:avatar_url) { |user| user.avatar.thumb.url if user.avatar? }
 end
 
+child :songs => :songs do
+  extends "api/songs/show"
+end
+
 attribute :created_at => :date
 
 node(:uploaded_file_size) { |video| video.tmpfile_size }
@@ -24,4 +28,3 @@ node(:uploaded_file_size) { |video| video.tmpfile_size }
 if current_user
   node(:liked_by_me) { |video| video.respond_to?(:liked_by_me) && (video.liked_by_me == 1) ? true : false }
 end
-
