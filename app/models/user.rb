@@ -1,6 +1,11 @@
 require 'custom_validators'
 class User < ActiveRecord::Base
 
+  HUMANIZED_ATTRIBUTES = {
+    :email => '',
+    :username => ''
+  }
+
   include Follow::FlagsAndCounters
 
   attr_protected :achievement_points_sum
@@ -12,7 +17,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   devise :database_authenticatable, :registerable,
-         :recoverable,  :validatable, :encryptable,
+         :recoverable, :encryptable,
          :token_authenticatable, :omniauthable
 
   mount_uploader :avatar, AvatarUploader
@@ -255,6 +260,10 @@ class User < ActiveRecord::Base
       raise I18n.t('errors.parameters.not_enough_options_for_authorization')
     end
     user
+  end
+
+  def self.human_attribute_name(attr, options={})
+    HUMANIZED_ATTRIBUTES[attr.to_sym] || super
   end
 
   private

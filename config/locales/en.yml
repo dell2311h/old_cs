@@ -63,6 +63,12 @@ en:
           attributes:
             performer_id:
               taken: 'was already added'
+        user:
+          attributes:
+            email:
+              taken: "User with such email already exists"
+            username:
+              taken: "User with such username already exists"
 
 
   errors:
