@@ -12,11 +12,11 @@ describe UserNotification do
       feed_item = "feed_item"
       user = "user"
       message = ""
-      feed_item.should_receive(:user).at_least(3).times.and_return(user)
+      UserNotification.should_receive(:find_feed_owner).with(feed_item).and_return(user)
       user.should_receive(:increment_new_notifications_count)
       UserNotification.should_receive(:format_message).with(feed_item).and_return(message)
-      UserNotification.should_receive(:process_email_notification).with(message, feed_item)
-      ApnNotification.should_receive(:store).with(message, feed_item.user)
+      UserNotification.should_receive(:process_email_notification).with(user, feed_item)
+      ApnNotification.should_receive(:store).with(message, user)
       UserNotification.process_notifications(feed_item)
     end
   end
@@ -41,9 +41,10 @@ describe UserNotification do
   describe "#create_by_feed_item" do
     it "should create user_notification_by feed_item " do
       feed_item = Factory.create :comment_video_feed
-      notification = UserNotification.create_by_feed_item feed_item
-      #notification.feed_item.should be_eql(feed_item)
-      #notification.user_id.should be_eql(feed_item.user_id)
+      user = feed_item.user
+      notification = UserNotification.create_by_feed_item feed_item, user
+      notification.feed_item.should be_eql(feed_item)
+      #notification.user_id.should be_eql(feed_item.user_id, user)
     end
   end
 

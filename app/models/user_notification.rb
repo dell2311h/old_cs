@@ -7,10 +7,11 @@ class UserNotification < ActiveRecord::Base
   validates :creation_date, :presence => true
 
   def self.process_notifications(feed_item)
-    feed_item.user.increment_new_notifications_count
+    user = UserNotification.find_feed_owner feed_item
+    user.increment_new_notifications_count
     message = self.format_message feed_item
-    UserNotification.process_email_notification message, feed_item
-    ApnNotification.store message, feed_item.user
+    UserNotification.process_email_notification user, feed_item
+    ApnNotification.store message, user
   end
 
   def self.format_message feed_item
@@ -38,19 +39,32 @@ class UserNotification < ActiveRecord::Base
     NotificationMailer.send_single_notification(email, text).deliver
   end
 
-  protected
+  private
 
-  def self.create_by_feed_item(feed_item)
-    self.new(:user_id => feed_item.user_id, :feed_item_id => feed_item.id, :creation_date => Time.now)
+  def self.find_feed_owner(feed_item)
+    case feed_item.action
+    when "comment_video", "like_video"
+      feed_item.entity.user
+    when "follow"
+      feed_item.entity
+    when "add_song"
+      feed_item.context.user
+    when "mention"
+      feed_item.entity
+    end
   end
 
-  def self.process_email_notification(message, feed_item)
-    case feed_item.user.email_notification_status
+  def self.create_by_feed_item(feed_item, user)
+    self.new(:user_id => user.id, :feed_item_id => feed_item.id, :creation_date => Time.now)
+  end
+
+  def self.process_email_notification(user, feed_item)
+    case user.email_notification_status
     when "day", "week"
-      notification = create_by_feed_item(feed_item)
+      notification = create_by_feed_item(feed_item, user)
       notification.save
     when "immediate"
-      notification = create_by_feed_item(feed_item)
+      notification = create_by_feed_item(feed_item, user)
       notification.deliver
     end
   end
