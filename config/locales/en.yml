@@ -79,6 +79,7 @@ en:
       can_not_find_user_by_provider: "Can't find user with %{provider} provider"
       incorrect_token_for_provider: "Token for %{provider} provider is incorrect"
       not_enough_options_for_authorization: "Not enough options for authorization"
+      user_email_already_exists: "User with such email already exists"
     models:
       event:
         master_track_not_reay: "Processing not completed yet."

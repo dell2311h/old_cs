@@ -8,7 +8,7 @@ class Api::UsersController < Api::BaseController
     if @user.new_record?
       @user.authentications.build(oauth) if oauth && @user.save!
     else
-      raise I18n.t('errors.parameters.wrong_password') unless @user.valid_password? params[:user][:password]
+      raise I18n.t('errors.parameters.user_email_already_exists') unless @user.valid_password? params[:user][:password]
       @user.authentications.create(oauth) unless @user.authentications.find_by_provider_and_uid(oauth[:provider], oauth[:uid]) if oauth
     end
 
