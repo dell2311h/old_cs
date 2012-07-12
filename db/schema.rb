@@ -243,8 +243,8 @@ ActiveRecord::Schema.define(:version => 20120709153521) do
     t.string   "sex"
     t.string   "first_name"
     t.string   "last_name"
-    t.integer  "new_notifications_count",   :default => 0
     t.integer  "achievement_points_sum",    :default => 0
+    t.integer  "new_notifications_count",   :default => 0
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

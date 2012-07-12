@@ -3,7 +3,9 @@
 FactoryGirl.define do
   factory :apn_notification do |f|
     f.association :user
-    f.association :feed_item, :factory => :comment_video_feed
-    f.creation_date { Time.now + (0..7).to_a.sample.days }
+    f.sound true
+    f.alert { Faker::Lorem.sentence }
+    f.badge { (1..10).to_a.sample }
+    f.sent_at nil
   end
 end

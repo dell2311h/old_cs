@@ -32,6 +32,12 @@ class UserNotification < ActiveRecord::Base
     notifications.each {|user_id, user_notifications| self.deliver_multiply user_notifications}
   end
 
+  def deliver
+    text = UserNotification.format_message self.feed_item
+    email = self.user.email
+    NotificationMailer.send_single_notification(email, text).deliver
+  end
+
   protected
 
   def self.create_by_feed_item(feed_item)
@@ -49,15 +55,9 @@ class UserNotification < ActiveRecord::Base
     end
   end
 
-  def deliver
-    text = self.format_message self.feed_item
-    email = self.user.email
-    NotificationMailer.send_single_notification(email, text).deliver
-  end
-
   def self.format_multiply_notifications(notifications)
     texts = []
-    notifications.each { |notification| texts << self.format_message(notification.feed_item) }
+    notifications.each { |notification| texts << UserNotification.format_message(notification.feed_item) }
     email = notifications.first.user.email
     period = Time.now - notifications.first.user.read_attribute(:email_notification_status).days
 
