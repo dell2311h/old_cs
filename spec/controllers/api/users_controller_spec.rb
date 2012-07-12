@@ -9,7 +9,6 @@ describe Api::UsersController do
     context 'with correct request params' do
       before :all do
         @user_params = {:username => "User", :email => "user@gmail.com", :password => "password"}
-        @user = Factory.create :user
       end
 
       it "should return object of the newly created user" do
@@ -22,6 +21,7 @@ describe Api::UsersController do
 
       context 'with information about user from social network' do
         before :all do
+          @user_params = {:username => "User_#{Time.now.to_i}", :email => "user_#{Time.now.to_i}@gmail.com", :password => "password"}
           @oauth = {:provider => "facebook", :uid => "33232", :token => "567GFHJJHGghGJG76876VBVJHG"}
         end
         it "should create authentication for newly created user" do
