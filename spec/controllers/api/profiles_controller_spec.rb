@@ -6,14 +6,9 @@ describe Api::ProfilesController do
     before :each do
       @performer_result = Factory.create(:performer)
       @user_result = Factory.create(:user)
-      
-      @performer = Performer
-      @user = User
-      
-      @performer.stub!(:search).and_return(@performer)
-      @user.stub!(:find_by_username).and_return(@user_result)
-      @performer.stub!(:first).and_return(@performer_result)
-      @user.stub!(:first).and_return(@user_result)
+
+      Performer.stub_chain(:search, :first).and_return(@performer_result)
+      User.stub(:find_by_username).and_return(@user_result)
     end
 
       context 'with invalid parameters' do
@@ -30,14 +25,13 @@ describe Api::ProfilesController do
         end
 
         it 'should return ok when only user found' do
-          @performer.stub!(:search).and_return(@performer)
-          @performer.stub!(:first).and_return(nil)
+          User.stub_chain(:search, :first).and_return(nil)
           get :index, :name => "Test", :format => :json
           response.should be_ok
         end
 
         it 'should return ok when only performer found' do
-          @user.stub!(:find_by_username).and_return(nil)
+          User.stub(:find_by_username).and_return(nil)
           get :index, :name => "Test", :format => :json
           response.should be_ok
         end
@@ -45,9 +39,8 @@ describe Api::ProfilesController do
 
       context 'Nothing found' do
         it 'should return not found when nothing found' do
-          @user.stub!(:find_by_username).and_return(nil)
-          @performer.stub!(:search).and_return(@performer)
-          @performer.stub!(:first).and_return(nil)
+          User.stub(:find_by_username).and_return(nil)
+          Performer.stub_chain(:search, :first).and_return(nil)
           get :index, :name => "Test", :format => :json
           response.should be_not_found
         end
