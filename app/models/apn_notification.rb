@@ -48,8 +48,10 @@ class ApnNotification < ActiveRecord::Base
   end
 
   def self.create_apns_notifications(notifications)
-   apns_notifications = []
-   notifications.each{|notification| apns_notifications << notification.format_apns_notification}
+    apns_notifications = []
+    notifications.each do |notification|
+      apns_notifications << notification.format_apns_notification if notification.user && notification.user.device
+    end
    apns_notifications
   end
 
