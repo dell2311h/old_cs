@@ -66,6 +66,7 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/encoded #{latest_release}/public/encoded"
     run "ln -nfs #{shared_path}/sockets #{latest_release}/tmp/sockets"
     run "ln -nfs #{shared_path}/sessions #{latest_release}/tmp/sessions"
+    run "ln -nfs #{shared_path}/users #{latest_release}/public/images/users"
   end
 
   desc "Run resque"
@@ -130,4 +131,3 @@ def watch_log(command)
     break if stream == :err
   end
 end
-
