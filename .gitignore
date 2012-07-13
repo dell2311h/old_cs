@@ -24,7 +24,5 @@ config/unicorn.conf.rb
 public/uploads/**
 !public/uploads/.gitkeep
 public/images/**
-!public/images/.gitkeep
 config/initializers/carrierwave.rb
 config/application.yml
-

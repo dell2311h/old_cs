@@ -4,36 +4,66 @@ class AvatarUploader < CarrierWave::Uploader::Base
 
   include CarrierWave::MiniMagick
 
-  # Include the Sprockets helpers for Rails 3.1+ asset pipeline compatibility:
-  # include Sprockets::Helpers::RailsHelper
-  # include Sprockets::Helpers::IsolatedHelper
+  FORMAT = 'jpeg'
 
-  def store_dir
-    "images/#{model.class.to_s.underscore.pluralize}/#{model.id}"
-  end
-
-  # Provide a default URL as a default if there hasn't been a file uploaded:
-  # def default_url
-  #   # For Rails 3.1+ asset pipeline compatibility:
-  #   # asset_path("fallback/" + [version_name, "default.png"].compact.join('_'))
-  #
-  #   "/images/fallback/" + [version_name, "default.png"].compact.join('_')
-  # end
+  storage :file
 
   def extension_white_list
     %w(jpg jpeg gif png)
   end
 
-  version :medium do
-    process :resize_to_fill => [Settings.avatar.width*3, Settings.avatar.height*3]
+  process :quality => Settings.avatar.quality
+  process :convert => FORMAT
+
+  def store_dir
+    "images/#{model.class.to_s.underscore.pluralize}/#{model.id}"
   end
 
-  version :iphone do
-    process :resize_to_fill => [Settings.avatar.width*2, Settings.avatar.height*2]
+  def filename
+    "original.#{FORMAT}" if original_filename
   end
 
-  version :thumb do
-    process :resize_to_fill => [Settings.avatar.width, Settings.avatar.height]
+  version :normal do
+    def store_dir
+      "images/#{model.class.to_s.underscore.pluralize}/#{model.id}/normal"
+    end
+
+    version :small do
+      def full_filename (for_file = model.avatar.file)
+        "small.#{FORMAT}"
+      end
+      process :convert => FORMAT
+      process :resize_to_fill => [Settings.avatar.small.width, Settings.avatar.small.height]
+    end
+
+    version :medium do
+      def full_filename (for_file = model.avatar.file)
+        "medium.#{FORMAT}"
+      end
+      process :convert => FORMAT
+      process :resize_to_fill => [Settings.avatar.medium.width, Settings.avatar.medium.height]
+    end
   end
 
+  version :doublesized do
+    def store_dir
+      "images/#{model.class.to_s.underscore.pluralize}/#{model.id}/doublesized"
+    end
+
+    version :small do
+      def full_filename (for_file = model.avatar.file)
+        "small.#{FORMAT}"
+      end
+      process :convert => FORMAT
+      process :resize_to_fill => [Settings.avatar.small.width*2, Settings.avatar.small.height*2]
+    end
+
+    version :medium do
+      def full_filename (for_file = model.avatar.file)
+        "medium.#{FORMAT}"
+      end
+      process :convert => FORMAT
+      process :resize_to_fill => [Settings.avatar.medium.width*2, Settings.avatar.medium.height*2]
+    end
+  end
 end
