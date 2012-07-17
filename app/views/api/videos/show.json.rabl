@@ -14,7 +14,6 @@ end
 
 child :cached_user => :user do
   attributes :id, :first_name, :last_name, :username
-  node(:avatar_url) { |user| user.avatar.thumb.url if user.avatar? }
 end
 
 child :songs => :songs do
