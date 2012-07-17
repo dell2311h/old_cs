@@ -10,6 +10,13 @@ class Remote::FacebookUser
     api.put_wall_post(message, {:link => link} , target_uid)
   end
 
+  def self.get_uid_by_token(token)
+    graph = Koala::Facebook::API.new(token)
+    profile = graph.get_object("me")
+
+    profile["id"]
+  end
+
   private
 
     def parse result

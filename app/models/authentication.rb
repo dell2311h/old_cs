@@ -18,9 +18,8 @@ class Authentication < ActiveRecord::Base
         remote_users
   end
 
-  def correct_token?(token)
-    # TODO: Need add verification of token
-    !token.empty?
+  def correct_token?(provider, uid, token)
+    RemoteUser.check_provider_token_for_uid(provider, token, uid) unless token.empty?
   end
 
 end

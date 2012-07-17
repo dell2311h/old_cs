@@ -7,6 +7,13 @@ class Remote::FoursquareUser
     parse response
   end
 
+  def self.get_uid_by_token(token)
+    client = Foursquare2::Client.new(:oauth_token => token)
+    user = client.user("self")
+
+    user.id
+  end
+
   private
 
     def api

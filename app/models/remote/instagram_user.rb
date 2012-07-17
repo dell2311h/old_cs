@@ -14,6 +14,13 @@ class Remote::InstagramUser
     Instagram.create_media_comment(medias.first.id, "#{message} http://#{link}") if medias.first
   end
 
+  def self.get_uid_by_token(token)
+    client = Instagram.client(:access_token => token)
+    user = client.user
+
+    user.id
+  end
+
   private
   def configure
     Instagram.configure do |config|

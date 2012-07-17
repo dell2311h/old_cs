@@ -13,10 +13,25 @@ class Remote::TwitterUser
     current_user.update("@#{screen_name} #{message} #{link}")
   end
 
+  def self.get_uid_by_token(token)
+    twitter = self.create_client(token)
+    user = twitter.verify_credentials
+
+    user.id
+  end
+
   private
+    def self.process_token(token)
+      oauth_token, oauth_token_secret = token.split('|')
+    end
+
+    def self.create_client(token)
+      oauth_token, oauth_token_secret = self.process_token(token)
+      Twitter::Client.new :consumer_key => Settings.twitter.consumer_key, :consumer_secret => Settings.twitter.consumer_secret, :oauth_token => oauth_token, :oauth_token_secret => oauth_token_secret
+    end
+
     def current_user
-      oauth_token, oauth_token_secret = self.token.split('|')
-      @twitter_user = Twitter::Client.new :consumer_key => Settings.twitter.consumer_key, :consumer_secret => Settings.twitter.consumer_secret, :oauth_token => oauth_token, :oauth_token_secret => oauth_token_secret
+      @twitter_user = self.create_client(self.token)
     end
 
 end

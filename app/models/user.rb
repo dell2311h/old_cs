@@ -252,7 +252,7 @@ class User < ActiveRecord::Base
       auth = Authentication.find_by_provider_and_uid(params[:provider], params[:uid])
       raise I18n.t('errors.parameters.can_not_find_user_by_provider', :provider => params[:provider]) unless auth
       unless auth.token == params[:token]
-        raise I18n.t('errors.parameters.incorrect_token_for_provider', :provider => params[:provider]) unless auth.correct_token?(params[:token])
+        raise I18n.t('errors.parameters.incorrect_token_for_provider', :provider => params[:provider]) unless auth.correct_token?( params[:provider], params[:uid], params[:token])
         auth.update_attribute(:token, params[:token])
       end
       user = auth.user
